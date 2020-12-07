@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:video_player/video_player.dart';
 // import 'package:flutter/rendering.dart';
 
 import 'pages/public/landing_page.dart';
@@ -28,6 +29,7 @@ import 'pages/user/quicklesson_video.dart';
 // import 'services/app.dart';
 
 void main() => runApp(MyApp());
+
 
 class MyApp extends StatelessWidget {
   
