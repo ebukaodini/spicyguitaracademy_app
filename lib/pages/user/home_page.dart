@@ -19,11 +19,11 @@ class Lesson {
 
   // constructing from json
   Lesson.fromJson(Map<String, dynamic> json) {
-    thumbnail = json['thumbnail'];
-    tutor = json['tutor'];
-    title = json['lesson'];
-    description = json['description'];
-    id = json['id'];
+    thumbnail = json['thumbnail'] ?? '';
+    tutor = json['tutor'] ?? '';
+    title = json['lesson'] ?? '';
+    description = json['description'] ?? '';
+    id = json['id'] ?? '';
   }
 }
 
@@ -64,11 +64,13 @@ class HomePageState extends State<HomePage> {
   void _sortLessons() {
     setState(() {
       if (_sortValue == "Tutor")
-        lessons.sort((a, b) => a.tutor.toString().compareTo(b.tutor.toString()));
-        // lessons.sort();
+        lessons
+            .sort((a, b) => a.tutor.toString().compareTo(b.tutor.toString()));
+      // lessons.sort();
       else if (_sortValue == "Title")
-        lessons.sort((a, b) => a.title.toString().compareTo(b.title.toString()));
-        // lessons.sort();
+        lessons
+            .sort((a, b) => a.title.toString().compareTo(b.title.toString()));
+      // lessons.sort();
     });
   }
 
@@ -255,6 +257,9 @@ class HomePageState extends State<HomePage> {
                             ),
                             Text(
                               lesson.title,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                              softWrap: true,
                               style: TextStyle(
                                 color: Color.fromRGBO(107, 43, 20, 1.0),
                                 fontSize: 25.0,
@@ -263,6 +268,9 @@ class HomePageState extends State<HomePage> {
                             ),
                             Text(
                               lesson.description,
+                              overflow: TextOverflow.clip,
+                              maxLines: 2,
+                              softWrap: true,
                               style: TextStyle(
                                 color: Color.fromRGBO(112, 112, 112, 1.0),
                                 fontSize: 15.0,
@@ -356,7 +364,6 @@ class HomePageState extends State<HomePage> {
                 ),
               ],
             )
-          
           ],
         ),
       );
