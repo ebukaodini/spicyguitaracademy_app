@@ -147,12 +147,12 @@ class LoginPageState extends State<LoginPage> {
                             User.token = json['token'];
                             User.justLoggedIn = true;
 
-                            if (User.wasLoggedIn == true) {
-                              Navigator.pushNamed(context, "/ready_to_play");
-                            } else {
+                            // if (User.wasLoggedIn == true) {
+                            //   Navigator.pushNamed(context, "/ready_to_play");
+                            // } else {
                               User.wasLoggedIn = true;
                               Navigator.pushNamed(context, "/welcome_note");
-                            }
+                            // }
                           }
                         },
                         color: Color.fromRGBO(107, 43, 20, 1.0),

@@ -127,6 +127,7 @@ class WelcomeNotePageState extends State<WelcomeNotePage> {
                                       Map<String, dynamic> json = resp;
                                       User.subStatus = json['status'];
                                       User.daysRemaining = json['days'];
+                                      User.plan = json['plan'] ?? '0';
                                     }
                                     print(User.subStatus);
                                     print(User.daysRemaining);
@@ -135,6 +136,7 @@ class WelcomeNotePageState extends State<WelcomeNotePage> {
                                     // get the current category and stats
                                     var resp =
                                         await request('GET', studentStats);
+                                    // print('STUDENT STATS => ' + resp);
                                     if (resp == false)
                                       Navigator.pushNamedAndRemoveUntil(context,
                                           '/login_page', (route) => false);

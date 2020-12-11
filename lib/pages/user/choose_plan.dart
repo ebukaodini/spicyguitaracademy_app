@@ -54,6 +54,10 @@ class ChoosePlanState extends State<ChoosePlan> {
 
   @override
   Widget build(BuildContext context) {
+
+  final Map args = ModalRoute.of(context).settings.arguments as Map;
+    _selectedPlan = args['plan'];
+
     PaymentCard _getCardFromUI() {
       return PaymentCard(
         number: '',
@@ -79,6 +83,7 @@ class ChoosePlanState extends State<ChoosePlan> {
           fullscreen: true,
           logo: SvgPicture.asset(
             "assets/imgs/icons/spicy_guitar_logo.svg",
+            width: 40.0,
             matchTextDirection: true,
           ),
         );
@@ -102,6 +107,7 @@ class ChoosePlanState extends State<ChoosePlan> {
               Map<String, dynamic> json = resp;
               User.subStatus = json['status'];
               User.daysRemaining = json['days'];
+              User.plan = json['plan'] ?? '0';
             }
 
             Navigator.popAndPushNamed(context, "/successful_transaction");

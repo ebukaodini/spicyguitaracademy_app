@@ -30,7 +30,9 @@ Future request(String method, String uri, {dynamic body}) async {
   print("\n\n" + uri + " => " + response.body + "\n\n");
   if (response.statusCode == 200) {
     return jsonDecode(response.body);
-  } else if (response.statusCode == 400 || response.statusCode == 401 || response.statusCode == 403) {
+  } else if (response.statusCode == 400 ||
+      response.statusCode == 401 ||
+      response.statusCode == 403) {
     print('Error: ' + response.statusCode + ', ' + response.body);
     return false;
   } else {
@@ -530,6 +532,7 @@ class User {
   static String studyingCourse;
 
   static String subStatus;
+  static String plan;
   static int daysRemaining;
 
   static reset() {
@@ -551,6 +554,7 @@ class User {
 class Courses {
   static Map<String, dynamic> allCourses;
   static List<dynamic> studyingCourses;
+  // static String studyingCategory;
   // static Map<String, dynamic> allQuickLessons;
   static List<dynamic> allQuickLessons;
   // static Map<String, dynamic> freeLessons;
