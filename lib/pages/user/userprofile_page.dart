@@ -59,8 +59,8 @@ class UserProfilePageState extends State<UserProfilePage> {
                   // Avatar
                   Container(
                     margin: EdgeInsets.only(top: 1.0, bottom: 0.0),
-                    width: 180,
-                    height: 180,
+                    width: 160,
+                    height: 160,
                     decoration: BoxDecoration(
                       image: new DecorationImage(
                         image: NetworkImage('${App.appurl}/${User.avatar}'),
@@ -74,7 +74,7 @@ class UserProfilePageState extends State<UserProfilePage> {
                   Container(
                       margin: EdgeInsets.only(top: 120),
                       width: 100,
-                      height: 40,
+                      height: 30,
                       padding: EdgeInsets.symmetric(horizontal: 5),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(15)),
@@ -82,7 +82,7 @@ class UserProfilePageState extends State<UserProfilePage> {
                       child: MaterialButton(
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
                               Icon(
                                 Icons.edit,

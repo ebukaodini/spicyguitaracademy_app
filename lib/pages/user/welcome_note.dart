@@ -149,7 +149,8 @@ class WelcomeNotePageState extends State<WelcomeNotePage> {
                                       User.category = json['category'];
                                     }
                                   }
-
+                                  
+                                  await _loadSubscriptionPlans();
                                   if (User.subStatus == "ACTIVE") {
                                     if (User.category == null) {
                                       Navigator.popAndPushNamed(
@@ -159,7 +160,7 @@ class WelcomeNotePageState extends State<WelcomeNotePage> {
                                           context, "/ready_to_play");
                                     }
                                   } else if (User.subStatus == "INACTIVE") {
-                                    await _loadSubscriptionPlans();
+                                    
                                     Navigator.popAndPushNamed(
                                         context, "/choose_plan");
                                   }

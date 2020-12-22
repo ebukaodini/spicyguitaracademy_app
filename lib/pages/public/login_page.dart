@@ -128,10 +128,12 @@ class LoginPageState extends State<LoginPage> {
                     width: double.infinity,
                     child: RaisedButton(
                         onPressed: () async {
+                          loading(context);
                           var resp = await request('POST', login, body: {
                             'email': _email.text,
                             'password': _pass.text
                           });
+                          Navigator.pop(context);
                           if (resp == false)
                             Navigator.pushNamedAndRemoveUntil(
                                 context, '/login_page', (route) => false);
@@ -150,10 +152,13 @@ class LoginPageState extends State<LoginPage> {
                             // if (User.wasLoggedIn == true) {
                             //   Navigator.pushNamed(context, "/ready_to_play");
                             // } else {
-                              User.wasLoggedIn = true;
-                              Navigator.pushNamed(context, "/welcome_note");
+                            User.wasLoggedIn = true;
+                            Navigator.pushNamed(context, "/welcome_note");
                             // }
+                          } else {
+                            error(context, json['errors']);
                           }
+                          
                         },
                         color: Color.fromRGBO(107, 43, 20, 1.0),
                         textColor: Colors.white,

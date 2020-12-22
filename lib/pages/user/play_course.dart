@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
 class PlayCourse extends StatefulWidget {
-   String thumbnail, tutor, title, description, url;
+  final String thumbnail, tutor, title, description, url;
 
   PlayCourse(this.thumbnail, this.tutor, this.title, this.description, this.url);
   @override

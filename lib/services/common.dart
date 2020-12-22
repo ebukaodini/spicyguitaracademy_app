@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-class Common
-{
-  static showMessage(scaffoldKey, String message, [Duration duration = const Duration(seconds: 4)]) {
+class Common {
+  static showMessage(scaffoldKey, String message,
+      [Duration duration = const Duration(seconds: 4)]) {
     scaffoldKey.currentState.showSnackBar(new SnackBar(
       content: new Text(message),
       duration: duration,
@@ -12,7 +12,8 @@ class Common
     ));
   }
 
-  static showInfo(scaffoldKey, String message, [Duration duration = const Duration(seconds: 4)]) {
+  static showInfo(scaffoldKey, String message,
+      [Duration duration = const Duration(seconds: 4)]) {
     scaffoldKey.currentState.showSnackBar(new SnackBar(
       content: new Text(message),
       duration: duration,
@@ -23,7 +24,9 @@ class Common
     ));
   }
 
-  static showError(scaffoldKey, String message, [Duration duration = const Duration(seconds: 4)]) {
+  static showError(String message,
+      [Duration duration = const Duration(seconds: 4)]) {
+    final scaffoldKey = new GlobalKey<ScaffoldState>();
     scaffoldKey.currentState.showSnackBar(new SnackBar(
       content: new Text(message),
       duration: duration,
@@ -34,7 +37,9 @@ class Common
     ));
   }
 
-  static showSuccess(scaffoldKey, String message, [Duration duration = const Duration(seconds: 4)]) {
+  static showSuccess(String message,
+      [Duration duration = const Duration(seconds: 4)]) {
+    final scaffoldKey = new GlobalKey<ScaffoldState>();
     scaffoldKey.currentState.showSnackBar(new SnackBar(
       content: new Text(message),
       duration: duration,
@@ -46,9 +51,7 @@ class Common
   }
 
   static showLoading(scaffoldKey) {
-    scaffoldKey.currentState.showSnackBar(new SnackBar(
-      content: new Text('Loading...')
-    ));
+    scaffoldKey.currentState
+        .showSnackBar(new SnackBar(content: new Text('Loading...')));
   }
-
 }

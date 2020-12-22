@@ -123,9 +123,11 @@ class StyudyingCoursesPageState extends State<StyudyingCoursesPage> {
         margin: EdgeInsets.symmetric(vertical: 0, horizontal: 0),
         child: CupertinoButton(
             onPressed: () async {
+              loading(context);
               List<dynamic> lessons = await getLessons(course.courseId);
+              Navigator.pop(context);
               Navigator.pushNamed(context, "/studying_courses_lessons",
-              arguments: {
+                  arguments: {
                     'courseLessons': lessons,
                     'courseTitle': course.title,
                     'noLessons': course.allLessons ?? 0

@@ -11,16 +11,14 @@
          "tutor": "Ebuka Odini",
          "low_video": "storage\/public\/tutorials\/videos\/fa33c5d.mp4",
          "high_video": "storage\/public\/tutorials\/videos\/d1f5f9f.mp4",
-         "audio": "storage\/public\/tutorials\/audios\/27122bf.mpeg",
-         "practice_audio": "storage\/public\/tutorials\/practice\/462c349.mpeg",
+         "audio": "storage\/public\/tutor ials\/audios\/27122bf.mpeg",
          "tablature": "storage\/public\/tutorials\/tablatures\/852f6df.pdf",
          "note": "Note.",
          "date_added": "2020-09-16 03:56:32",
          "active": "1"
       },
       {
-         "price": "10",
-         "free": "1",
+         "price": "10", 
          "id": "3",
          "course": "2",
          "lesson": "Lesson Two",
@@ -37,4 +35,26 @@
          "active": "1"
       }
    ]
-}
+}            
+                                 
+                             
+                            
+                              
+                             
+                             
+                                
+                                 
+                             
+                            
+                              
+                             
+                            
+                            
+                           
+                                               
+                                 
+                                 
+                                 
+                                 
+                         
+                         

@@ -3,32 +3,46 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/cupertino.dart';
 import '../../services/app.dart';
 
-class StudyingCoursesLessons extends StatefulWidget{
-
+class StudyingCoursesLessons extends StatefulWidget {
   StudyingCoursesLessons();
 
   @override
-  StudyingCoursesLessonsState createState() => new StudyingCoursesLessonsState();
+  StudyingCoursesLessonsState createState() =>
+      new StudyingCoursesLessonsState();
 }
 
-class Lessons
-{
+class Lessons {
   // the properties on the class
-  String thumbnail, tutor, title, description, lessons;
+  String thumbnail,
+      tutor,
+      title,
+      description,
+      video,
+      audio,
+      tablature,
+      practice,
+      id,
+      note;
   // the constructor
-  Lessons(this.thumbnail, this.tutor, this.title, this.description);
+  Lessons(this.thumbnail, this.tutor, this.title, this.description, this.video,
+      this.audio, this.tablature, this.practice, this.id, this.note);
 
   // constructing from json
-  Lessons.fromJson(Map <String, dynamic> json) {
+  Lessons.fromJson(Map<String, dynamic> json) {
     thumbnail = json['thumbnail'];
     tutor = json['tutor'];
     title = json['lesson'];
     description = json['description'];
+    video = json['video'];
+    audio = json['audio'];
+    tablature = json['tablature'];
+    practice = json['practice'];
+    id = json['id'];
+    note = json['note'];
   }
 }
 
-class StudyingCoursesLessonsState extends State<StudyingCoursesLessons>{
-
+class StudyingCoursesLessonsState extends State<StudyingCoursesLessons> {
   // properties
   bool courseLocked = false;
 
@@ -38,31 +52,50 @@ class StudyingCoursesLessonsState extends State<StudyingCoursesLessons>{
   }
 
   Widget _loadLessons(orientation, courseLessons) {
-    List <Widget> vids = new List<Widget>();
-    courseLessons.toList().forEach((lesson){
+    List<Widget> vids = new List<Widget>();
+    courseLessons.toList().forEach((lesson) {
+      // print("this is the lesson: " + lesson);
 
-      lesson = new Lessons(lesson['thumbnail'], lesson["tutor"],
-          lesson["lesson"], lesson["description"]);
+      lesson = new Lessons(
+          lesson['thumbnail'],
+          lesson["tutor"],
+          lesson["lesson"],
+          lesson["description"],
+          lesson['high_video'],
+          lesson['audio'],
+          lesson['tablature'],
+          lesson['practice_audio'],
+          lesson['id'],
+          lesson['note']);
 
       vids.add(
-        new 
-        CupertinoButton(
-          onPressed: () => courseLocked == true ? {} :  Navigator.pushNamed(context, "/tutorial_page"),
-          child:
-          Container(
-            margin: EdgeInsets.symmetric(vertical: 20, horizontal: 5),
+        new CupertinoButton(
+          onPressed: () => courseLocked == true
+              ? {}
+              : Navigator.pushNamed(context, "/tutorial_page", arguments: {
+                  'id': lesson.id,
+                  'title': lesson.title,
+                  'description': lesson.description,
+                  'thumbnail': lesson.thumbnail,
+                  'tutor': lesson.tutor,
+                  'video': lesson.video,
+                  'audio': lesson.audio,
+                  'tablature': lesson.tablature,
+                  'note': lesson.note
+                }),
+          child: Container(
+            margin: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
             padding: EdgeInsets.only(bottom: 40),
             decoration: new BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.all(Radius.circular(25)),
               boxShadow: [
-                BoxShadow(color: Colors.black12, blurRadius: 10.0, spreadRadius: 2.0 )
+                BoxShadow(
+                    color: Colors.black12, blurRadius: 10.0, spreadRadius: 2.0)
               ],
             ),
-            child: 
-            Column(
+            child: Column(
               children: <Widget>[
-                
                 // add the thumbnail for the lesson
                 Container(
                   margin: EdgeInsets.only(bottom: 10),
@@ -75,17 +108,14 @@ class StudyingCoursesLessonsState extends State<StudyingCoursesLessons>{
                     ),
                     borderRadius: BorderRadius.all(Radius.circular(25)),
                   ),
-                  child: courseLocked == true ? 
-                  SvgPicture.asset(
-                    "assets/imgs/icons/lock_icon.svg",
-                    color: Colors.white,
-                    fit: BoxFit.scaleDown
-                  ) : 
-                  SvgPicture.asset(
-                    "assets/imgs/icons/play_video_icon.svg",
-                    color: Colors.white,
-                    fit: BoxFit.scaleDown,
-                  ),
+                  child: courseLocked == true
+                      ? SvgPicture.asset("assets/imgs/icons/lock_icon.svg",
+                          color: Colors.white, fit: BoxFit.scaleDown)
+                      : SvgPicture.asset(
+                          "assets/imgs/icons/play_video_icon.svg",
+                          color: Colors.white,
+                          fit: BoxFit.scaleDown,
+                        ),
                 ),
 
                 // The text contents
@@ -93,11 +123,10 @@ class StudyingCoursesLessonsState extends State<StudyingCoursesLessons>{
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
-
                     Container(
                       width: orientation == Orientation.portrait ? 300 : 650,
                       child: Text(
-                        lesson.title, 
+                        lesson.title,
                         // textAlign: TextAlign.left,
                         overflow: TextOverflow.clip,
                         style: TextStyle(
@@ -106,9 +135,7 @@ class StudyingCoursesLessonsState extends State<StudyingCoursesLessons>{
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-
                     ),
-
                     Container(
                       margin: EdgeInsets.only(top: 3, bottom: 10),
                       child: Text(
@@ -121,11 +148,10 @@ class StudyingCoursesLessonsState extends State<StudyingCoursesLessons>{
                         ),
                       ),
                     ),
-
                     Container(
                       width: orientation == Orientation.portrait ? 300 : 650,
                       child: Text(
-                        lesson.description, 
+                        lesson.description,
                         overflow: TextOverflow.visible,
                         style: TextStyle(
                           color: Color.fromRGBO(112, 112, 112, 1.0),
@@ -134,42 +160,34 @@ class StudyingCoursesLessonsState extends State<StudyingCoursesLessons>{
                         ),
                       ),
                     ),
-                    
                   ],
                 )
-
               ],
             ),
           ),
         ),
       );
-
     });
-      
-    return new Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: vids);
+
+    return new Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: vids);
   }
 
   @override
   Widget build(BuildContext context) {
-
     final Map args = ModalRoute.of(context).settings.arguments as Map;
     String courseTitle = args['courseTitle'] ?? "No Title";
     num noLessons = args['noLessons'];
     List<dynamic> courseLessons = args['courseLessons'];
 
     return new Scaffold(
-      backgroundColor: Color.fromRGBO(243, 243, 243, 1.0),
-      body: OrientationBuilder(
-        
-        builder: (context, orientation) {
-          return 
-          SafeArea(
-            minimum: EdgeInsets.only(top: 20),
-            child: SingleChildScrollView(
-              child: 
-              Column(
+        backgroundColor: Color.fromRGBO(243, 243, 243, 1.0),
+        body: OrientationBuilder(builder: (context, orientation) {
+          return SafeArea(
+              minimum: EdgeInsets.only(top: 20),
+              child: SingleChildScrollView(
+                  child: Column(
                 children: <Widget>[
-
                   // back button
                   Container(
                     alignment: Alignment.topLeft,
@@ -177,15 +195,20 @@ class StudyingCoursesLessonsState extends State<StudyingCoursesLessons>{
                     child: MaterialButton(
                       minWidth: 20,
                       color: Colors.white,
-                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-                      onPressed: (){ Navigator.pop(context);},
-                      child: new Icon(Icons.arrow_back_ios, color: Color.fromRGBO(107, 43, 20, 1.0), size: 20.0,),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: new BorderRadius.circular(15.0),
-                        side: BorderSide(color: Colors.white)
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: new Icon(
+                        Icons.arrow_back_ios,
+                        color: Color.fromRGBO(107, 43, 20, 1.0),
+                        size: 20.0,
                       ),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(15.0),
+                          side: BorderSide(color: Colors.white)),
                     ),
-                    
                   ),
 
                   // course title and the number of lessons
@@ -198,40 +221,35 @@ class StudyingCoursesLessonsState extends State<StudyingCoursesLessons>{
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
-                        
                         // Number of Lessons
                         Container(
-                          padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 15, horizontal: 20),
                           decoration: BoxDecoration(
-                            borderRadius: new BorderRadius.all(Radius.circular(20)),
+                            borderRadius:
+                                new BorderRadius.all(Radius.circular(20)),
                             color: Color.fromRGBO(71, 29, 14, 1.0),
                           ),
-                          child: Text(
-                            noLessons.toString(),
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                            )
-                          ),
+                          child: Text(noLessons.toString(),
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              )),
                         ),
 
                         // Lesson Title
                         Expanded(
                           child: Container(
                             margin: EdgeInsets.only(left: 10),
-                            child: 
-                            Text(
-                              courseTitle,
-                              style: TextStyle(
-                                fontSize: 20.0,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                              )
-                            ),
+                            child: Text(courseTitle,
+                                style: TextStyle(
+                                  fontSize: 20.0,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                )),
                           ),
                         )
-
                       ],
                     ),
                   ),
@@ -247,21 +265,12 @@ class StudyingCoursesLessonsState extends State<StudyingCoursesLessons>{
                   //     color: Colors.white,
                   //   ),
 
-                    // child: 
-                    _loadLessons(orientation, courseLessons),
+                  // child:
+                  _loadLessons(orientation, courseLessons),
 
                   // ),
-
-
                 ],
-              )
-              
-            )
-          );
-        }
-      )
-    );
-
+              )));
+        }));
   }
-
 }

@@ -1,4 +1,5 @@
-import 'package:flutter/services.dart';
+// import 'package:flutter/services.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 // import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -6,7 +7,6 @@ import 'common.dart';
 
 Future request(String method, String uri, {dynamic body}) async {
   String appurl = 'https://spicyguitaracademy.com';
-  // String appurl = 'https://spicyguitaracademy.com';
   dynamic headers = {'cache-control': 'no-cache', 'JWToken': User.token};
   var response;
   switch (method) {
@@ -314,7 +314,7 @@ class App extends Common {
     } else {
       var respb = resp.body;
       print(respb);
-      Map<String, dynamic> json = jsonDecode(respb);
+      // Map<String, dynamic> json = jsonDecode(respb);
       // showMessage(json['status']);
       return true;
     }
@@ -331,7 +331,7 @@ class App extends Common {
     } else {
       var respb = resp.body;
       print(respb);
-      Map<String, dynamic> json = jsonDecode(respb);
+      // Map<String, dynamic> json = jsonDecode(respb);
       // showMessage(json['status']);
       return true;
     }
@@ -348,7 +348,7 @@ class App extends Common {
     } else {
       var respb = resp.body;
       print(respb);
-      Map<String, dynamic> json = jsonDecode(respb);
+      // Map<String, dynamic> json = jsonDecode(respb);
       // showMessage(json['status']);
       return true;
     }
@@ -365,7 +365,7 @@ class App extends Common {
     } else {
       var respb = resp.body;
       print(respb);
-      Map<String, dynamic> json = jsonDecode(respb);
+      // Map<String, dynamic> json = jsonDecode(respb);
       // showMessage(json['status']);
       return true;
     }
@@ -382,7 +382,7 @@ class App extends Common {
     } else {
       var respb = resp.body;
       print(respb);
-      Map<String, dynamic> json = jsonDecode(respb);
+      // Map<String, dynamic> json = jsonDecode(respb);
       // showMessage(json['status']);
       return true;
     }
@@ -400,7 +400,7 @@ class App extends Common {
     } else {
       var respb = resp.body;
       print(respb);
-      Map<String, dynamic> json = jsonDecode(respb);
+      // Map<String, dynamic> json = jsonDecode(respb);
       // showMessage(json['status']);
       return true;
     }
@@ -417,7 +417,7 @@ class App extends Common {
     } else {
       var respb = resp.body;
       print(respb);
-      Map<String, dynamic> json = jsonDecode(respb);
+      // Map<String, dynamic> json = jsonDecode(respb);
       // showMessage(json['status']);
       return true;
     }
@@ -435,7 +435,7 @@ class App extends Common {
     } else {
       var respb = resp.body;
       print(respb);
-      Map<String, dynamic> json = jsonDecode(respb);
+      // Map<String, dynamic> json = jsonDecode(respb);
       // showMessage(json['status']);
       return true;
     }
@@ -453,7 +453,7 @@ class App extends Common {
     } else {
       var respb = resp.body;
       print(respb);
-      Map<String, dynamic> json = jsonDecode(respb);
+      // Map<String, dynamic> json = jsonDecode(respb);
       // showMessage(json['status']);
       return true;
     }
@@ -470,7 +470,7 @@ class App extends Common {
     } else {
       var respb = resp.body;
       print(respb);
-      Map<String, dynamic> json = jsonDecode(respb);
+      // Map<String, dynamic> json = jsonDecode(respb);
       // showMessage(json['status']);
       return true;
     }
@@ -487,7 +487,7 @@ class App extends Common {
     } else {
       var respb = resp.body;
       print(respb);
-      Map<String, dynamic> json = jsonDecode(respb);
+      // Map<String, dynamic> json = jsonDecode(respb);
       // showMessage(json['status']);
       return true;
     }
@@ -512,6 +512,18 @@ class App extends Common {
 
   static showMessage(scaffoldKey, String message) {
     Common.showMessage(scaffoldKey, message);
+  }
+
+  static showInfo(scaffoldKey, String message) {
+    Common.showInfo(scaffoldKey, message);
+  }
+
+  static showSuccess(String message) {
+    Common.showSuccess(message);
+  }
+
+  static showError(String message) {
+    Common.showError(message);
   }
 }
 
@@ -591,4 +603,96 @@ class Subscription {
   static List<dynamic> plans;
 
   static bool paystatus;
+}
+
+void message(context, String message) {
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+          scrollable: true,
+          title: Row(
+            children: [
+              Text("Message", style: TextStyle(color: Colors.lightBlueAccent)),
+              Icon(Icons.info, color: Colors.lightBlueAccent),
+            ],
+            mainAxisAlignment: MainAxisAlignment.start,
+          ),
+          content:
+              Text(message, style: TextStyle(color: Colors.lightBlueAccent)),
+          backgroundColor: Colors.white);
+    },
+  );
+}
+
+void loading(context) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (context) {
+      return AlertDialog(
+        content: new Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            new CircularProgressIndicator(),
+            new Text("     Loading..."),
+          ],
+        ),
+      );
+    },
+  );
+}
+
+void success(context, String message) {
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        scrollable: true,
+        title: Row(
+          children: [
+            Text("Success", style: TextStyle(color: Colors.green)),
+            Icon(
+              Icons.done,
+              color: Colors.green,
+            ),
+          ],
+          mainAxisAlignment: MainAxisAlignment.start,
+        ),
+        content: Text(message, style: TextStyle(color: Colors.green)),
+        backgroundColor: Colors.white,
+      );
+    },
+  );
+}
+
+Widget btnIsLoading() {
+  return
+  Row(
+    children: [
+      new CircularProgressIndicator(),
+      new Text("  Loading..."),
+    ],
+  )
+  ;
+}
+
+void error(context, String message) {
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        scrollable: true,
+        title: Row(
+          children: [
+            Text("Error", style: TextStyle(color: Colors.red)),
+            Icon(Icons.error, color: Colors.red),
+          ],
+          mainAxisAlignment: MainAxisAlignment.start,
+        ),
+        content: Text(message, style: TextStyle(color: Colors.red)),
+        backgroundColor: Colors.white,
+      );
+    },
+  );
 }

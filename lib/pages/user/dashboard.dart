@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../services/app.dart';
+// import '../../services/app.dart';
 import './home_page.dart';
 import './courses_page.dart';
 import './quicklesson_page.dart';
@@ -137,7 +137,7 @@ class DashboardState extends State<Dashboard> {
 
             BottomNavigationBarItem(
               backgroundColor: Colors.transparent,
-              title: Text('Lessons'),
+              title: Text('Featured'),
               icon: Container(
                 margin: EdgeInsets.symmetric(vertical:10),
                 child: 

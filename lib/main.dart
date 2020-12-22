@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:video_player/video_player.dart';
+// import 'package:video_player/video_player.dart';
 // import 'package:flutter/rendering.dart';
 
 import 'pages/public/landing_page.dart';
@@ -8,7 +8,7 @@ import 'pages/public/register_page.dart';
 import 'pages/public/login_page.dart';
 import 'pages/user/welcome_note.dart';
 import 'pages/user/choose_plan.dart';
-// import 'pages/user/paystack_page.dart';
+import 'pages/user/paystack_page.dart';
 import 'pages/user/successful_transaction.dart';
 import 'pages/user/failed_transaction.dart';
 import 'pages/user/ready_to_play.dart';
@@ -23,7 +23,7 @@ import 'pages/user/userprofile_page.dart';
 import 'pages/user/all_courses_lessons.dart';
 import 'pages/user/studying_courses_lessons.dart';
 import 'pages/user/quicklesson_video.dart';
-// import 'pages/user/tutorial_page.dart';
+import 'pages/user/tutorial_page.dart';
 // import 'pages/user/tutorial_tab.dart';
 
 // import 'services/app.dart';
@@ -64,7 +64,7 @@ class MyApp extends StatelessWidget {
         '/allcourses_lessons': (BuildContext context) => new AllCoursesLessons(),
         '/studying_courses_lessons': (BuildContext context) => new StudyingCoursesLessons(),
         '/quicklesson_video': (BuildContext context) => new QuickLessonVideo(),
-        // '/tutorial_page': (BuildContext context) => new TutorialPage(),
+        '/tutorial_page': (BuildContext context) => new TutorialPage(),
         // '/tutorial_tab': (BuildContext context) => new TutorialTab(),
       },
     );
