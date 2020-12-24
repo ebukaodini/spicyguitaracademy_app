@@ -8,7 +8,7 @@ import 'pages/public/register_page.dart';
 import 'pages/public/login_page.dart';
 import 'pages/user/welcome_note.dart';
 import 'pages/user/choose_plan.dart';
-import 'pages/user/paystack_page.dart';
+// import 'pages/user/paystack_page.dart';
 import 'pages/user/successful_transaction.dart';
 import 'pages/user/failed_transaction.dart';
 import 'pages/user/ready_to_play.dart';
