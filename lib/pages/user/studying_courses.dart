@@ -77,7 +77,7 @@ class StyudyingCoursesPageState extends State<StyudyingCoursesPage> {
   ];
 
   String _sortValue = "Tutor";
-  num _courseCategory = int.parse(Courses.studyingCourses[0]["category"]) ?? 1;
+  num _courseCategory = Courses.studyingCourses.length > 0 ? int.parse(Courses.studyingCourses[0]["category"]) ?? 1 : 0;
 
   // function to sort the courses either by tutor or by title
   void _sortCourses() {
@@ -118,183 +118,231 @@ class StyudyingCoursesPageState extends State<StyudyingCoursesPage> {
       ),
     ));
 
-    videos.forEach((course) {
-      vids.add(new Container(
-        margin: EdgeInsets.symmetric(vertical: 0, horizontal: 0),
-        child: CupertinoButton(
-            onPressed: () async {
-              loading(context);
-              List<dynamic> lessons = await getLessons(course.courseId);
-              Navigator.pop(context);
-              Navigator.pushNamed(context, "/studying_courses_lessons",
-                  arguments: {
-                    'courseLessons': lessons,
-                    'courseTitle': course.title,
-                    'noLessons': course.allLessons ?? 0
-                  });
-            },
-            child: Stack(
-              children: <Widget>[
-                Container(
-                    margin: EdgeInsets.only(left: 70),
-                    width: MediaQuery.of(context).copyWith().size.width - 100,
-                    height: 160.00,
+    if (Courses.studyingCourses.length > 0) {
+      videos.forEach((course) {
+        vids.add(new Container(
+          margin: EdgeInsets.symmetric(vertical: 0, horizontal: 0),
+          child: CupertinoButton(
+              onPressed: () async {
+                loading(context);
+                List<dynamic> lessons = await getLessons(course.courseId);
+                Navigator.pop(context);
+                Navigator.pushNamed(context, "/studying_courses_lessons",
+                    arguments: {
+                      'courseLessons': lessons,
+                      'courseTitle': course.title,
+                      'noLessons': course.allLessons ?? 0
+                    });
+              },
+              child: Stack(
+                children: <Widget>[
+                  Container(
+                      margin: EdgeInsets.only(left: 70),
+                      width: MediaQuery.of(context).copyWith().size.width - 100,
+                      height: 160.00,
+                      decoration: new BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(25)),
+                        boxShadow: [
+                          BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 10.0,
+                              spreadRadius: 2.0)
+                        ],
+                      ),
+                      child: Container(
+                          margin: EdgeInsets.only(
+                              left: 60, right: 3, top: 20, bottom: 15),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              // tutor
+                              Text(
+                                course.tutor,
+                                style: TextStyle(
+                                  color: Color.fromRGBO(112, 112, 112, 1.0),
+                                  fontSize: 14.0,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+
+                              // Title
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Container(
+                                    width: orientation == Orientation.portrait
+                                        ? MediaQuery.of(context)
+                                                .copyWith()
+                                                .size
+                                                .width -
+                                            300
+                                        : MediaQuery.of(context)
+                                                .copyWith()
+                                                .size
+                                                .width -
+                                            300,
+                                    child: Text(
+                                      course.title,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        color: Color.fromRGBO(107, 43, 20, 1.0),
+                                        fontSize: 20.0,
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(right: 5),
+                                    child: Text(
+                                      course.allLessons.toString() + " lessons",
+                                      style: TextStyle(
+                                        color:
+                                            Color.fromRGBO(112, 112, 112, 1.0),
+                                        fontSize: 12.0,
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+
+                              // description
+                              Text(
+                                course.description,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
+                                style: TextStyle(
+                                  color: Color.fromRGBO(112, 112, 112, 1.0),
+                                  fontSize: 15.0,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+
+                              // progress indicator
+                              Stack(
+                                alignment: Alignment.topLeft,
+                                // fit: StackFit.passthrough,
+                                children: <Widget>[
+                                  Container(
+                                    margin: EdgeInsets.only(right: 5),
+                                    child: FractionallySizedBox(
+                                      widthFactor: 1.0,
+                                      child: Container(
+                                        height: 2.0,
+                                        color:
+                                            Color.fromRGBO(112, 112, 112, 0.3),
+                                      ),
+                                    ),
+                                  ),
+                                  FractionallySizedBox(
+                                    widthFactor: course.completedLessons == 0
+                                        ? 0.005
+                                        : (course.completedLessons /
+                                            course.allLessons),
+                                    child: Container(
+                                      height: 2.0,
+                                      color: Color.fromRGBO(107, 43, 20, 1.0),
+                                    ),
+                                  )
+                                ],
+                              ),
+
+                              // progress note
+                              Container(
+                                  alignment: Alignment.centerRight,
+                                  margin: EdgeInsets.only(right: 5),
+                                  child: Text(
+                                      course.completedLessons.toString() +
+                                          " of " +
+                                          course.allLessons.toString() +
+                                          " Lessons",
+                                      style: TextStyle(
+                                        color:
+                                            Color.fromRGBO(112, 112, 112, 1.0),
+                                        fontSize: 12.0,
+                                      )))
+                            ],
+                          ))),
+
+                  // course thumbnail
+                  Container(
+                    margin: EdgeInsets.symmetric(vertical: 20),
+                    width: 120.00,
+                    height: 120.00,
                     decoration: new BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(25)),
+                      image: new DecorationImage(
+                        // image: ExactAssetImage(course.thumbnail),
+                        image:
+                            NetworkImage('${App.appurl}/${course.thumbnail}'),
+                        fit: BoxFit.fitHeight,
+                        colorFilter: course.courseStatus == true
+                            ? null
+                            : ColorFilter.mode(
+                                Colors.black87, BlendMode.overlay),
+                      ),
                       boxShadow: [
                         BoxShadow(
                             color: Colors.black12,
-                            blurRadius: 10.0,
-                            spreadRadius: 2.0)
+                            blurRadius: 7.0,
+                            spreadRadius: 5.0)
                       ],
+                      borderRadius: BorderRadius.all(Radius.circular(25)),
                     ),
-                    child: Container(
-                        margin: EdgeInsets.only(
-                            left: 60, right: 3, top: 20, bottom: 15),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            // tutor
-                            Text(
-                              course.tutor,
-                              style: TextStyle(
-                                color: Color.fromRGBO(112, 112, 112, 1.0),
-                                fontSize: 14.0,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-
-                            // Title
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Container(
-                                  width: orientation == Orientation.portrait
-                                      ? MediaQuery.of(context)
-                                              .copyWith()
-                                              .size
-                                              .width -
-                                          300
-                                      : MediaQuery.of(context)
-                                              .copyWith()
-                                              .size
-                                              .width -
-                                          300,
-                                  child: Text(
-                                    course.title,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      color: Color.fromRGBO(107, 43, 20, 1.0),
-                                      fontSize: 20.0,
-                                      fontWeight: FontWeight.w800,
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(right: 5),
-                                  child: Text(
-                                    course.allLessons.toString() + " lessons",
-                                    style: TextStyle(
-                                      color: Color.fromRGBO(112, 112, 112, 1.0),
-                                      fontSize: 12.0,
-                                      fontWeight: FontWeight.w800,
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-
-                            // description
-                            Text(
-                              course.description,
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 2,
-                              style: TextStyle(
-                                color: Color.fromRGBO(112, 112, 112, 1.0),
-                                fontSize: 15.0,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-
-                            // progress indicator
-                            Stack(
-                              alignment: Alignment.topLeft,
-                              // fit: StackFit.passthrough,
-                              children: <Widget>[
-                                Container(
-                                  margin: EdgeInsets.only(right: 5),
-                                  child: FractionallySizedBox(
-                                    widthFactor: 1.0,
-                                    child: Container(
-                                      height: 2.0,
-                                      color: Color.fromRGBO(112, 112, 112, 0.3),
-                                    ),
-                                  ),
-                                ),
-                                FractionallySizedBox(
-                                  widthFactor: course.completedLessons == 0
-                                      ? 0.005
-                                      : (course.completedLessons /
-                                          course.allLessons),
-                                  child: Container(
-                                    height: 2.0,
-                                    color: Color.fromRGBO(107, 43, 20, 1.0),
-                                  ),
-                                )
-                              ],
-                            ),
-
-                            // progress note
-                            Container(
-                                alignment: Alignment.centerRight,
-                                margin: EdgeInsets.only(right: 5),
-                                child: Text(
-                                    course.completedLessons.toString() +
-                                        " of " +
-                                        course.allLessons.toString() +
-                                        " Lessons",
-                                    style: TextStyle(
-                                      color: Color.fromRGBO(112, 112, 112, 1.0),
-                                      fontSize: 12.0,
-                                    )))
-                          ],
-                        ))),
-
-                // course thumbnail
-                Container(
-                  margin: EdgeInsets.symmetric(vertical: 20),
-                  width: 120.00,
-                  height: 120.00,
-                  decoration: new BoxDecoration(
-                    image: new DecorationImage(
-                      // image: ExactAssetImage(course.thumbnail),
-                      image: NetworkImage('${App.appurl}/${course.thumbnail}'),
-                      fit: BoxFit.fitHeight,
-                      colorFilter: course.courseStatus == true
-                          ? null
-                          : ColorFilter.mode(Colors.black87, BlendMode.overlay),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 7.0,
-                          spreadRadius: 5.0)
-                    ],
-                    borderRadius: BorderRadius.all(Radius.circular(25)),
+                    child: course.courseStatus == true
+                        ? null
+                        : SvgPicture.asset("assets/imgs/icons/lock_icon.svg",
+                            color: Colors.white,
+                            // color: Color.fromRGBO(107, 43, 20, 1.0),
+                            fit: BoxFit.scaleDown),
                   ),
-                  child: course.courseStatus == true
-                      ? null
-                      : SvgPicture.asset("assets/imgs/icons/lock_icon.svg",
-                          color: Colors.white,
-                          // color: Color.fromRGBO(107, 43, 20, 1.0),
-                          fit: BoxFit.scaleDown),
-                ),
-              ],
-            )),
+                ],
+              )),
+        ));
+      });
+    } else {
+
+      vids.add(new Container(
+        child: Center(
+          child: Text("No Courses!",
+              style: TextStyle(
+                color: Color.fromRGBO(107, 43, 20, 1.0),
+                fontWeight: FontWeight.w500,
+              )
+            )
+          )
+        )
+      );
+
+      vids.add(new Container(
+        child: Center(
+          child: Text(
+            "Choose a course by selecting the learning category from the category tab or use the button below to select",
+            style: TextStyle(
+              color: Color.fromRGBO(112, 112, 112, 1.0),
+              fontSize: 15.0,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+        ),
       ));
-    });
+
+      vids.add(
+        Center(
+          child: IconButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/rechoose_category');
+            },
+            iconSize: 40.0,
+            color: Color.fromRGBO(107, 43, 20, 1.0),
+            icon: Icon(Icons.add_box),
+          )
+        )
+      );
+
+    }
 
     return new Column(children: vids);
   }

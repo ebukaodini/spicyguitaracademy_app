@@ -14,16 +14,18 @@ class WelcomePage extends StatelessWidget {
               return LinearGradient(
                 begin: Alignment.center,
                 end: Alignment.bottomCenter,
-                colors: [ 
-                  Colors.black.withOpacity(0.6), 
-                  Colors.black.withOpacity(0.9),
-                  Colors.black.withOpacity(1.0) 
+                colors: [
+                  // Colors.accents,
+                  // Colors.black.withOpacity(0.6), 
+                  // Colors.black.withOpacity(0.9),
+                  // Colors.black.withOpacity(1.0) 
                 ],
               ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
             },
             blendMode: BlendMode.srcOver,
             child: Container (
               decoration: BoxDecoration(
+                color: Color.fromRGBO(107, 43, 20, 1.0),
                 image: DecorationImage(
                   image: AssetImage('assets/imgs/pictures/welcome_picture.jpg'),
                   fit: BoxFit.cover,
