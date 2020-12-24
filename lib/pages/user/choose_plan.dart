@@ -49,12 +49,13 @@ class ChoosePlanState extends State<ChoosePlan> {
     // _loadSubscriptionPlans();
     PaystackPlugin.initialize(publicKey: App.paystackPublicKey);
     super.initState();
+    _selectedPlan = User.plan;
   }
 
   @override
   Widget build(BuildContext context) {
-    final Map args = ModalRoute.of(context).settings.arguments as Map;
-    _selectedPlan = args['selectedplan'];
+    // final Map args = ModalRoute.of(context).settings.arguments as Map;
+    // _selectedPlan = args['selectedplan'];
     bool isLoading = false;
 
     PaymentCard _getCardFromUI() {
@@ -473,9 +474,11 @@ class ChoosePlanState extends State<ChoosePlan> {
 
                               Container(
                                 margin: EdgeInsets.symmetric(horizontal: 10),
-                                child: Text(isLoading == false
-                                    ? "Continue Payment" : "Loading...",
-                                        style: TextStyle(fontSize: 20.0)),
+                                child: Text(
+                                    isLoading == false
+                                        ? "Continue Payment"
+                                        : "Loading...",
+                                    style: TextStyle(fontSize: 20.0)),
                               ),
 
                               // Icon(Icons.arrow_forward_ios, size: 25.0),

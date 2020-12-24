@@ -201,8 +201,8 @@ class UserProfilePageState extends State<UserProfilePage> {
                             padding: EdgeInsets.symmetric(
                                 vertical: 20, horizontal: 25),
                             onPressed: () {
-                              Navigator.pushNamed(context, '/choose_plan',
-                                  arguments: {'selectedplan': User.plan});
+                              Navigator.pushNamed(context, '/choose_plan');
+                              //arguments: {'selectedplan': User.plan}
                             },
                             color: Colors.white,
                             textColor: Color.fromRGBO(107, 43, 20, 1.0),

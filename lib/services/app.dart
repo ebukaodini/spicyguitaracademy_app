@@ -605,6 +605,20 @@ class Subscription {
   static bool paystatus;
 }
 
+class Tutorial
+{
+  static String id;
+  static String title;
+  static String description;
+  static String thumbnail;
+  static String tutor;
+  static String video;
+  static String audio;
+  static String tablature;
+  static String note;
+  static String practice;
+}
+
 void message(context, String message) {
   showDialog(
     context: context,
@@ -666,17 +680,6 @@ void success(context, String message) {
   );
 }
 
-Widget btnIsLoading() {
-  return
-  Row(
-    children: [
-      new CircularProgressIndicator(),
-      new Text("  Loading..."),
-    ],
-  )
-  ;
-}
-
 void error(context, String message) {
   showDialog(
     context: context,
@@ -695,4 +698,15 @@ void error(context, String message) {
       );
     },
   );
+}
+
+Widget btnIsLoading() {
+  return
+  Row(
+    children: [
+      new CircularProgressIndicator(),
+      new Text("  Loading..."),
+    ],
+  )
+  ;
 }

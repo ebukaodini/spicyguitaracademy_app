@@ -61,7 +61,7 @@ class StudyingCoursesLessonsState extends State<StudyingCoursesLessons> {
           lesson["tutor"],
           lesson["lesson"],
           lesson["description"],
-          lesson['high_video'],
+          lesson['high_video'] ?? lesson['low_video'],
           lesson['audio'],
           lesson['tablature'],
           lesson['practice_audio'],
@@ -70,19 +70,21 @@ class StudyingCoursesLessonsState extends State<StudyingCoursesLessons> {
 
       vids.add(
         new CupertinoButton(
-          onPressed: () => courseLocked == true
-              ? {}
-              : Navigator.pushNamed(context, "/tutorial_page", arguments: {
-                  'id': lesson.id,
-                  'title': lesson.title,
-                  'description': lesson.description,
-                  'thumbnail': lesson.thumbnail,
-                  'tutor': lesson.tutor,
-                  'video': lesson.video,
-                  'audio': lesson.audio,
-                  'tablature': lesson.tablature,
-                  'note': lesson.note
-                }),
+          onPressed: () {
+            Tutorial.id = lesson.id;
+            Tutorial.title = lesson.title;
+            Tutorial.description = lesson.description;
+            Tutorial.thumbnail = lesson.thumbnail;
+            Tutorial.tutor = lesson.tutor;
+            Tutorial.video = lesson.video;
+            Tutorial.audio = lesson.audio;
+            Tutorial.tablature = lesson.tablature;
+            Tutorial.note = lesson.note;
+            Tutorial.practice = lesson.practice;
+
+            // if (courseLocked == false)
+            Navigator.pushNamed(context, "/tutorial_page");
+          },
           child: Container(
             margin: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
             padding: EdgeInsets.only(bottom: 40),

@@ -27,6 +27,9 @@ dependencies:
   # For Http
   http: ^0.12.2
   video_player: ^0.10.0
+  cached_video_player: ^1.0.3
+  # audioplayer: ^0.8.1
+  cache_audio_player: ^1.0.0
 
   # For rendering SVG Images
   # flutter_svg: ^0.13.0

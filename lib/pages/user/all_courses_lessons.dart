@@ -46,77 +46,71 @@ class AllCoursesLessonsState extends State<AllCoursesLessons> {
 
       vids.add(
 
-        InkWell(
-          onTap: (){
-           Navigator.push(context, MaterialPageRoute(builder:
-            (context) => PlayCourse(lesson.thumbnail, lesson.tutor, lesson.title, lesson.description, lesson.url)  ));
-          },
-          child: new Container(
-            margin: EdgeInsets.symmetric(vertical: 20),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Container(
-                  margin: EdgeInsets.only(top: 5),
-                  child: Text(
-                    count.toString() + ".",
-                    textAlign: TextAlign.left,
-                    // overflow: TextOverflow.visible,
-                    style: TextStyle(
-                      color: Color.fromRGBO(112, 112, 112, 0.5),
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                    ),
+        Container(
+          margin: EdgeInsets.symmetric(vertical: 20),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Container(
+                margin: EdgeInsets.only(top: 5),
+                child: Text(
+                  count.toString() + ".",
+                  textAlign: TextAlign.left,
+                  // overflow: TextOverflow.visible,
+                  style: TextStyle(
+                    color: Color.fromRGBO(112, 112, 112, 0.5),
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    Container(
-                      width: orientation == Orientation.portrait ? 300 : 650,
-                      child: Text(
-                        lesson.title,
-                        // textAlign: TextAlign.left,
-                        overflow: TextOverflow.clip,
-                        style: TextStyle(
-                          color: Color.fromRGBO(107, 43, 20, 1.0),
-                          fontSize: 25,
-                          fontWeight: FontWeight.w500,
-                        ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Container(
+                    width: orientation == Orientation.portrait ? 300 : 650,
+                    child: Text(
+                      lesson.title,
+                      // textAlign: TextAlign.left,
+                      overflow: TextOverflow.clip,
+                      style: TextStyle(
+                        color: Color.fromRGBO(107, 43, 20, 1.0),
+                        fontSize: 25,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                    Container(
-                      margin: EdgeInsets.only(top: 3, bottom: 10),
-                      child: Text(
-                        lesson.tutor,
-                        // textAlign: TextAlign.left,
-                        style: TextStyle(
-                          color: Color.fromRGBO(112, 112, 112, 0.5),
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                        ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(top: 3, bottom: 10),
+                    child: Text(
+                      lesson.tutor,
+                      // textAlign: TextAlign.left,
+                      style: TextStyle(
+                        color: Color.fromRGBO(112, 112, 112, 0.5),
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                    Container(
-                      width: orientation == Orientation.portrait ? 300 : 650,
-                      child: Text(
-                        lesson.description,
-                        overflow: TextOverflow.visible,
-                        style: TextStyle(
-                          color: Color.fromRGBO(112, 112, 112, 1.0),
-                          fontSize: 15.0,
-                          fontWeight: FontWeight.w400,
-                        ),
+                  ),
+                  Container(
+                    width: orientation == Orientation.portrait ? 300 : 650,
+                    child: Text(
+                      lesson.description,
+                      overflow: TextOverflow.visible,
+                      style: TextStyle(
+                        color: Color.fromRGBO(112, 112, 112, 1.0),
+                        fontSize: 15.0,
+                        fontWeight: FontWeight.w400,
                       ),
                     ),
-                  ],
-                )
-              ],
-            ),
+                  ),
+                ],
+              )
+            ],
           ),
-        ),
+        )
       );
     });
 
