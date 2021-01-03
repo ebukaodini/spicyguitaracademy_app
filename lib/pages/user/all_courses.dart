@@ -41,8 +41,11 @@ parseCourses(_courses) {
 getLessons(courseId) async {
   var resp = await request('GET', courseLessons(courseId));
   if (resp == false) return [];
-  List<dynamic> json = resp['lessons'];
-  return json;
+  // List<dynamic> json = resp['lessons'];
+  if (resp['status'] == true)
+    return resp['data'];
+  else
+    return [];
 }
 
 class AllCoursesPageState extends State<AllCoursesPage> {

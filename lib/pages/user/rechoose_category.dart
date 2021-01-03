@@ -18,38 +18,8 @@ class ReChooseCategoryState extends State<ReChooseCategory> {
     // internal properties
     int _completedCourses = User.categoryStats['takenCourses'];
     int _totalCourses = User.categoryStats['allCourses'];
-    int _selectedCategory = int.parse(User.category) ?? 0;
+    int _selectedCategory = User.category ?? 0;
     // String _selectedCategory;
-
-    _titleOrient(orientation) {
-      if (orientation == Orientation.landscape) {
-        return Container(
-          child: Text(
-            "Choose a Category",
-            textWidthBasis: TextWidthBasis.longestLine,
-            style: TextStyle(
-                color: Color.fromRGBO(107, 43, 20, 1.0),
-                fontSize: 35.0,
-                fontWeight: FontWeight.w600),
-            strutStyle: StrutStyle(
-              fontSize: 35.0,
-              height: 1.8,
-            ),
-          ),
-        );
-      } else {
-        return Container(
-          child: Text("Choose your Category",
-              overflow: TextOverflow.clip,
-              maxLines: 2,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  color: Color.fromRGBO(107, 43, 20, 1.0),
-                  fontSize: 35.0,
-                  fontWeight: FontWeight.w600)),
-        );
-      }
-    }
 
     return new Scaffold(
         key: _scaffoldKey,
@@ -86,7 +56,16 @@ class ReChooseCategoryState extends State<ReChooseCategory> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   // title text
-                  _titleOrient(orientation),
+                  Container(
+                    child: Text("Choose a \nCategory",
+                        overflow: TextOverflow.clip,
+                        maxLines: 2,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Color.fromRGBO(107, 43, 20, 1.0),
+                            fontSize: 35.0,
+                            fontWeight: FontWeight.w600)),
+                  ),
 
                   // message test
                   Container(
@@ -261,43 +240,48 @@ class ReChooseCategoryState extends State<ReChooseCategory> {
                     child: RaisedButton(
                       padding:
                           EdgeInsets.symmetric(vertical: 18, horizontal: 20),
-                      onPressed: (_selectedCategory == int.parse(User.category) || _selectedCategory == 0)
+                      onPressed: (_selectedCategory == User.category || _selectedCategory == 0)
                           ? null
                           : () async {
                               // Navigator.pushNamed(context, "/ready_to_play");
                               // go back and select another category
                               String category = _selectedCategory.toString();
+                              
+                              
+                              loading(context);
                               var resp = await request('POST', chooseCategory,
                                   body: {'category': category});
-                              Map<String, dynamic> json = resp;
-                              App.showMessage(_scaffoldKey, json['message']);
-
-                              {
+                              // Map<String, dynamic> json = resp;
+                              if (resp['status'] == false) {
+                                Navigator.pop(context);
+                                message(context, resp['message']);
+                              } else {
                                 // get the current category and stats
                                 var resp = await request('GET', studentStats);
                                 if (resp == false)
                                   Navigator.pushNamedAndRemoveUntil(
                                       context, '/login_page', (route) => false);
-                                  Map<String, dynamic> json = resp;
-                                  if (json['status'] == false) {
-                                    User.categoryStats = null;
-                                    User.category = null;
-                                  } else {
-                                    User.categoryStats = json['stats'];
-                                    User.category = json['category'];
-                                  }
-                                }
-
+                                // Map<String, dynamic> json = resp;
+                                // if (resp['status'] == false) {
+                                //   User.categoryStats = null;
+                                //   User.category = null;
+                                // } else {
+                                  User.categoryStats = resp['data'];
+                                  User.category = resp['data']['category'];
+                                // }
+                                Navigator.pop(context);
                                 if (User.category == null) {
+                                  message(context, 'Please Try Again');
                                   Navigator.popAndPushNamed(
                                       context, "/choose_category");
-                                  App.showMessage(
-                                      _scaffoldKey, "Please Try Again.");
+                                  // App.showMessage(_scaffoldKey, "Please Try Again.");
                                 } else {
                                   Navigator.popAndPushNamed(
                                       context, "/ready_to_play");
                                 }
-                              },
+                              }
+
+                            },
                       color: _selectedCategory == 0
                           ? Colors.white
                           : Color.fromRGBO(107, 43, 20, 1.0),

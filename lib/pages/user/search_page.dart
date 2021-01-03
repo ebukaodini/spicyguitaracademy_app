@@ -136,6 +136,7 @@ class SearchPageState extends State<SearchPage> {
                                       _searchValue = _searchController.text;
                                       _searchController.clear();
                                     });
+                                    // TODO: handle search and load results in a page
                                     Navigator.popAndPushNamed(context, '/dashboard');
                                   },
                                   child: new Icon(Icons.search, color: Colors.white, size: 25.0,),

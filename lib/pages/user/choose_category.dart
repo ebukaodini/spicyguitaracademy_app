@@ -256,35 +256,37 @@ class ChooseCategoryState extends State<ChooseCategory> {
                                   category = '1';
                               }
 
+                              loading(context);
                               var resp = await request('POST', chooseCategory,
                                   body: {'category': category});
-                              Map<String, dynamic> json = resp;
-                              App.showMessage(_scaffoldKey, json['message']);
-
-                              {
+                              // Map<String, dynamic> json = resp;
+                              if (resp['status'] == false) {
+                                Navigator.pop(context);
+                                message(context, resp['message']);
+                              } else {
                                 // get the current category and stats
                                 var resp = await request('GET', studentStats);
                                 if (resp == false)
                                   Navigator.pushNamedAndRemoveUntil(
                                       context, '/login_page', (route) => false);
-                                Map<String, dynamic> json = resp;
-                                if (json['status'] == false) {
-                                  User.categoryStats = null;
-                                  User.category = null;
+                                // Map<String, dynamic> json = resp;
+                                // if (resp['status'] == false) {
+                                //   User.categoryStats = null;
+                                //   User.category = null;
+                                // } else {
+                                  User.categoryStats = resp['data'];
+                                  User.category = resp['data']['category'];
+                                // }
+                                Navigator.pop(context);
+                                if (User.category == null) {
+                                  message(context, 'Please Try Again');
+                                  Navigator.popAndPushNamed(
+                                      context, "/choose_category");
+                                  // App.showMessage(_scaffoldKey, "Please Try Again.");
                                 } else {
-                                  User.categoryStats = json['stats'];
-                                  User.category = json['category'];
+                                  Navigator.popAndPushNamed(
+                                      context, "/ready_to_play");
                                 }
-                              }
-
-                              if (User.category == null) {
-                                Navigator.popAndPushNamed(
-                                    context, "/choose_category");
-                                App.showMessage(
-                                    _scaffoldKey, "Please Try Again.");
-                              } else {
-                                Navigator.popAndPushNamed(
-                                    context, "/ready_to_play");
                               }
                             },
                       color: _selectedCategory == ""

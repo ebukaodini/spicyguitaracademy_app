@@ -73,6 +73,7 @@ class LoginPageState extends State<LoginPage> {
                   margin: const EdgeInsets.only(bottom: 20.0),
                   child: TextField(
                     controller: _email,
+                    textInputAction: TextInputAction.next,
                     cursorColor: Color.fromRGBO(107, 43, 20, 1.0),
                     autofocus: true,
                     style: TextStyle(
@@ -101,6 +102,7 @@ class LoginPageState extends State<LoginPage> {
                   margin: const EdgeInsets.only(bottom: 50.0),
                   child: TextField(
                     controller: _pass,
+                    textInputAction: TextInputAction.go,
                     cursorColor: Color.fromRGBO(107, 43, 20, 1.0),
                     obscureText: _obscurePwd,
                     style: TextStyle(
@@ -137,16 +139,17 @@ class LoginPageState extends State<LoginPage> {
                           if (resp == false)
                             Navigator.pushNamedAndRemoveUntil(
                                 context, '/login_page', (route) => false);
-                          Map<String, dynamic> json = resp;
-                          if (json['success'] != '') {
+                          // Map<String, dynamic> json = resp;
+                          if (resp['status'] == true) {
+                            var data = resp['data'];
                             User.reset();
-                            User.id = json['student']['id'];
-                            User.firstname = json['student']['firstname'];
-                            User.lastname = json['student']['lastname'];
-                            User.email = json['student']['email'];
-                            User.telephone = json['student']['telephone'];
-                            User.avatar = json['student']['avatar'];
-                            User.token = json['token'];
+                            User.id = data['student']['id'];
+                            User.firstname = data['student']['firstname'];
+                            User.lastname = data['student']['lastname'];
+                            User.email = data['student']['email'];
+                            User.telephone = data['student']['telephone'];
+                            User.avatar = data['student']['avatar'];
+                            User.token = data['token'];
                             User.justLoggedIn = true;
 
                             // if (User.wasLoggedIn == true) {
@@ -156,9 +159,8 @@ class LoginPageState extends State<LoginPage> {
                             Navigator.pushNamed(context, "/welcome_note");
                             // }
                           } else {
-                            error(context, json['errors']);
+                            error(context, resp['message']);
                           }
-                          
                         },
                         color: Color.fromRGBO(107, 43, 20, 1.0),
                         textColor: Colors.white,

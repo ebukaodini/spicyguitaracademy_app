@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 // import 'package:video_player/video_player.dart';
 // import 'package:flutter/rendering.dart';
 
@@ -24,16 +25,20 @@ import 'pages/user/all_courses_lessons.dart';
 import 'pages/user/studying_courses_lessons.dart';
 import 'pages/user/quicklesson_video.dart';
 import 'pages/user/tutorial_page.dart';
-// import 'pages/user/tutorial_tab.dart';
+import 'pages/user/assignment_page.dart';
+import 'pages/user/tutorial_practice.dart';
 
 // import 'services/app.dart';
 
-void main() => runApp(MyApp());
-
+void main()
+{
+  // SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+  //   .then((_) {
+      runApp(new MyApp());
+    // });
+}
 
 class MyApp extends StatelessWidget {
-  
-  
 
   @override
   Widget build (BuildContext context) {
@@ -42,6 +47,7 @@ class MyApp extends StatelessWidget {
     // precacheImage(AssetImage("assets/imgs/icons/spicy_guitar_logo.png"), context);
 
     return new MaterialApp(
+      debugShowCheckedModeBanner: false,
       routes: <String, WidgetBuilder> {
         '/': (BuildContext context) => new LandingPage(),// landing_page
         '/welcome_page': (BuildContext context) => new WelcomePage(),
@@ -65,7 +71,8 @@ class MyApp extends StatelessWidget {
         '/studying_courses_lessons': (BuildContext context) => new StudyingCoursesLessons(),
         '/quicklesson_video': (BuildContext context) => new QuickLessonVideo(),
         '/tutorial_page': (BuildContext context) => new TutorialPage(),
-        // '/tutorial_tab': (BuildContext context) => new TutorialTab(),
+        '/assignment_page': (BuildContext context) => new AssignmentPage(),
+        '/tutorial_practice': (BuildContext context) => new TutorialPractice(),
       },
     );
   }

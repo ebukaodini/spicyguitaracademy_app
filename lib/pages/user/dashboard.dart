@@ -42,15 +42,38 @@ class DashboardState extends State<Dashboard> {
 
           return 
           SafeArea(
-            
             minimum: EdgeInsets.symmetric(vertical: 1.0, horizontal: 1.0),
-            
             child: _pageOptions[_currentPage],
-          
           );
         }
       ),
-    
+      
+      endDrawer: Drawer(
+        child: Column(
+          children: <Widget>[
+            SizedBox(height: 36),
+            ListTile(
+              title: Text('Load from Assets'),
+              onTap: () {
+                
+              },
+            ),
+            ListTile(
+              title: Text('Load from URL'),
+              onTap: () {
+                
+              },
+            ),
+            ListTile(
+              title: Text('Restore default'),
+              onTap: () {
+                
+              },
+            ),
+          ],
+        ),
+      ),
+
       bottomNavigationBar: 
       Container(
         height: 80,
@@ -81,7 +104,7 @@ class DashboardState extends State<Dashboard> {
             BottomNavigationBarItem(
               // backgroundColor: Color.fromRGBO(107, 43, 20, 1.0),
               backgroundColor: Colors.transparent,
-              title: Text('Home'),
+              label: 'Home',
               icon: Container(
                 margin: EdgeInsets.symmetric(vertical:10),
                 child: 
@@ -109,7 +132,7 @@ class DashboardState extends State<Dashboard> {
 
             BottomNavigationBarItem(
               backgroundColor: Colors.transparent,
-              title: Text('Courses'),
+              label: 'Courses',
               icon: Container(
                 margin: EdgeInsets.symmetric(vertical:10),
                 child: 
@@ -137,7 +160,7 @@ class DashboardState extends State<Dashboard> {
 
             BottomNavigationBarItem(
               backgroundColor: Colors.transparent,
-              title: Text('Featured'),
+              label: 'Featured',
               icon: Container(
                 margin: EdgeInsets.symmetric(vertical:10),
                 child: 
@@ -165,7 +188,7 @@ class DashboardState extends State<Dashboard> {
 
             BottomNavigationBarItem(
               backgroundColor: Colors.transparent,
-              title: Text('Profile'),
+              label: 'Profile',
               icon: Container(
                 margin: EdgeInsets.symmetric(vertical:10),
                 child: 
@@ -205,30 +228,6 @@ class DashboardState extends State<Dashboard> {
 }
 
 
-// drawer: Drawer(
-//           child: Column(
-//             children: <Widget>[
-//               SizedBox(height: 36),
-//               ListTile(
-//                 title: Text('Load from Assets'),
-//                 onTap: () {
-//                   changePDF(1);
-//                 },
-//               ),
-//               ListTile(
-//                 title: Text('Load from URL'),
-//                 onTap: () {
-//                   changePDF(2);
-//                 },
-//               ),
-//               ListTile(
-//                 title: Text('Restore default'),
-//                 onTap: () {
-//                   changePDF(3);
-//                 },
-//               ),
-//             ],
-//           ),
 
 
     // Material(

@@ -9,6 +9,7 @@ Future request(String method, String uri, {dynamic body}) async {
   String appurl = 'https://spicyguitaracademy.com';
   dynamic headers = {'cache-control': 'no-cache', 'JWToken': User.token};
   var response;
+  // Navigator.pushNamedAndRemoveUntil(context, '/login_page', (route) => false);
   switch (method) {
     case 'GET':
       response = await http.get(appurl + uri, headers: headers);
@@ -60,12 +61,11 @@ String answerAssignment = '/api/student/assignment/answer';
 String search(String query) => '/api/courses/search?q=$query';
 String invite = '/api/invite-a-friend';
 String updateAvatar = '/api/student/avatar/update';
-String allQuickLessons = '/api/student/quicklessons/all';
-String quickLessons = '/api/student/quicklessons';
-String quickLesson(int lesson) => '/api/student/quicklesson/$lesson';
+String allQuickLessons = '/api/student/featuredlessons/all';
+String quickLessons = '/api/student/featuredlessons';
+String quickLesson(int lesson) => '/api/student/featuredlesson/$lesson';
 String freeLessons = '/api/student/freelessons';
 String subscriptionStatus = '/api/subscription/status';
-// String register = '/api/register';
 
 class App extends Common {
   static String appurl = 'https://spicyguitaracademy.com';
@@ -106,305 +106,246 @@ class App extends Common {
     }
   }
 
-  static Future<bool> login(scaffold, String email, String password) async {
-    User.reset();
-    var resp = await http.post('https://spicyguitaracademy.com/api/login',
-        body: {'email': email, 'password': password});
-    // j.hamlet@gmail.com
-    // Jhamlett09
+  // static studentStatistics() async {
+  //   var resp = await http
+  //       .get('https://spicyguitaracademy.com/api/student/statistics', headers: {
+  //     'cache-control': 'no-cache',
+  //     'JWToken': User.token,
+  //   });
 
-    if (resp.statusCode != 200) {
-      showMessage(scaffold, 'Login Failed.');
-      return false;
-    } else {
-      var respb = resp.body;
-      print(respb);
-      Map<String, dynamic> json = jsonDecode(respb);
-      // showMessage(scaffold, respb);
-      if (json['success'] != '') {
-        User.firstname = json['student']['firstname'];
-        User.lastname = json['student']['lastname'];
-        User.email = json['student']['email'];
-        User.telephone = json['student']['telephone'];
-        User.id = json['student']['id'];
-        User.avatar = json['student']['avatar'];
-        User.token = json['token'];
-        User.justLoggedIn = true;
-        print(User.token);
-        showMessage(scaffold, json['success']);
+  //   if (resp.statusCode != 200) {
+  //     print('Getting Student Subscription Status Failed (${resp.statusCode}).');
+  //     return false;
+  //   } else {
+  //     var respb = resp.body;
+  //     print(respb);
+  //     Map<String, dynamic> json = jsonDecode(respb);
+  //     print(json['status']);
+  //     if (json['status'] == false) {
+  //       User.categoryStats = null;
+  //       User.category = null;
+  //     } else {
+  //       User.categoryStats = json['stats'];
+  //       User.category = json['category'];
+  //     }
+  //     print("student stats is ${json['category']}");
+  //   }
+  // }
 
-        // set the student subscription details
-        getUserSubscriptionStatus();
+  // static getUserSubscriptionStatus() async {
+  //   var resp = await http.get(
+  //       'https://spicyguitaracademy.com/api/subscription/status',
+  //       headers: {'JWToken': User.token, 'cache-control': 'no-cache'});
 
-        // get the student's category and stats
-        studentStatistics();
+  //   if (resp.statusCode != 200) {
+  //     print('${resp.statusCode} Getting Student Subscription Status Failed.');
+  //     return false;
+  //   } else {
+  //     var respb = resp.body;
+  //     print(respb);
+  //     Map<String, dynamic> json = jsonDecode(respb);
+  //     User.subStatus = json['status'];
+  //     User.daysRemaining = json['days'];
+  //   }
+  // }
 
-        // get subscription plans
-        getSubscriptionPlans();
+  // static Future initiatePayment(scaffold, String plan) async {
+  //   var resp = await http.post(
+  //       'https://spicyguitaracademy.com/api/subscription/initiate',
+  //       headers: {'JWToken': User.token},
+  //       body: {'email': User.email, 'plan': plan});
 
-        return true;
-      } else {
-        showMessage(scaffold, json['errors']);
-        return false;
-      }
-    }
-  }
+  //   if (resp.statusCode != 200) {
+  //     showMessage(scaffold, 'Initiate Subscription Failed.');
+  //     return false;
+  //   } else {
+  //     var respb = resp.body;
+  //     print(respb);
+  //     Map<String, dynamic> json = jsonDecode(respb);
+  //     if (json['flag'] == true) {
+  //       Subscription.reference = json['data']['reference'];
+  //       Subscription.access_code = json['data']['access_code'];
+  //       Subscription.price = json['data']['price'];
+  //     } else {
+  //       showMessage(scaffold, 'Initiate Subscription Failed.');
+  //     }
+  //     return true;
+  //   }
+  // }
 
-  static studentStatistics() async {
-    var resp = await http
-        .get('https://spicyguitaracademy.com/api/student/statistics', headers: {
-      'cache-control': 'no-cache',
-      'JWToken': User.token,
-    });
+  // static Future verifyPayment(String reference) async {
+  //   var resp = await http.post(
+  //       "https://spicyguitaracademy.com/api/subscription/verify/$reference",
+  //       headers: {'JWToken': User.token},
+  //       body: {'plan': reference});
 
-    if (resp.statusCode != 200) {
-      print('Getting Student Subscription Status Failed (${resp.statusCode}).');
-      return false;
-    } else {
-      var respb = resp.body;
-      print(respb);
-      Map<String, dynamic> json = jsonDecode(respb);
-      print(json['status']);
-      if (json['status'] == false) {
-        User.categoryStats = null;
-        User.category = null;
-      } else {
-        User.categoryStats = json['stats'];
-        User.category = json['category'];
-      }
-      print("student stats is ${json['category']}");
-    }
-  }
+  //   if (resp.statusCode != 200) {
+  //     print('Error Occurred.');
+  //   } else {
+  //     final respb = resp.body;
+  //     Map<String, dynamic> json = jsonDecode(respb);
+  //     if (json['success']) {
+  //       Subscription.paystatus = true;
+  //       // getUserSubscriptionStatus();
+  //     }
+  //   }
+  // }
 
-  static getSubscriptionPlans() async {
-    var resp = await http.get(
-        'https://spicyguitaracademy.com/api/subscription/plans',
-        headers: {'JWToken': User.token, 'cache-control': 'no-cache'});
+  // static Future chooseCategory(String category) async {
+  //   var resp = await http.post(
+  //       'https://spicyguitaracademy.com/api/student/category/select',
+  //       headers: {'JWToken': User.token, 'cache-control': 'no-cache'},
+  //       body: {'category': category});
 
-    if (resp.statusCode != 200) {
-      print('Getting Subscription Plans Failed.');
-    } else {
-      var respb = resp.body;
-      print(respb);
-      Map<String, dynamic> json = jsonDecode(respb);
-      Subscription.plans = json['plans'];
-    }
-  }
+  //   if (resp.statusCode != 200) {
+  //     print('Getting Student Subscription Status Failed. (${resp.body}) ');
+  //     return false;
+  //   } else {
+  //     var respb = resp.body;
+  //     print(respb);
+  //     Map<String, dynamic> json = jsonDecode(respb);
+  //     print("response message: ${json['message']}");
 
-  static getUserSubscriptionStatus() async {
-    var resp = await http.get(
-        'https://spicyguitaracademy.com/api/subscription/status',
-        headers: {'JWToken': User.token, 'cache-control': 'no-cache'});
+  //     await studentStatistics();
+  //   }
+  // }
 
-    if (resp.statusCode != 200) {
-      print('${resp.statusCode} Getting Student Subscription Status Failed.');
-      return false;
-    } else {
-      var respb = resp.body;
-      print(respb);
-      Map<String, dynamic> json = jsonDecode(respb);
-      User.subStatus = json['status'];
-      User.daysRemaining = json['days'];
-    }
-  }
+  // static Future getAllCourses() async {
+  //   var resp = await http.get('https://spicyguitaracademy.com/api/course/all',
+  //       headers: {'JWToken': User.token, 'cache-control': 'no-cache'});
 
-  static Future initiatePayment(scaffold, String plan) async {
-    var resp = await http.post(
-        'https://spicyguitaracademy.com/api/subscription/initiate',
-        headers: {'JWToken': User.token},
-        body: {'email': User.email, 'plan': plan});
+  //   if (resp.statusCode != 200) {
+  //     print('${resp.statusCode} Getting Student Subscription Status Failed.');
+  //     return false;
+  //   } else {
+  //     var respb = resp.body;
+  //     print(respb);
+  //     Map<String, dynamic> json = jsonDecode(respb);
+  //     Courses.allCourses = json;
+  //     return true;
+  //   }
+  // }
 
-    if (resp.statusCode != 200) {
-      showMessage(scaffold, 'Initiate Subscription Failed.');
-      return false;
-    } else {
-      var respb = resp.body;
-      print(respb);
-      Map<String, dynamic> json = jsonDecode(respb);
-      if (json['flag'] == true) {
-        Subscription.reference = json['data']['reference'];
-        Subscription.access_code = json['data']['access_code'];
-        Subscription.price = json['data']['price'];
-      } else {
-        showMessage(scaffold, 'Initiate Subscription Failed.');
-      }
-      return true;
-    }
-  }
+  // static Future studyingCourses() async {
+  //   var resp = await http.get(
+  //       'https://spicyguitaracademy.com/api/student/courses/studying',
+  //       headers: {'JWToken': User.token, 'cache-control': 'no-cache'});
 
-  static Future verifyPayment(String reference) async {
-    var resp = await http.post(
-        "https://spicyguitaracademy.com/api/subscription/verify/$reference",
-        headers: {'JWToken': User.token},
-        body: {'plan': reference});
+  //   if (resp.statusCode != 200) {
+  //     print('${resp.statusCode} Getting Student Subscription Status Failed.');
+  //     return false;
+  //   } else {
+  //     var respb = resp.body;
+  //     print(respb);
+  //     Map<String, dynamic> json = jsonDecode(respb);
+  //     Courses.studyingCourses = json['courses'];
+  //     print(json['courses']);
+  //     return true;
+  //   }
+  // }
 
-    if (resp.statusCode != 200) {
-      print('Error Occurred.');
-    } else {
-      final respb = resp.body;
-      Map<String, dynamic> json = jsonDecode(respb);
-      if (json['success']) {
-        Subscription.paystatus = true;
-        getUserSubscriptionStatus();
-      }
-    }
-  }
+  // static Future courseLessons(int course) async {
+  //   var resp = await http.get(
+  //       'https://spicyguitaracademy.com/api/course/$course/lessons',
+  //       headers: {'JWToken': User.token, 'cache-control': 'no-cache'});
 
-  static Future chooseCategory(String category) async {
-    var resp = await http.post(
-        'https://spicyguitaracademy.com/api/student/category/select',
-        headers: {'JWToken': User.token, 'cache-control': 'no-cache'},
-        body: {'category': category});
+  //   if (resp.statusCode != 200) {
+  //     print('${resp.statusCode} Getting Student Subscription Status Failed.');
+  //     return false;
+  //   } else {
+  //     var respb = resp.body;
+  //     print(respb);
+  //     // Map<String, dynamic> json = jsonDecode(respb);
+  //     // showMessage(json['status']);
+  //     return true;
+  //   }
+  // }
 
-    if (resp.statusCode != 200) {
-      print('Getting Student Subscription Status Failed. (${resp.body}) ');
-      return false;
-    } else {
-      var respb = resp.body;
-      print(respb);
-      Map<String, dynamic> json = jsonDecode(respb);
-      print("response message: ${json['message']}");
+  // static Future getLesson(int lesson) async {
+  //   var resp = await http.get(
+  //       'https://spicyguitaracademy.com/api/lesson/$lesson',
+  //       headers: {'JWToken': User.token, 'cache-control': 'no-cache'});
 
-      await studentStatistics();
-    }
-  }
+  //   if (resp.statusCode != 200) {
+  //     print('${resp.statusCode} Getting Student Subscription Status Failed.');
+  //     return false;
+  //   } else {
+  //     var respb = resp.body;
+  //     print(respb);
+  //     // Map<String, dynamic> json = jsonDecode(respb);
+  //     // showMessage(json['status']);
+  //     return true;
+  //   }
+  // }
 
-  static Future getAllCourses() async {
-    var resp = await http.get('https://spicyguitaracademy.com/api/course/all',
-        headers: {'JWToken': User.token, 'cache-control': 'no-cache'});
+  // static Future studyingLesson(lesson) async {
+  //   var resp = await http.get(
+  //       'https://spicyguitaracademy.com/api/student/lesson/$lesson',
+  //       headers: {'JWToken': User.token, 'cache-control': 'no-cache'});
 
-    if (resp.statusCode != 200) {
-      print('${resp.statusCode} Getting Student Subscription Status Failed.');
-      return false;
-    } else {
-      var respb = resp.body;
-      print(respb);
-      Map<String, dynamic> json = jsonDecode(respb);
-      Courses.allCourses = json;
-      return true;
-    }
-  }
+  //   if (resp.statusCode != 200) {
+  //     print('${resp.statusCode} Getting Student Subscription Status Failed.');
+  //     return false;
+  //   } else {
+  //     var respb = resp.body;
+  //     print(respb);
+  //     // Map<String, dynamic> json = jsonDecode(respb);
+  //     // showMessage(json['status']);
+  //     return true;
+  //   }
+  // }
 
-  static Future studyingCourses() async {
-    var resp = await http.get(
-        'https://spicyguitaracademy.com/api/student/courses/studying',
-        headers: {'JWToken': User.token, 'cache-control': 'no-cache'});
+  // static Future nextLesson(lesson) async {
+  //   var resp = await http.get(
+  //       'https://spicyguitaracademy.com/api/student/lesson/$lesson/next?course=${User.studyingCourse}',
+  //       headers: {'JWToken': User.token, 'cache-control': 'no-cache'});
 
-    if (resp.statusCode != 200) {
-      print('${resp.statusCode} Getting Student Subscription Status Failed.');
-      return false;
-    } else {
-      var respb = resp.body;
-      print(respb);
-      Map<String, dynamic> json = jsonDecode(respb);
-      Courses.studyingCourses = json['courses'];
-      print(json['courses']);
-      return true;
-    }
-  }
+  //   if (resp.statusCode != 200) {
+  //     print('${resp.statusCode} Getting Student Subscription Status Failed.');
+  //     return false;
+  //   } else {
+  //     var respb = resp.body;
+  //     print(respb);
+  //     // Map<String, dynamic> json = jsonDecode(respb);
+  //     // showMessage(json['status']);
+  //     return true;
+  //   }
+  // }
 
-  static Future courseLessons(int course) async {
-    var resp = await http.get(
-        'https://spicyguitaracademy.com/api/course/$course/lessons',
-        headers: {'JWToken': User.token, 'cache-control': 'no-cache'});
+  // static Future prevLesson(lesson) async {
+  //   var resp = await http.get(
+  //       'https://spicyguitaracademy.com/api/student/lesson/$lesson/previous?course=${User.studyingCourse}',
+  //       headers: {'JWToken': User.token, 'cache-control': 'no-cache'});
 
-    if (resp.statusCode != 200) {
-      print('${resp.statusCode} Getting Student Subscription Status Failed.');
-      return false;
-    } else {
-      var respb = resp.body;
-      print(respb);
-      // Map<String, dynamic> json = jsonDecode(respb);
-      // showMessage(json['status']);
-      return true;
-    }
-  }
+  //   if (resp.statusCode != 200) {
+  //     print('${resp.statusCode} Getting Student Subscription Status Failed.');
+  //     return false;
+  //   } else {
+  //     var respb = resp.body;
+  //     print(respb);
+  //     // Map<String, dynamic> json = jsonDecode(respb);
+  //     // showMessage(json['status']);
+  //     return true;
+  //   }
+  // }
 
-  static Future getLesson(int lesson) async {
-    var resp = await http.get(
-        'https://spicyguitaracademy.com/api/lesson/$lesson',
-        headers: {'JWToken': User.token, 'cache-control': 'no-cache'});
+  // static Future answerAssignment(assignment) async {
+  //   var resp = await http.post(
+  //       'https://spicyguitaracademy.com/api/student/assignment/answer',
+  //       headers: {'JWToken': User.token, 'cache-control': 'no-cache'},
+  //       body: {'assignment': assignment});
 
-    if (resp.statusCode != 200) {
-      print('${resp.statusCode} Getting Student Subscription Status Failed.');
-      return false;
-    } else {
-      var respb = resp.body;
-      print(respb);
-      // Map<String, dynamic> json = jsonDecode(respb);
-      // showMessage(json['status']);
-      return true;
-    }
-  }
-
-  static Future studyingLesson(lesson) async {
-    var resp = await http.get(
-        'https://spicyguitaracademy.com/api/student/lesson/$lesson',
-        headers: {'JWToken': User.token, 'cache-control': 'no-cache'});
-
-    if (resp.statusCode != 200) {
-      print('${resp.statusCode} Getting Student Subscription Status Failed.');
-      return false;
-    } else {
-      var respb = resp.body;
-      print(respb);
-      // Map<String, dynamic> json = jsonDecode(respb);
-      // showMessage(json['status']);
-      return true;
-    }
-  }
-
-  static Future nextLesson(lesson) async {
-    var resp = await http.get(
-        'https://spicyguitaracademy.com/api/student/lesson/$lesson/next?course=${User.studyingCourse}',
-        headers: {'JWToken': User.token, 'cache-control': 'no-cache'});
-
-    if (resp.statusCode != 200) {
-      print('${resp.statusCode} Getting Student Subscription Status Failed.');
-      return false;
-    } else {
-      var respb = resp.body;
-      print(respb);
-      // Map<String, dynamic> json = jsonDecode(respb);
-      // showMessage(json['status']);
-      return true;
-    }
-  }
-
-  static Future prevLesson(lesson) async {
-    var resp = await http.get(
-        'https://spicyguitaracademy.com/api/student/lesson/$lesson/previous?course=${User.studyingCourse}',
-        headers: {'JWToken': User.token, 'cache-control': 'no-cache'});
-
-    if (resp.statusCode != 200) {
-      print('${resp.statusCode} Getting Student Subscription Status Failed.');
-      return false;
-    } else {
-      var respb = resp.body;
-      print(respb);
-      // Map<String, dynamic> json = jsonDecode(respb);
-      // showMessage(json['status']);
-      return true;
-    }
-  }
-
-  static Future answerAssignment(assignment) async {
-    var resp = await http.post(
-        'https://spicyguitaracademy.com/api/student/assignment/answer',
-        headers: {'JWToken': User.token, 'cache-control': 'no-cache'},
-        body: {'assignment': assignment});
-
-    if (resp.statusCode != 200) {
-      print('${resp.statusCode} Getting Student Subscription Status Failed.');
-      return false;
-    } else {
-      var respb = resp.body;
-      print(respb);
-      // Map<String, dynamic> json = jsonDecode(respb);
-      // showMessage(json['status']);
-      return true;
-    }
-  }
+  //   if (resp.statusCode != 200) {
+  //     print('${resp.statusCode} Getting Student Subscription Status Failed.');
+  //     return false;
+  //   } else {
+  //     var respb = resp.body;
+  //     print(respb);
+  //     // Map<String, dynamic> json = jsonDecode(respb);
+  //     // showMessage(json['status']);
+  //     return true;
+  //   }
+  // }
 
   static Future search(query) async {
     var resp = await http.get(
@@ -423,23 +364,23 @@ class App extends Common {
     }
   }
 
-  static Future inviteAFriend(String friend) async {
-    var resp = await http.post(
-        'https://spicyguitaracademy.com/api/invite-a-friend',
-        headers: {'JWToken': User.token, 'cache-control': 'no-cache'},
-        body: {'friend': friend});
+  // static Future inviteAFriend(String friend) async {
+  //   var resp = await http.post(
+  //       'https://spicyguitaracademy.com/api/invite-a-friend',
+  //       headers: {'JWToken': User.token, 'cache-control': 'no-cache'},
+  //       body: {'friend': friend});
 
-    if (resp.statusCode != 200) {
-      print('${resp.statusCode} Getting Student Subscription Status Failed.');
-      return false;
-    } else {
-      var respb = resp.body;
-      print(respb);
-      // Map<String, dynamic> json = jsonDecode(respb);
-      // showMessage(json['status']);
-      return true;
-    }
-  }
+  //   if (resp.statusCode != 200) {
+  //     print('${resp.statusCode} Getting Student Subscription Status Failed.');
+  //     return false;
+  //   } else {
+  //     var respb = resp.body;
+  //     print(respb);
+  //     // Map<String, dynamic> json = jsonDecode(respb);
+  //     // showMessage(json['status']);
+  //     return true;
+  //   }
+  // }
 
   static Future uploadAvatar(String base64Image) async {
     var resp = await http.post(
@@ -459,56 +400,56 @@ class App extends Common {
     }
   }
 
-  static Future quicklessons() async {
-    var resp = await http.get(
-        'https://spicyguitaracademy.com/api/student/quicklessons',
-        headers: {'JWToken': User.token, 'cache-control': 'no-cache'});
+  // static Future quicklessons() async {
+  //   var resp = await http.get(
+  //       'https://spicyguitaracademy.com/api/student/quicklessons',
+  //       headers: {'JWToken': User.token, 'cache-control': 'no-cache'});
 
-    if (resp.statusCode != 200) {
-      print('${resp.statusCode} Getting Student Subscription Status Failed.');
-      return false;
-    } else {
-      var respb = resp.body;
-      print(respb);
-      // Map<String, dynamic> json = jsonDecode(respb);
-      // showMessage(json['status']);
-      return true;
-    }
-  }
+  //   if (resp.statusCode != 200) {
+  //     print('${resp.statusCode} Getting Student Subscription Status Failed.');
+  //     return false;
+  //   } else {
+  //     var respb = resp.body;
+  //     print(respb);
+  //     // Map<String, dynamic> json = jsonDecode(respb);
+  //     // showMessage(json['status']);
+  //     return true;
+  //   }
+  // }
 
-  static Future quicklesson(lesson) async {
-    var resp = await http.get(
-        'https://spicyguitaracademy.com/api/student/quicklesson/$lesson',
-        headers: {'JWToken': User.token, 'cache-control': 'no-cache'});
+  // static Future quicklesson(lesson) async {
+  //   var resp = await http.get(
+  //       'https://spicyguitaracademy.com/api/student/quicklesson/$lesson',
+  //       headers: {'JWToken': User.token, 'cache-control': 'no-cache'});
 
-    if (resp.statusCode != 200) {
-      print('${resp.statusCode} Getting Student Subscription Status Failed.');
-      return false;
-    } else {
-      var respb = resp.body;
-      print(respb);
-      // Map<String, dynamic> json = jsonDecode(respb);
-      // showMessage(json['status']);
-      return true;
-    }
-  }
+  //   if (resp.statusCode != 200) {
+  //     print('${resp.statusCode} Getting Student Subscription Status Failed.');
+  //     return false;
+  //   } else {
+  //     var respb = resp.body;
+  //     print(respb);
+  //     // Map<String, dynamic> json = jsonDecode(respb);
+  //     // showMessage(json['status']);
+  //     return true;
+  //   }
+  // }
 
-  static Future freelesson() async {
-    var resp = await http.get(
-        'https://spicyguitaracademy.com/api/student/freelessons',
-        headers: {'JWToken': User.token, 'cache-control': 'no-cache'});
+  // static Future freelesson() async {
+  //   var resp = await http.get(
+  //       'https://spicyguitaracademy.com/api/student/freelessons',
+  //       headers: {'JWToken': User.token, 'cache-control': 'no-cache'});
 
-    if (resp.statusCode != 200) {
-      print('${resp.statusCode} Getting Student Subscription Status Failed.');
-      return false;
-    } else {
-      var respb = resp.body;
-      print(respb);
-      Map<String, dynamic> json = jsonDecode(respb);
-      if (json['lessons'] != null) Courses.freeLessons = json['lessons'];
-      print(Courses.freeLessons);
-    }
-  }
+  //   if (resp.statusCode != 200) {
+  //     print('${resp.statusCode} Getting Student Subscription Status Failed.');
+  //     return false;
+  //   } else {
+  //     var respb = resp.body;
+  //     print(respb);
+  //     Map<String, dynamic> json = jsonDecode(respb);
+  //     if (json['lessons'] != null) Courses.freeLessons = json['lessons'];
+  //     print(Courses.freeLessons);
+  //   }
+  // }
 
   static showMessage(scaffoldKey, String message) {
     Common.showMessage(scaffoldKey, message);
@@ -538,7 +479,7 @@ class User {
   static String avatar;
   static String token;
 
-  static String category;
+  static int category;
   static Map<String, dynamic> categoryStats;
 
   static String studyingCourse;
@@ -605,8 +546,7 @@ class Subscription {
   static bool paystatus;
 }
 
-class Tutorial
-{
+class Tutorial {
   static String id;
   static String title;
   static String description;
@@ -618,6 +558,21 @@ class Tutorial
   static String note;
   static String practice;
 }
+
+class Assignment {
+  static String id;
+  static String questionNote;
+  static String questionVideo;
+  static String tutor;
+  static String answerNote;
+  static String answerVideo;
+  static String answerRating;
+  static String answerDate;
+}
+
+List tutorialLessons = [];
+
+dynamic currentTutorial;
 
 void message(context, String message) {
   showDialog(
@@ -701,12 +656,10 @@ void error(context, String message) {
 }
 
 Widget btnIsLoading() {
-  return
-  Row(
+  return Row(
     children: [
       new CircularProgressIndicator(),
       new Text("  Loading..."),
     ],
-  )
-  ;
+  );
 }

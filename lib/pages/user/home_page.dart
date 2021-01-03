@@ -141,7 +141,9 @@ class HomePageState extends State<HomePage> {
                   shape: RoundedRectangleBorder(
                       borderRadius: new BorderRadius.circular(30.0)),
                   onPressed: () {
-                    Navigator.pushNamed(context, "/welcome_note");
+                    // ScaffoldState.openEndDrawer();
+                    Scaffold.of(context).openDrawer();
+                    // Navigator.pushNamed(context, "/welcome_note");
                   },
                 )),
             Row(children: <Widget>[

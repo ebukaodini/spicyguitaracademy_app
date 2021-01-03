@@ -125,8 +125,8 @@ class ChoosePlanState extends State<ChoosePlan> {
           if (resp == false)
             Navigator.pushNamedAndRemoveUntil(
                 context, '/login_page', (route) => false);
-          Map<String, dynamic> json = resp;
-          if (json['success'] != null) {
+          // Map<String, dynamic> json = resp;
+          if (resp['status'] == true) {
             Subscription.paystatus = true;
             {
               // get subscription status
@@ -134,10 +134,16 @@ class ChoosePlanState extends State<ChoosePlan> {
               if (resp == false)
                 Navigator.pushNamedAndRemoveUntil(
                     context, '/login_page', (route) => false);
-              Map<String, dynamic> json = resp;
-              User.subStatus = json['status'];
-              User.daysRemaining = json['days'];
-              User.plan = json['plan'] ?? '0';
+              var data = resp['data'];
+              if (resp['status'] == true) {
+                User.subStatus = data['status'];
+                User.daysRemaining = data['days'];
+                User.plan = data['plan'];
+              } else {
+                User.subStatus = data['status'];
+                User.daysRemaining = data['days'];
+                User.plan = '0';
+              }
             }
 
             Navigator.popAndPushNamed(context, "/successful_transaction");
@@ -440,17 +446,17 @@ class ChoosePlanState extends State<ChoosePlan> {
                                   if (resp == false)
                                     Navigator.pushNamedAndRemoveUntil(context,
                                         '/login_page', (route) => false);
-                                  Map<String, dynamic> json = resp;
-                                  if (json['flag'] == true) {
+                                  // Map<String, dynamic> json = resp;
+                                  if (resp['status'] == true) {
                                     Subscription.reference =
-                                        json['data']['reference'];
+                                        resp['data']['reference'];
                                     Subscription.access_code =
-                                        json['data']['access_code'];
-                                    Subscription.price = json['data']['price'];
+                                        resp['data']['access_code'];
+                                    Subscription.price = resp['data']['price'];
 
                                     _handleCheckout(context);
                                   } else {
-                                    message(context, 'Please select a plan');
+                                    message(context, resp['message']);
                                   }
                                   // Navigator.pushNamed(context, "/paystack_page");
                                 },

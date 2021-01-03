@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12">
+  <g id="maximize_video_icon" data-name="maximize video icon" transform="translate(0.2 0.5)">
+    <path id="Shape" d="M9.778,11H7.944L11,7.944V9.778A1.223,1.223,0,0,1,9.778,11ZM3.056,11H1.222A1.223,1.223,0,0,1,0,9.778V7.944L3.055,11ZM11,3.056h0L7.944,0H9.778A1.223,1.223,0,0,1,11,1.222V3.056Zm-11,0V1.222A1.223,1.223,0,0,1,1.222,0H3.056L0,3.055Z" transform="translate(0.3)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1"/>
+  </g>
+</svg>

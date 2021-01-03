@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:spicyguitaracademy/pages/user/play_course.dart';
 
 class AllCoursesLessons extends StatefulWidget {
   AllCoursesLessons();
@@ -10,9 +9,9 @@ class AllCoursesLessons extends StatefulWidget {
 
 class Lessons {
   // the properties on the class
-  String thumbnail, tutor, title, description, url;
+  String thumbnail, tutor, title, description;
   // the constructor
-  Lessons(this.thumbnail, this.tutor, this.title, this.description, this.url);
+  Lessons(this.thumbnail, this.tutor, this.title, this.description);
 
   // constructing from json
   Lessons.fromJson(Map<String, dynamic> json) {
@@ -20,7 +19,6 @@ class Lessons {
     tutor = json['tutor'];
     title = json['lesson'];
     description = json['description'];
-    url = 'http://www.sample-videos.com/video123/mp4/720/big_buck_bunny_720p_20mb.mp4';
   }
   
 }
@@ -42,7 +40,7 @@ class AllCoursesLessonsState extends State<AllCoursesLessons> {
       count++;
 
       lesson = new Lessons(lesson['thumbnail'], lesson["tutor"],
-          lesson["lesson"], lesson["description"], lesson['url']);
+          lesson["lesson"], lesson["description"]);
 
       vids.add(
 

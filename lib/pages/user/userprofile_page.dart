@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'dart:core';
 import '../../services/app.dart';
+// import 'package:'
 
 class UserProfilePage extends StatefulWidget {
   UserProfilePage();
@@ -13,6 +14,19 @@ class UserProfilePage extends StatefulWidget {
 
 class UserProfilePageState extends State<UserProfilePage> {
   UserProfilePageState();
+
+  // uploadPicture() {
+  //   var request = new http.MultipartRequest("POST", url);
+  //   request.fields['user'] = 'someone@somewhere.com';
+  //   request.files.add(http.MultipartFile.fromPath(
+  //       'package',
+  //       'build/package.tar.gz',
+  //       contentType: new MediaType('application', 'x-tar'),
+  //   ));
+  //   request.send().then((response) {
+  //     if (response.statusCode == 200) print("Uploaded!");
+  //   });
+  // }
 
   @override
   void initState() {

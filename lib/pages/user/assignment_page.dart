@@ -1,114 +1,29 @@
 // import 'package:flutter/foundation.dart';
 import 'package:cached_video_player/cached_video_player.dart';
 import 'dart:math';
-import 'package:cache_audio_player/cache_audio_player.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/cupertino.dart';
 
-// import 'dart:io';
-// import 'package:file_picker/file_picker.dart';
-// import 'package:flutter/material.dart';
-// import 'package:pdf_flutter/pdf_flutter.dart';
-
-// import 'dart:async';
-// import 'dart:io';
-// import 'package:flutter_full_pdf_viewer/full_pdf_viewer_scaffold.dart';
-// import 'package:path_provider/path_provider.dart';
-
 import '../../services/app.dart';
 
-// // Audio
-// import 'dart:io';
-// import 'package:flutter/services.dart';
-// import 'package:path_provider/path_provider.dart';
-// import 'package:audioplayer/audioplayer.dart';
-
-class TutorialPage extends StatefulWidget {
-  TutorialPage();
+class AssignmentPage extends StatefulWidget {
+  AssignmentPage();
 
   @override
-  TutorialPageState createState() => new TutorialPageState();
+  AssignmentPageState createState() => new AssignmentPageState();
 }
 
-class TutorialPageState extends State<TutorialPage> {
+class AssignmentPageState extends State<AssignmentPage> {
   // video controller
   CachedVideoPlayerController _videoController;
 
   TextEditingController _textController = TextEditingController();
 
-  final CacheAudioPlayer _audioController = new CacheAudioPlayer();
-  StreamSubscription<AudioPlayerState> _audioStateSubscription;
-  StreamSubscription<double> _audioBufferSubscription;
-  StreamSubscription<double> _audioTimeElapsedSubscription;
-  StreamSubscription<Object> _audioErrorSubscription;
-
-  AudioPlayerState _audioState = AudioPlayerState.PAUSED;
-  double _audioBufferedPercentage = 0;
-  double _audioTimeInSeconds = 0;
-  double _audioPercentageOfTimeElapsed = 0;
-  int _audioTotalDuration = 0;
-  Object _audioError;
-  bool _audioIsSeeking = false;
-  double _audioValueToSeekTo = 0;
-
   // bool courseLocked = true;
-  String _videoOrAudio = 'video';
+  bool _videoAssignment = false;
   bool _showNote = false;
-
-  String _audioFormattedTime() {
-    int seconds;
-    String paddedSeconds, paddedMinutes;
-    String _audioTime = "";
-
-    Duration duration = Duration(seconds: _audioTimeInSeconds.toInt());
-    paddedMinutes = duration.inMinutes.toString().padLeft(2, '0');
-    seconds = duration.inSeconds - (duration.inMinutes * 60);
-    paddedSeconds = seconds.toString().padLeft(2, '0');
-    _audioTime = "$paddedMinutes:$paddedSeconds";
-
-    duration = Duration(seconds: _audioTotalDuration);
-    seconds =
-        duration.inSeconds > 60 ? duration.inSeconds % 60 : duration.inSeconds;
-    paddedMinutes = duration.inMinutes.toString().padLeft(2, '0');
-    paddedSeconds = seconds.toString().padLeft(2, '0');
-    return "$_audioTime / $paddedMinutes:$paddedSeconds";
-  }
-
-  _audioUpdateSliderValue() {
-    if (_audioTotalDuration == 0) {
-      _audioController.lengthInseconds().then((totalDuration) {
-        _audioTotalDuration = totalDuration.toInt();
-      }).catchError((error) {
-        _audioError = error;
-      });
-    } else {
-      if (_audioIsSeeking) {
-        _audioIsSeeking = false;
-        final double value = _audioValueToSeekTo;
-        _audioValueToSeekTo = 0;
-        _audioPercentageOfTimeElapsed = value;
-      } else {
-        _audioPercentageOfTimeElapsed =
-            min(_audioTimeInSeconds / _audioTotalDuration, 1.0);
-      }
-    }
-  }
-
-  IconData _audioIcon() {
-    switch (_audioState) {
-      case AudioPlayerState.PLAYING:
-        return Icons.pause;
-      case AudioPlayerState.READYTOPLAY:
-      case AudioPlayerState.BUFFERING:
-      case AudioPlayerState.PAUSED:
-      case AudioPlayerState.FINISHED:
-        return Icons.mic_none;
-      default:
-        return Icons.error;
-    }
-  }
 
   Duration _videoSeekToPosition(double moment) {
     Duration newPosition = Duration(seconds: moment.toInt());
@@ -172,19 +87,6 @@ class TutorialPageState extends State<TutorialPage> {
                     color: Colors.white, fit: BoxFit.scaleDown))),
       ]);
     }
-  }
-
-  _renderAudio() {
-    return Container(
-        margin: EdgeInsets.only(bottom: 10),
-        width: MediaQuery.of(context).copyWith().size.width,
-        height: 200.00,
-        decoration: BoxDecoration(
-            gradient: RadialGradient(
-                center: Alignment.center,
-                colors: [Color.fromRGBO(112, 112, 112, 0.8), Colors.white])),
-        child: SvgPicture.asset("assets/imgs/icons/big_mic.svg",
-            color: Color.fromRGBO(107, 43, 20, 1.0), fit: BoxFit.scaleDown));
   }
 
   double _videoPosition = 0;
@@ -251,15 +153,9 @@ class TutorialPageState extends State<TutorialPage> {
       List<Widget> commentsWidgets = new List<Widget>();
 
       comments.forEach((comment) {
-        String name, avatar, date;
-        if (User.email == comment['sender']) {
-          name = '${User.firstname} ${User.lastname}';
-          avatar = '${User.avatar}';
-        } else {
-          name = comment['tutor']['name'];
-          avatar = comment['tutor']['avatar'];
-        }
-        date = comment['date_added'];
+        String name = '${User.firstname} ${User.lastname}';
+        String avatar = '${User.avatar}';
+        String date = comment['date_added'];
 
         commentsWidgets.add(new Container(
             decoration: new BoxDecoration(
@@ -314,36 +210,17 @@ class TutorialPageState extends State<TutorialPage> {
     }
   }
 
-  takeThisLesson() async {
-    await request('POST', "/api/student/takelesson",
-        body: {'lesson': currentTutorial.id});
-
-    // update the lessons taken
-    var resp = await request('GET', studyingCourses);
-    if (resp == false)
-      Navigator.pushNamedAndRemoveUntil(
-          context, '/login_page', (route) => false);
-    // List<dynamic> json = resp['courses'];
-    Courses.studyingCourses = resp['data'];
-  }
-
   @override
   void initState() {
     super.initState();
 
-    takeThisLesson();
-
     loadUserCommentsOnThisLesson();
 
-    if (currentTutorial.video != null) {
-      _videoOrAudio = 'video';
-    } else {
-      if (currentTutorial.audio != null) {
-        _videoOrAudio = 'audio';
-      }
+    if (currentTutorial.video != "NULL") {
+      _videoAssignment = true;
     }
 
-    if (currentTutorial.video != null) {
+    if (_videoAssignment == true) {
       _videoController = CachedVideoPlayerController.network(
           '${App.appurl}/${currentTutorial.video}')
         ..initialize().then((_) {
@@ -366,35 +243,6 @@ class TutorialPageState extends State<TutorialPage> {
         });
       });
     }
-
-    if (currentTutorial.audio != null) {
-      _audioController.loadUrl('${App.appurl}/${currentTutorial.audio}');
-      // cached audio player
-      _audioController.registerListeners();
-      _audioStateSubscription =
-          _audioController.onStateChanged.listen((AudioPlayerState state) {
-        setState(() {
-          _audioState = state;
-        });
-      });
-      _audioBufferSubscription =
-          _audioController.onPlayerBuffered.listen((double percentageBuffered) {
-        setState(() {
-          _audioBufferedPercentage = percentageBuffered;
-        });
-      });
-      _audioTimeElapsedSubscription =
-          _audioController.onTimeElapsed.listen((double timeInSeconds) {
-        setState(() {
-          _audioTimeInSeconds = timeInSeconds;
-        });
-      });
-      _audioErrorSubscription = _audioController.onError.listen((Object error) {
-        setState(() {
-          _audioError = error;
-        });
-      });
-    }
   }
 
   _submitComment() async {
@@ -413,45 +261,14 @@ class TutorialPageState extends State<TutorialPage> {
     }
   }
 
-  _audioOnPressed() {
-    switch (_audioState) {
-      case AudioPlayerState.PLAYING:
-        _audioController.stop();
-        break;
-      case AudioPlayerState.READYTOPLAY:
-      case AudioPlayerState.BUFFERING:
-      case AudioPlayerState.PAUSED:
-        _audioController.play();
-        break;
-      case AudioPlayerState.FINISHED:
-        _audioPercentageOfTimeElapsed = 0;
-        _audioTimeInSeconds = 0;
-        _audioController.play();
-        break;
-      default:
-        {}
-    }
-  }
-
   @override
   void dispose() {
     super.dispose();
     _videoController.dispose();
-
-    _audioStateSubscription.cancel();
-    _audioBufferSubscription.cancel();
-    _audioErrorSubscription.cancel();
-    _audioTimeElapsedSubscription.cancel();
-    _audioController.stop();
-    _audioController.unregisterListeners();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_audioState == AudioPlayerState.PLAYING || _audioIsSeeking) {
-      _audioUpdateSliderValue();
-    }
-
     if (_videoController.value.isPlaying) {
       _videoUpdateSliderValue();
     }
@@ -521,7 +338,7 @@ class TutorialPageState extends State<TutorialPage> {
                   margin:
                       EdgeInsets.only(top: 20, bottom: 5, left: 15, right: 15),
                   padding: EdgeInsets.only(
-                      bottom: 40, top: _videoOrAudio == 'video' ? 0.0 : 20.0),
+                      bottom: 40, top: _videoAssignment == true ? 0.0 : 20.0),
                   decoration: new BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.all(Radius.circular(25)),
@@ -535,9 +352,7 @@ class TutorialPageState extends State<TutorialPage> {
                   child: Column(
                     children: <Widget>[
                       // add the thumbnail for the lesson
-                      _videoOrAudio == 'video'
-                          ? _renderVideo()
-                          : _renderAudio(),
+                      _videoAssignment == true ? _renderVideo() : Container(),
 
                       // the play/pause controller
                       Container(
@@ -548,86 +363,43 @@ class TutorialPageState extends State<TutorialPage> {
                             color: Color.fromRGBO(107, 43, 20, 1.0),
                             onPressed: () {
                               setState(() {
-                                if (_videoOrAudio == 'video') {
+                                if (_videoAssignment == true) {
                                   _videoController.value.isPlaying
                                       ? _videoController.pause()
                                       : _videoController.play();
                                 }
-                                if (_videoOrAudio == 'audio') {
-                                  _audioOnPressed();
-                                }
                               });
                             },
                             icon: Icon(
-                              _videoOrAudio == 'video'
-                                  ? _videoController.value.isPlaying
-                                      ? Icons.pause_circle_outline
-                                      : Icons.play_circle_outline
-                                  : _audioIcon(),
+                              _videoController.value.isPlaying
+                                  ? Icons.pause_circle_outline
+                                  : Icons.play_circle_outline,
                             ),
                           ),
                           Expanded(
                               child: Stack(
                                   alignment: Alignment.bottomLeft,
                                   children: [
-                                _videoOrAudio == 'video'
-                                    ? Slider(
-                                        onChangeEnd: (double value) {
-                                          _videoController.seekTo(
-                                              _videoSeekToPosition(value));
-                                        },
-                                        inactiveColor:
-                                            Color.fromRGBO(112, 112, 112, 0.1),
-                                        activeColor:
-                                            Color.fromRGBO(107, 43, 20, 1.0),
-                                        onChanged: (value) {
-                                          _videoController.seekTo(
-                                              _videoSeekToPosition(value));
-                                        },
-                                        max: _videoDuration,
-                                        value: _videoPosition,
-                                      )
-                                    : Slider(
-                                        onChangeEnd: (double value) {
-                                          _audioValueToSeekTo = value;
-                                          _audioIsSeeking = true;
-                                          _audioController
-                                              .seek(value)
-                                              .catchError((Object error) {
-                                            setState(() {
-                                              _audioIsSeeking = false;
-                                              _audioError = error;
-                                            });
-                                          });
-                                          _audioController.play();
-                                        },
-                                        onChanged: (value) {
-                                          _audioValueToSeekTo = value;
-                                          _audioIsSeeking = true;
-                                          _audioController
-                                              .seek(value)
-                                              .catchError((Object error) {
-                                            setState(() {
-                                              _audioIsSeeking = false;
-                                              _audioError = error;
-                                            });
-                                          });
-                                          _audioController.play();
-                                        },
-                                        inactiveColor:
-                                            Color.fromRGBO(112, 112, 112, 0.1),
-                                        activeColor:
-                                            Color.fromRGBO(107, 43, 20, 1.0),
-                                        // max: _audioTotalDuration.toDouble(),
-                                        value: _audioPercentageOfTimeElapsed,
-                                      ),
+                                Slider(
+                                  onChangeEnd: (double value) {
+                                    _videoController
+                                        .seekTo(_videoSeekToPosition(value));
+                                  },
+                                  inactiveColor:
+                                      Color.fromRGBO(112, 112, 112, 0.1),
+                                  activeColor: Color.fromRGBO(107, 43, 20, 1.0),
+                                  onChanged: (value) {
+                                    _videoController
+                                        .seekTo(_videoSeekToPosition(value));
+                                  },
+                                  max: _videoDuration,
+                                  value: _videoPosition,
+                                ),
                                 Container(
                                   alignment: Alignment.centerRight,
                                   margin: EdgeInsets.only(right: 22.0),
                                   child: Text(
-                                      _videoOrAudio == 'video'
-                                          ? "$_formattedVideoPosition / $_formattedVideoDuration"
-                                          : _audioFormattedTime(),
+                                      "$_formattedVideoPosition / $_formattedVideoDuration",
                                       style: TextStyle(
                                           color: Color.fromRGBO(
                                               112, 112, 112, 0.2))),
@@ -704,23 +476,17 @@ class TutorialPageState extends State<TutorialPage> {
                                             color: Color.fromRGBO(
                                                 107, 43, 20, 1.0))))
                                 : Container(),
-                            _videoOrAudio == 'video'
+                            _videoAssignment == true
                                 ? currentTutorial.audio != null
                                     ? IconButton(
-                                        onPressed: () {
-                                          setState(
-                                              () => _videoOrAudio = 'audio');
-                                        },
+                                        onPressed: () {},
                                         icon: Icon(Icons.mic),
                                         color: Color.fromRGBO(107, 43, 20, 1.0),
                                       )
                                     : Container()
                                 : currentTutorial.video != null
                                     ? IconButton(
-                                        onPressed: () {
-                                          setState(
-                                              () => _videoOrAudio = 'video');
-                                        },
+                                        onPressed: () {},
                                         icon: Icon(Icons.play_circle_filled),
                                         color: Color.fromRGBO(107, 43, 20, 1.0),
                                       )
@@ -763,74 +529,10 @@ class TutorialPageState extends State<TutorialPage> {
                                     ],
                                   ),
                                   onPressed: () {
-                                    if (currentTutorial.audio != null) {
-                                      _audioStateSubscription.cancel();
-                                      _audioBufferSubscription.cancel();
-                                      _audioErrorSubscription.cancel();
-                                      _audioTimeElapsedSubscription.cancel();
-                                      _audioController.stop();
-                                      _audioController.unregisterListeners();
-                                    }
                                     Navigator.pushNamed(
                                         context, '/tutorial_practice');
                                   }))
                           : Container(),
-
-                      Container(
-                          margin: EdgeInsets.symmetric(horizontal: 5),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              currentTutorial != tutorialLessons.first
-                                  ? FlatButton(
-                                      textColor:
-                                          Color.fromRGBO(107, 43, 20, 1.0),
-                                      onPressed: () {
-                                        int currentIndex = tutorialLessons
-                                            .indexOf(currentTutorial);
-
-                                        if (currentTutorial !=
-                                            tutorialLessons.first) {
-                                          currentTutorial = tutorialLessons
-                                              .elementAt(currentIndex - 1);
-                                          Navigator.pushReplacementNamed(
-                                              context, '/tutorial_page');
-                                        }
-                                      },
-                                      child: Row(
-                                        children: [
-                                          Icon(Icons.arrow_back),
-                                          Text('Previous Lesson')
-                                        ],
-                                      ),
-                                    )
-                                  : Container(),
-                              currentTutorial != tutorialLessons.last
-                                  ? FlatButton(
-                                      textColor:
-                                          Color.fromRGBO(107, 43, 20, 1.0),
-                                      onPressed: () {
-                                        int currentIndex = tutorialLessons
-                                            .indexOf(currentTutorial);
-
-                                        if (currentTutorial !=
-                                            tutorialLessons.last) {
-                                          currentTutorial = tutorialLessons
-                                              .elementAt(currentIndex + 1);
-                                          Navigator.pushReplacementNamed(
-                                              context, '/tutorial_page');
-                                        }
-                                      },
-                                      child: Row(
-                                        children: [
-                                          Text('Next Lesson'),
-                                          Icon(Icons.arrow_forward)
-                                        ],
-                                      ),
-                                    )
-                                  : Container()
-                            ],
-                          )),
 
                       Column(
                         children: _commentsWidget,
@@ -838,7 +540,7 @@ class TutorialPageState extends State<TutorialPage> {
 
                       Container(
                           margin:
-                              EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                              EdgeInsets.symmetric(vertical: 20, horizontal: 10),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,

@@ -21,32 +21,32 @@ class StartLoadingState extends State<StartLoading> {
       if (resp == false)
         Navigator.pushNamedAndRemoveUntil(
             context, '/login_page', (route) => false);
-      Map<String, dynamic> json = resp;
-      Courses.allCourses = json;
+      // Map<String, dynamic> json = resp;
+      Courses.allCourses = resp['data'];
     }
     {
       var resp = await request('GET', studyingCourses);
       if (resp == false)
         Navigator.pushNamedAndRemoveUntil(
             context, '/login_page', (route) => false);
-      List<dynamic> json = resp['courses'];
-      Courses.studyingCourses = json;
+      // List<dynamic> json = resp['courses'];
+      Courses.studyingCourses = resp['data'];
     }
     {
       var resp = await request('GET', allQuickLessons);
       if (resp == false)
         Navigator.pushNamedAndRemoveUntil(
             context, '/login_page', (route) => false);
-      List<dynamic> json = resp['lessons'];
-      Courses.allQuickLessons = json;
+      // List<dynamic> json = resp['lessons'];
+      Courses.allQuickLessons = resp['status'] == true ? resp['data'] : [];
     }
     {
       var resp = await request('GET', freeLessons);
       if (resp == false)
         Navigator.pushNamedAndRemoveUntil(
             context, '/login_page', (route) => false);
-      List<dynamic> json = resp['lessons'];
-      Courses.freeLessons = json;
+      // List<dynamic> json = resp['lessons'];
+      Courses.freeLessons = resp['status'] == true ? resp['data'] : [];
     }
     Navigator.pushReplacementNamed(context, "/dashboard");
   }

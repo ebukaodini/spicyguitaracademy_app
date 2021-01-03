@@ -55,19 +55,29 @@ parseCourses(_courses) {
 getLessons(courseId) async {
   var resp = await request('GET', courseLessons(courseId));
   if (resp == false) return [];
-  List<dynamic> json = resp['lessons'];
-  return json;
+  // List<dynamic> json = resp['lessons'];
+  if (resp['status'] == true)
+    return resp['data'];
+  else
+    return [];
 }
 
 class StyudyingCoursesPageState extends State<StyudyingCoursesPage> {
   StyudyingCoursesPageState();
 
+  String _sortValue = "Tutor";
+  num _courseCategory = 0;
+  dynamic courses;
+
   @override
   void initState() {
     super.initState();
-  }
 
-  final courses = parseCourses(Courses.studyingCourses);
+    if (Courses.studyingCourses.length > 0) {
+      _courseCategory = int.parse(Courses.studyingCourses[0]["category"]) ?? 1;
+      courses = parseCourses(Courses.studyingCourses);
+    }
+  }
 
   final categoryThumbnails = [
     "assets/imgs/pictures/beginners_thumbnail.jpg",
@@ -75,9 +85,6 @@ class StyudyingCoursesPageState extends State<StyudyingCoursesPage> {
     "assets/imgs/pictures/intermediate_thumbnail.jpg",
     "assets/imgs/pictures/advanced_thumbnail.jpg"
   ];
-
-  String _sortValue = "Tutor";
-  num _courseCategory = Courses.studyingCourses.length > 0 ? int.parse(Courses.studyingCourses[0]["category"]) ?? 1 : 0;
 
   // function to sort the courses either by tutor or by title
   void _sortCourses() {
@@ -105,18 +112,20 @@ class StyudyingCoursesPageState extends State<StyudyingCoursesPage> {
     videos = courses;
 
     // add the image for the category
-    vids.add(Container(
-      margin: EdgeInsets.symmetric(vertical: 20),
-      width: MediaQuery.of(context).copyWith().size.width,
-      height: 200.00,
-      decoration: new BoxDecoration(
-        image: new DecorationImage(
-          image: ExactAssetImage(categoryThumbnails[_courseCategory - 1]),
-          fit: BoxFit.fitWidth,
+    if (Courses.studyingCourses.length > 0) {
+      vids.add(Container(
+        margin: EdgeInsets.symmetric(vertical: 20),
+        width: MediaQuery.of(context).copyWith().size.width,
+        height: 200.00,
+        decoration: new BoxDecoration(
+          image: new DecorationImage(
+            image: ExactAssetImage(categoryThumbnails[_courseCategory - 1]),
+            fit: BoxFit.fitWidth,
+          ),
+          borderRadius: BorderRadius.all(Radius.circular(25)),
         ),
-        borderRadius: BorderRadius.all(Radius.circular(25)),
-      ),
-    ));
+      ));
+    }
 
     if (Courses.studyingCourses.length > 0) {
       videos.forEach((course) {
@@ -126,12 +135,16 @@ class StyudyingCoursesPageState extends State<StyudyingCoursesPage> {
               onPressed: () async {
                 loading(context);
                 List<dynamic> lessons = await getLessons(course.courseId);
+                var resp = await request('GET', '/api/course/${course.courseId}/assignment');
                 Navigator.pop(context);
                 Navigator.pushNamed(context, "/studying_courses_lessons",
                     arguments: {
                       'courseLessons': lessons,
                       'courseTitle': course.title,
-                      'noLessons': course.allLessons ?? 0
+                      'noLessons': course.allLessons ?? 0,
+                      'courseActive': course.courseStatus,
+                      'courseId': course.courseId,
+                      'assignmentResp': resp
                     });
               },
               child: Stack(
@@ -303,13 +316,14 @@ class StyudyingCoursesPageState extends State<StyudyingCoursesPage> {
         ));
       });
     } else {
-
-      vids.add(new Container(
-        child: Center(
-          child: Text("No Courses!",
+      vids.add(
+        new Container(
+          child: Center(
+            child: Text("No Courses!",
               style: TextStyle(
                 color: Color.fromRGBO(107, 43, 20, 1.0),
                 fontWeight: FontWeight.w500,
+                fontSize: 25.0,
               )
             )
           )
@@ -317,31 +331,28 @@ class StyudyingCoursesPageState extends State<StyudyingCoursesPage> {
       );
 
       vids.add(new Container(
-        child: Center(
+        margin: EdgeInsets.symmetric(vertical: 15.0, horizontal: 15.0),
+          alignment: Alignment.center,
           child: Text(
-            "Choose a course by selecting the learning category from the category tab or use the button below to select",
+            "Choose a category from the category tab or use the button below to select",
+            textAlign: TextAlign.center,
             style: TextStyle(
-              color: Color.fromRGBO(112, 112, 112, 1.0),
-              fontSize: 15.0,
-              fontWeight: FontWeight.w400,
+              color: Color.fromRGBO(112, 112, 112, 0.5),
+              fontSize: 22.0,
+              fontWeight: FontWeight.w300,
             ),
           ),
-        ),
       ));
 
-      vids.add(
-        Center(
+      vids.add(Center(
           child: IconButton(
-            onPressed: () {
-              Navigator.pushNamed(context, '/rechoose_category');
-            },
-            iconSize: 40.0,
-            color: Color.fromRGBO(107, 43, 20, 1.0),
-            icon: Icon(Icons.add_box),
-          )
-        )
-      );
-
+        onPressed: () {
+          Navigator.pushNamed(context, '/rechoose_category');
+        },
+        iconSize: 70.0,
+        color: Color.fromRGBO(107, 43, 20, 1.0),
+        icon: Icon(Icons.add_box),
+      )));
     }
 
     return new Column(children: vids);
@@ -356,66 +367,71 @@ class StyudyingCoursesPageState extends State<StyudyingCoursesPage> {
           return SingleChildScrollView(
             child: Column(children: <Widget>[
               // The top text
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    // description text
-                    Container(
-                      margin: EdgeInsets.only(top: 10, left: 5),
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              "Your",
-                              textAlign: TextAlign.start,
-                              maxLines: 2,
-                              style: TextStyle(
-                                  fontSize: 30.0,
-                                  color: Color.fromRGBO(107, 43, 20, 1.0),
-                                  fontWeight: FontWeight.w500),
-                            ),
-                            Text(
-                              "Courses",
-                              textAlign: TextAlign.start,
-                              maxLines: 2,
-                              style: TextStyle(
-                                  fontSize: 30.0,
-                                  color: Color.fromRGBO(107, 43, 20, 1.0),
-                                  fontWeight: FontWeight.w500),
-                            ),
-                          ]),
-                    ),
-
-                    // the sort button
-                    Container(
-                      margin: EdgeInsets.only(top: 10, right: 5),
-                      child: MaterialButton(
-                        minWidth: 15,
-                        color: Colors.white,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                        onPressed: () => setState(() {
-                          _sortCourses();
-                        }),
-                        child: Transform.rotate(
-                          angle: pi / 2,
-                          child: Icon(
-                            Icons.tune,
-                            color: Color.fromRGBO(107, 43, 20, 1.0),
-                            size: 25.0,
-                          ),
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                          // side: BorderSide(color: Color.fromRGBO(107, 43, 20, 1.0))
+              Courses.studyingCourses.length > 0
+              ? 
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      // description text
+                      Container(
+                        margin: EdgeInsets.only(top: 10, left: 5),
+                        child: 
+                        Text(
+                          "Your\nCourses",
+                          textAlign: TextAlign.start,
+                          maxLines: 2,
+                          style: TextStyle(
+                              fontSize: 30.0,
+                              color: Color.fromRGBO(107, 43, 20, 1.0),
+                              fontWeight: FontWeight.w500),
                         ),
                       ),
-                    )
-                  ],
-                ),
-              ),
+
+                      // the sort button
+                      Container(
+                        margin: EdgeInsets.only(top: 10, right: 5),
+                        child: MaterialButton(
+                          minWidth: 15,
+                          color: Colors.white,
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                          onPressed: () => setState(() {
+                            _sortCourses();
+                          }),
+                          child: Transform.rotate(
+                            angle: pi / 2,
+                            child: Icon(
+                              Icons.tune,
+                              color: Color.fromRGBO(107, 43, 20, 1.0),
+                              size: 25.0,
+                            ),
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                            // side: BorderSide(color: Color.fromRGBO(107, 43, 20, 1.0))
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                )
+              :
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 20.0),
+                  width: 160,
+                  height: 160,
+                  decoration: BoxDecoration(
+                    image: new DecorationImage(
+                      image: AssetImage('assets/imgs/pictures/course_img_default.jpg'),
+                      fit: BoxFit.fitHeight,
+                    ),
+                    borderRadius: BorderRadius.all(Radius.circular(250)),
+                  ),
+                )
+              ,
+
 
               _loadCourses(orientation)
             ]),

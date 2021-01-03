@@ -25,7 +25,7 @@ class WelcomeNotePageState extends State<WelcomeNotePage> {
       Navigator.pushNamedAndRemoveUntil(
           context, '/login_page', (route) => false);
     Map<String, dynamic> json = resp;
-    Subscription.plans = json['plans'];
+    Subscription.plans = json['data'];
   }
 
   @override
@@ -124,10 +124,16 @@ class WelcomeNotePageState extends State<WelcomeNotePage> {
                                       Navigator.pushNamedAndRemoveUntil(context,
                                           '/login_page', (route) => false);
                                     } else {
-                                      Map<String, dynamic> json = resp;
-                                      User.subStatus = json['status'];
-                                      User.daysRemaining = json['days'];
-                                      User.plan = json['plan'] ?? '0';
+                                      var data = resp['data'];
+                                      if (resp['status'] == true) {
+                                        User.subStatus = data['status'];
+                                        User.daysRemaining = data['days'];
+                                        User.plan = data['plan'];
+                                      } else {
+                                        User.subStatus = data['status'];
+                                        User.daysRemaining = data['days'];
+                                        User.plan = '0';
+                                      }
                                     }
                                     print(User.subStatus);
                                     print(User.daysRemaining);
@@ -140,14 +146,14 @@ class WelcomeNotePageState extends State<WelcomeNotePage> {
                                     if (resp == false)
                                       Navigator.pushNamedAndRemoveUntil(context,
                                           '/login_page', (route) => false);
-                                    Map<String, dynamic> json = resp;
-                                    if (json['status'] == false) {
-                                      User.categoryStats = null;
-                                      User.category = null;
-                                    } else {
-                                      User.categoryStats = json['stats'];
-                                      User.category = json['category'];
-                                    }
+                                    // Map<String, dynamic> json = resp;
+                                    // if (resp['status'] == false) {
+                                    //   User.categoryStats = null;
+                                    //   User.category = null;
+                                    // } else {
+                                      User.categoryStats = resp['data'];
+                                      User.category = resp['data']['category'];
+                                    // }
                                   }
                                   
                                   await _loadSubscriptionPlans();

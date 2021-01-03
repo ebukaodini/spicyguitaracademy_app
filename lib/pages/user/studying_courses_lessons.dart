@@ -51,8 +51,87 @@ class StudyingCoursesLessonsState extends State<StudyingCoursesLessons> {
     super.initState();
   }
 
+  Widget assignmentWidget = Container();
+  var courseId = 0;
+
+  renderAssignment(resp) async {
+    if (resp['status'] == false) {
+      setState(() {
+        assignmentWidget = Container();
+      });
+    } else {
+      // currently returns details on the question only
+      // should return for the question and the answer
+      Map<String, dynamic> json = resp['data'];
+      var assignmentNote = json['note'];
+      setState(() {
+        assignmentWidget = new CupertinoButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/assignment_page');
+              // currentTutorial = lesson;
+            },
+            child: Container(
+                margin: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                padding: EdgeInsets.all(40.0),
+                decoration: new BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(25)),
+                  boxShadow: [
+                    BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 10.0,
+                        spreadRadius: 2.0)
+                  ],
+                ),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Container(
+                        width: 300,
+                        child: Text(
+                          "Course Assignment",
+                          // textAlign: TextAlign.left,
+                          overflow: TextOverflow.clip,
+                          style: TextStyle(
+                            color: Color.fromRGBO(107, 43, 20, 1.0),
+                            fontSize: 25,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(top: 3, bottom: 10),
+                        child: Text(
+                          "by Tutor",
+                          // textAlign: TextAlign.left,
+                          style: TextStyle(
+                            color: Color.fromRGBO(112, 112, 112, 0.5),
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        width: 300,
+                        child: Text(
+                          assignmentNote,
+                          overflow: TextOverflow.visible,
+                          style: TextStyle(
+                            color: Color.fromRGBO(112, 112, 112, 1.0),
+                            fontSize: 15.0,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ),
+                    ])));
+      });
+    }
+  }
+
   Widget _loadLessons(orientation, courseLessons) {
     List<Widget> vids = new List<Widget>();
+    tutorialLessons.clear();
     courseLessons.toList().forEach((lesson) {
       // print("this is the lesson: " + lesson);
 
@@ -68,22 +147,25 @@ class StudyingCoursesLessonsState extends State<StudyingCoursesLessons> {
           lesson['id'],
           lesson['note']);
 
+      tutorialLessons.add(lesson);
+
       vids.add(
         new CupertinoButton(
           onPressed: () {
-            Tutorial.id = lesson.id;
-            Tutorial.title = lesson.title;
-            Tutorial.description = lesson.description;
-            Tutorial.thumbnail = lesson.thumbnail;
-            Tutorial.tutor = lesson.tutor;
-            Tutorial.video = lesson.video;
-            Tutorial.audio = lesson.audio;
-            Tutorial.tablature = lesson.tablature;
-            Tutorial.note = lesson.note;
-            Tutorial.practice = lesson.practice;
+            currentTutorial = lesson;
+            // Tutorial.id = lesson.id;
+            // Tutorial.title = lesson.title;
+            // Tutorial.description = lesson.description;
+            // Tutorial.thumbnail = lesson.thumbnail;
+            // Tutorial.tutor = lesson.tutor;
+            // Tutorial.video = lesson.video;
+            // Tutorial.audio = lesson.audio;
+            // Tutorial.tablature = lesson.tablature;
+            // Tutorial.note = lesson.note;
+            // Tutorial.practice = lesson.practice;
 
-            // if (courseLocked == false)
-            Navigator.pushNamed(context, "/tutorial_page");
+            if (courseLocked == false)
+              Navigator.pushNamed(context, "/tutorial_page");
           },
           child: Container(
             margin: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
@@ -181,6 +263,10 @@ class StudyingCoursesLessonsState extends State<StudyingCoursesLessons> {
     String courseTitle = args['courseTitle'] ?? "No Title";
     num noLessons = args['noLessons'];
     List<dynamic> courseLessons = args['courseLessons'];
+    courseLocked = !args['courseActive'];
+    courseId = args['courseId'];
+    var assignmentResp = args['assignmentResp'];
+    renderAssignment(assignmentResp);
 
     return new Scaffold(
         backgroundColor: Color.fromRGBO(243, 243, 243, 1.0),
@@ -269,6 +355,8 @@ class StudyingCoursesLessonsState extends State<StudyingCoursesLessons> {
 
                   // child:
                   _loadLessons(orientation, courseLessons),
+
+                  assignmentWidget,
 
                   // ),
                 ],
