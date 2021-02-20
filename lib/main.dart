@@ -27,6 +27,7 @@ import 'pages/user/quicklesson_video.dart';
 import 'pages/user/tutorial_page.dart';
 import 'pages/user/assignment_page.dart';
 import 'pages/user/tutorial_practice.dart';
+import 'services/imgupload.dart';
 
 // import 'services/app.dart';
 
@@ -73,6 +74,7 @@ class MyApp extends StatelessWidget {
         '/tutorial_page': (BuildContext context) => new TutorialPage(),
         '/assignment_page': (BuildContext context) => new AssignmentPage(),
         '/tutorial_practice': (BuildContext context) => new TutorialPractice(),
+        '/demo': (BuildContext context) => new UploadImageDemo()
       },
     );
   }

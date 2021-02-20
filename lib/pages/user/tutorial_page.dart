@@ -754,7 +754,7 @@ class TutorialPageState extends State<TutorialPage> {
                                     children: [
                                       Icon(Icons.mic),
                                       Text(
-                                        "Listen to Practice Audio",
+                                        "Practice Loop",
                                         style: TextStyle(
                                           fontSize: 15.0,
                                           fontWeight: FontWeight.w400,

@@ -47,8 +47,9 @@ class DashboardState extends State<Dashboard> {
           );
         }
       ),
-      
-      endDrawer: Drawer(
+
+      // endDrawer:
+      drawer: Drawer(
         child: Column(
           children: <Widget>[
             SizedBox(height: 36),

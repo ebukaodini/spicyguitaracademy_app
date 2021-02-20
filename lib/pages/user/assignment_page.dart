@@ -1,11 +1,11 @@
 // import 'package:flutter/foundation.dart';
 import 'package:cached_video_player/cached_video_player.dart';
-import 'dart:math';
 import 'package:flutter/material.dart';
-import 'dart:async';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/cupertino.dart';
 
+import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 import '../../services/app.dart';
 
 class AssignmentPage extends StatefulWidget {
@@ -23,7 +23,7 @@ class AssignmentPageState extends State<AssignmentPage> {
 
   // bool courseLocked = true;
   bool _videoAssignment = false;
-  bool _showNote = false;
+  // bool _showNote = false;
 
   Duration _videoSeekToPosition(double moment) {
     Duration newPosition = Duration(seconds: moment.toInt());
@@ -61,7 +61,7 @@ class AssignmentPageState extends State<AssignmentPage> {
           height: 200.00,
           decoration: new BoxDecoration(
             image: new DecorationImage(
-              image: NetworkImage('${App.appurl}/${currentTutorial.thumbnail}'),
+              image: AssetImage('assets/imgs/pictures/course_img_default.jpg'),
               fit: BoxFit.fitWidth,
             ),
           ),
@@ -93,6 +93,7 @@ class AssignmentPageState extends State<AssignmentPage> {
   double _videoDuration = 0;
   String _formattedVideoPosition = "00:00";
   String _formattedVideoDuration = "00:00";
+  File file;
 
   Widget renderComment(avatar, name, date, comment) {
     return new Container(
@@ -142,7 +143,6 @@ class AssignmentPageState extends State<AssignmentPage> {
   }
 
   List<Widget> _commentsWidget = [Container()];
-
   loadUserCommentsOnThisLesson() async {
     Map<String, dynamic> resp =
         await request('GET', "/api/lesson/${currentTutorial.id}/comments");
@@ -214,15 +214,15 @@ class AssignmentPageState extends State<AssignmentPage> {
   void initState() {
     super.initState();
 
-    loadUserCommentsOnThisLesson();
+    // loadUserCommentsOnThisLesson();
 
-    if (currentTutorial.video != "NULL") {
+    if (Assignment.questionVideo != "NULL") {
       _videoAssignment = true;
     }
 
     if (_videoAssignment == true) {
       _videoController = CachedVideoPlayerController.network(
-          '${App.appurl}/${currentTutorial.video}')
+          '${App.appurl}/${Assignment.questionVideo}')
         ..initialize().then((_) {
           setState(() {
             _videoDuration =
@@ -243,21 +243,24 @@ class AssignmentPageState extends State<AssignmentPage> {
         });
       });
     }
+
+    setState(() => _textController.value = TextEditingValue(text: Assignment.answerNote));
+    
   }
 
-  _submitComment() async {
-    loading(context);
+  _submitNoteAnswer() async {
+    loading(context, message: 'Submitting');
     Map<String, dynamic> resp =
-        await request('POST', "/api/commentlesson", body: {
-      'comment': _textController.text,
-      'lessonId': currentTutorial.id,
-      'receiver': currentTutorial.tutor
+        await request('POST', '/api/student/assignment/answer', body: {
+      'note': _textController.text,
+      'answerId': Assignment.answerId,
+      'assignment': Assignment.id
     });
     Navigator.pop(context);
     if (resp['status'] == true) {
-      _textController.clear();
-      // GET the comments for this user on this lesson
-      loadUserCommentsOnThisLesson();
+      success(context, resp['message']);
+    } else {
+      error(context, resp['message']);
     }
   }
 
@@ -269,7 +272,7 @@ class AssignmentPageState extends State<AssignmentPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (_videoController.value.isPlaying) {
+    if (_videoAssignment == true && _videoController.value.isPlaying) {
       _videoUpdateSliderValue();
     }
 
@@ -307,28 +310,6 @@ class AssignmentPageState extends State<AssignmentPage> {
                               side: BorderSide(color: Colors.white)),
                         ),
                       ),
-
-                      // Tablature
-                      currentTutorial.tablature != null
-                          ? Container(
-                              child: MaterialButton(
-                                color: Color.fromRGBO(107, 43, 20, 1.0),
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 20, vertical: 18),
-                                onPressed: () {
-                                  // Navigator.pushNamed(context, '/tutorial_tab');
-                                },
-                                child: Text(
-                                  "Tablature",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: new BorderRadius.circular(15.0),
-                                  // side: BorderSide(color: Colors.white)
-                                ),
-                              ),
-                            )
-                          : Container(),
                     ],
                   ),
                 ),
@@ -355,73 +336,77 @@ class AssignmentPageState extends State<AssignmentPage> {
                       _videoAssignment == true ? _renderVideo() : Container(),
 
                       // the play/pause controller
-                      Container(
-                          child: Row(
-                        children: [
-                          IconButton(
-                            iconSize: 30.0,
-                            color: Color.fromRGBO(107, 43, 20, 1.0),
-                            onPressed: () {
-                              setState(() {
-                                if (_videoAssignment == true) {
-                                  _videoController.value.isPlaying
-                                      ? _videoController.pause()
-                                      : _videoController.play();
-                                }
-                              });
-                            },
-                            icon: Icon(
-                              _videoController.value.isPlaying
-                                  ? Icons.pause_circle_outline
-                                  : Icons.play_circle_outline,
-                            ),
-                          ),
-                          Expanded(
-                              child: Stack(
-                                  alignment: Alignment.bottomLeft,
-                                  children: [
-                                Slider(
-                                  onChangeEnd: (double value) {
-                                    _videoController
-                                        .seekTo(_videoSeekToPosition(value));
+                      _videoAssignment == true
+                          ? Container(
+                              child: Row(
+                              children: [
+                                IconButton(
+                                  iconSize: 30.0,
+                                  color: Color.fromRGBO(107, 43, 20, 1.0),
+                                  onPressed: () {
+                                    setState(() {
+                                      // if (_videoAssignment == true) {
+                                      _videoController.value.isPlaying
+                                          ? _videoController.pause()
+                                          : _videoController.play();
+                                      // }
+                                    });
                                   },
-                                  inactiveColor:
-                                      Color.fromRGBO(112, 112, 112, 0.1),
-                                  activeColor: Color.fromRGBO(107, 43, 20, 1.0),
-                                  onChanged: (value) {
-                                    _videoController
-                                        .seekTo(_videoSeekToPosition(value));
-                                  },
-                                  max: _videoDuration,
-                                  value: _videoPosition,
+                                  icon: Icon(
+                                    _videoAssignment == true &&
+                                            _videoController.value.isPlaying
+                                        ? Icons.pause_circle_outline
+                                        : Icons.play_circle_outline,
+                                  ),
                                 ),
-                                Container(
-                                  alignment: Alignment.centerRight,
-                                  margin: EdgeInsets.only(right: 22.0),
-                                  child: Text(
-                                      "$_formattedVideoPosition / $_formattedVideoDuration",
-                                      style: TextStyle(
-                                          color: Color.fromRGBO(
-                                              112, 112, 112, 0.2))),
-                                )
-                              ])),
-                        ],
-                      )),
+                                Expanded(
+                                    child: Stack(
+                                        alignment: Alignment.bottomLeft,
+                                        children: [
+                                      Slider(
+                                        onChangeEnd: (double value) {
+                                          _videoController.seekTo(
+                                              _videoSeekToPosition(value));
+                                        },
+                                        inactiveColor:
+                                            Color.fromRGBO(112, 112, 112, 0.1),
+                                        activeColor:
+                                            Color.fromRGBO(107, 43, 20, 1.0),
+                                        onChanged: (value) {
+                                          _videoController.seekTo(
+                                              _videoSeekToPosition(value));
+                                        },
+                                        max: _videoDuration,
+                                        value: _videoPosition,
+                                      ),
+                                      Container(
+                                        alignment: Alignment.centerRight,
+                                        margin: EdgeInsets.only(right: 22.0),
+                                        child: Text(
+                                            "$_formattedVideoPosition / $_formattedVideoDuration",
+                                            style: TextStyle(
+                                                color: Color.fromRGBO(
+                                                    112, 112, 112, 0.2))),
+                                      )
+                                    ])),
+                              ],
+                            ))
+                          : Container(),
 
                       SizedBox(
                         height: 20.0,
                       ),
 
                       // The text contents
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          Container(
-                            width:
-                                orientation == Orientation.portrait ? 300 : 650,
-                            child: Text(
-                              currentTutorial.title ?? 'No title',
+                      Container(
+                        width: MediaQuery.of(context).copyWith().size.width,
+                        margin: EdgeInsets.all(10.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            Text(
+                              'Course Assignment',
                               // textAlign: TextAlign.left,
                               overflow: TextOverflow.clip,
                               maxLines: 3,
@@ -431,24 +416,20 @@ class AssignmentPageState extends State<AssignmentPage> {
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(top: 3, bottom: 10),
-                            child: Text(
-                              currentTutorial.tutor ?? 'No Tutor',
-                              // textAlign: TextAlign.left,
-                              style: TextStyle(
-                                color: Color.fromRGBO(112, 112, 112, 0.5),
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
+                            Container(
+                              margin: EdgeInsets.only(top: 3, bottom: 10),
+                              child: Text(
+                                Assignment.tutor ?? 'No Tutor',
+                                // textAlign: TextAlign.left,
+                                style: TextStyle(
+                                  color: Color.fromRGBO(112, 112, 112, 0.5),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
                             ),
-                          ),
-                          Container(
-                            width:
-                                orientation == Orientation.portrait ? 300 : 650,
-                            child: Text(
-                              currentTutorial.description ?? 'No description',
+                            Text(
+                              Assignment.questionNote ?? 'No question note',
                               overflow: TextOverflow.visible,
                               style: TextStyle(
                                 color: Color.fromRGBO(112, 112, 112, 1.0),
@@ -456,111 +437,83 @@ class AssignmentPageState extends State<AssignmentPage> {
                                 fontWeight: FontWeight.w400,
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-
-                      Container(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            currentTutorial.note != null
-                                ? FlatButton(
-                                    onPressed: () =>
-                                        setState(() => _showNote = !_showNote),
-                                    child: Text(
-                                        _showNote == false
-                                            ? 'Read more'
-                                            : 'Read less',
-                                        style: TextStyle(
-                                            color: Color.fromRGBO(
-                                                107, 43, 20, 1.0))))
-                                : Container(),
-                            _videoAssignment == true
-                                ? currentTutorial.audio != null
-                                    ? IconButton(
-                                        onPressed: () {},
-                                        icon: Icon(Icons.mic),
-                                        color: Color.fromRGBO(107, 43, 20, 1.0),
-                                      )
-                                    : Container()
-                                : currentTutorial.video != null
-                                    ? IconButton(
-                                        onPressed: () {},
-                                        icon: Icon(Icons.play_circle_filled),
-                                        color: Color.fromRGBO(107, 43, 20, 1.0),
-                                      )
-                                    : Container(),
+                            Container(
+                              margin: EdgeInsets.only(top: 10.0),
+                              child: Text('Answer Ratings',
+                                  style: TextStyle(
+                                      color: Color.fromRGBO(107, 43, 20, 1.0))),
+                            ),
+                            Container(
+                                width: MediaQuery.of(context)
+                                    .copyWith()
+                                    .size
+                                    .width,
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                        int.parse(Assignment.answerRating) > 0
+                                            ? Icons.star
+                                            : Icons.star_border_outlined,
+                                        color:
+                                            Color.fromRGBO(107, 43, 20, 1.0)),
+                                    Icon(
+                                        int.parse(Assignment.answerRating) > 1
+                                            ? Icons.star
+                                            : Icons.star_border_outlined,
+                                        color:
+                                            Color.fromRGBO(107, 43, 20, 1.0)),
+                                    Icon(
+                                        int.parse(Assignment.answerRating) > 2
+                                            ? Icons.star
+                                            : Icons.star_border_outlined,
+                                        color:
+                                            Color.fromRGBO(107, 43, 20, 1.0)),
+                                    Icon(
+                                        int.parse(Assignment.answerRating) > 3
+                                            ? Icons.star
+                                            : Icons.star_border_outlined,
+                                        color:
+                                            Color.fromRGBO(107, 43, 20, 1.0)),
+                                    Icon(
+                                        int.parse(Assignment.answerRating) > 4
+                                            ? Icons.star
+                                            : Icons.star_border_outlined,
+                                        color:
+                                            Color.fromRGBO(107, 43, 20, 1.0)),
+                                  ],
+                                ))
                           ],
                         ),
                       ),
-
-                      // show the note if open
-                      _showNote == true
-                          ? Container(
-                              padding: EdgeInsets.symmetric(horizontal: 15.0),
-                              child: Text(
-                                currentTutorial.note,
-                                style: TextStyle(
-                                  color: Color.fromRGBO(112, 112, 112, 1.0),
-                                  fontSize: 15.0,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            )
-                          : Container(),
-
-                      currentTutorial.practice != null
-                          ? Container(
-                              margin: EdgeInsets.only(top: 10.0),
-                              alignment: Alignment.centerLeft,
-                              child: FlatButton(
-                                  textColor: Color.fromRGBO(112, 112, 112, 1.0),
-                                  child: Row(
-                                    children: [
-                                      Icon(Icons.mic),
-                                      Text(
-                                        "Listen to Practice Audio",
-                                        style: TextStyle(
-                                          fontSize: 15.0,
-                                          fontWeight: FontWeight.w400,
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  onPressed: () {
-                                    Navigator.pushNamed(
-                                        context, '/tutorial_practice');
-                                  }))
-                          : Container(),
-
-                      Column(
-                        children: _commentsWidget,
-                      ),
+                      // Column(
+                      //   children: _commentsWidget,
+                      // ),
 
                       Container(
-                          margin:
-                              EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-                          child: Row(
+                          margin: EdgeInsets.symmetric(
+                              vertical: 20, horizontal: 10),
+                          width: MediaQuery.of(context).copyWith().size.width,
+                          child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: <Widget>[
                               Container(
                                   width: MediaQuery.of(context)
-                                          .copyWith()
-                                          .size
-                                          .width -
-                                      130,
+                                      .copyWith()
+                                      .size
+                                      .width,
+                                  margin: EdgeInsets.only(bottom: 10.0),
                                   // color: Colors.white,
                                   child: TextField(
                                     controller: _textController,
-                                    // maxLength: 250,
+                                    maxLines: 5,
+                                    maxLength: 65535,
                                     maxLengthEnforced: true,
                                     cursorColor:
                                         Color.fromRGBO(112, 112, 112, 1.0),
                                     textInputAction: TextInputAction.send,
                                     onSubmitted: (String value) async {
-                                      await _submitComment();
+                                      await _submitNoteAnswer();
                                     },
                                     style: TextStyle(
                                         color:
@@ -568,22 +521,22 @@ class AssignmentPageState extends State<AssignmentPage> {
                                         fontSize: 18.0,
                                         height: 1.6),
                                     decoration: InputDecoration(
-                                      hintText: "Write a comment",
+                                      hintText: "Write your answer",
                                       hintStyle: TextStyle(
                                           color: Color.fromRGBO(
                                               112, 112, 112, 0.5)),
                                       fillColor: Colors.white,
                                       focusColor:
                                           Color.fromRGBO(107, 43, 20, 1.0),
-                                      contentPadding:
-                                          EdgeInsets.symmetric(horizontal: 15),
+                                      contentPadding: EdgeInsets.symmetric(
+                                          horizontal: 15, vertical: 15),
                                       border: InputBorder.none,
                                     ),
                                   ),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     borderRadius:
-                                        BorderRadius.all(Radius.circular(30.0)),
+                                        BorderRadius.all(Radius.circular(10.0)),
                                     boxShadow: [
                                       BoxShadow(
                                           color: Colors.black12,
@@ -591,28 +544,89 @@ class AssignmentPageState extends State<AssignmentPage> {
                                           spreadRadius: 2.0)
                                     ],
                                   )),
-                              Container(
-                                child: MaterialButton(
-                                  minWidth: 20,
-                                  color: Color.fromRGBO(107, 43, 20, 1.0),
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 15, vertical: 13),
-                                  onPressed: () async {
-                                    // submit the comment/question
-                                    await _submitComment();
-                                  },
-                                  child: new Icon(
-                                    Icons.send,
-                                    color: Colors.white,
-                                    size: 25.0,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          new BorderRadius.circular(30.0),
-                                      side: BorderSide(
-                                          color: Color.fromRGBO(
-                                              107, 43, 20, 1.0))),
-                                ),
+                              FlatButton(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    side: BorderSide(
+                                        color:
+                                            Color.fromRGBO(107, 43, 20, 1.0))),
+                                color: Color.fromRGBO(107, 43, 20, 1.0),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 15, vertical: 13),
+                                onPressed: () async {
+                                  // submit the answer
+                                  await _submitNoteAnswer();
+                                },
+                                child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text('Submit  ',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 18.0)),
+                                      Icon(Icons.send, color: Colors.white)
+                                    ]),
+                              ),
+                              Center(
+                                  child: Text('OR',
+                                      style: TextStyle(
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.bold))),
+                              FlatButton(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    side: BorderSide(
+                                        color:
+                                            Color.fromRGBO(107, 43, 20, 1.0))),
+                                color: Color.fromRGBO(107, 43, 20, 1.0),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 15, vertical: 13),
+                                onPressed: () async {
+                                  try {
+                                    FilePickerResult result = await FilePicker
+                                        .platform
+                                        .pickFiles(type: FileType.video);
+                                    if (result != null) {
+                                      file = File(result.files.single.path);
+                                    }
+                                  } catch (e) {
+                                    error(context,
+                                        "Video picker error " + e.toString());
+                                  }
+
+                                  loading(context, message: 'Uploading');
+
+                                  var resp = await upload(
+                                      'POST',
+                                      '/api/student/assignment/answer',
+                                      'video',
+                                      file,
+                                      'video/mp4',
+                                      body: {
+                                        'answerId': Assignment.answerId,
+                                        'assignment': Assignment.id
+                                      });
+
+                                  Navigator.pop(context);
+
+                                  if (resp['status'] == true) {
+                                    success(context, resp['message']);
+                                  } else {
+                                    error(context, resp['message']);
+                                  }
+                                },
+                                child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text('Upload Answer  ',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 18.0)),
+                                      Icon(
+                                        Icons.attachment,
+                                        color: Colors.white,
+                                      )
+                                    ]),
                               ),
                             ],
                           )),

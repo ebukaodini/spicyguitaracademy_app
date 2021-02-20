@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 // import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'common.dart';
+import 'package:http_parser/http_parser.dart';
 
 Future request(String method, String uri, {dynamic body}) async {
   String appurl = 'https://spicyguitaracademy.com';
@@ -38,6 +39,54 @@ Future request(String method, String uri, {dynamic body}) async {
     return false;
   } else {
     print('Error: ' + response.statusCode + ', ' + response.body);
+  }
+}
+
+Future upload(String method, String uri, String filename, dynamic file,
+    String contentType,
+    {dynamic body}) async {
+  String appurl = 'https://spicyguitaracademy.com';
+  dynamic headers = {'cache-control': 'no-cache', 'JWToken': User.token};
+  http.StreamedResponse response;
+  List<String> contentType; // = contentType.split('/');
+  // Navigator.pushNamedAndRemoveUntil(context, '/login_page', (route) => false);
+
+  // infer content type from the file basename
+  var fileType = file.toString().replaceAll("'", "").split(".").reversed.first;
+  switch (fileType) {
+    case 'jpg':
+      contentType = ["image", "jpeg"];
+      break;
+    case 'png':
+      contentType = ["image", "png"];
+      break;
+    case 'mp4':
+      contentType = ["video", "mp4"];
+      break;
+    default:
+  }
+
+  if (['POST', 'PATCH', 'PUT'].contains(method)) {
+    var request = http.MultipartRequest(method, Uri.parse(appurl + uri));
+    request.fields.addAll(body);
+    request.files.add(await http.MultipartFile.fromPath(filename, file.path,
+        contentType: new MediaType(contentType[0], contentType[1])));
+    request.headers.addAll(headers);
+
+    response = await request.send();
+    String responseBody = await response.stream.bytesToString();
+
+    print("\n\n" + uri + " => " + responseBody + "\n\n");
+    if (response.statusCode == 200) {
+      return jsonDecode(responseBody);
+    } else if (response.statusCode == 400 ||
+        response.statusCode == 401 ||
+        response.statusCode == 403) {
+      print('Error: ' + response.statusCode.toString() + ', ' + responseBody);
+      return false;
+    } else {
+      print('Error: ' + response.statusCode.toString() + ', ' + responseBody);
+    }
   }
 }
 
@@ -106,247 +155,6 @@ class App extends Common {
     }
   }
 
-  // static studentStatistics() async {
-  //   var resp = await http
-  //       .get('https://spicyguitaracademy.com/api/student/statistics', headers: {
-  //     'cache-control': 'no-cache',
-  //     'JWToken': User.token,
-  //   });
-
-  //   if (resp.statusCode != 200) {
-  //     print('Getting Student Subscription Status Failed (${resp.statusCode}).');
-  //     return false;
-  //   } else {
-  //     var respb = resp.body;
-  //     print(respb);
-  //     Map<String, dynamic> json = jsonDecode(respb);
-  //     print(json['status']);
-  //     if (json['status'] == false) {
-  //       User.categoryStats = null;
-  //       User.category = null;
-  //     } else {
-  //       User.categoryStats = json['stats'];
-  //       User.category = json['category'];
-  //     }
-  //     print("student stats is ${json['category']}");
-  //   }
-  // }
-
-  // static getUserSubscriptionStatus() async {
-  //   var resp = await http.get(
-  //       'https://spicyguitaracademy.com/api/subscription/status',
-  //       headers: {'JWToken': User.token, 'cache-control': 'no-cache'});
-
-  //   if (resp.statusCode != 200) {
-  //     print('${resp.statusCode} Getting Student Subscription Status Failed.');
-  //     return false;
-  //   } else {
-  //     var respb = resp.body;
-  //     print(respb);
-  //     Map<String, dynamic> json = jsonDecode(respb);
-  //     User.subStatus = json['status'];
-  //     User.daysRemaining = json['days'];
-  //   }
-  // }
-
-  // static Future initiatePayment(scaffold, String plan) async {
-  //   var resp = await http.post(
-  //       'https://spicyguitaracademy.com/api/subscription/initiate',
-  //       headers: {'JWToken': User.token},
-  //       body: {'email': User.email, 'plan': plan});
-
-  //   if (resp.statusCode != 200) {
-  //     showMessage(scaffold, 'Initiate Subscription Failed.');
-  //     return false;
-  //   } else {
-  //     var respb = resp.body;
-  //     print(respb);
-  //     Map<String, dynamic> json = jsonDecode(respb);
-  //     if (json['flag'] == true) {
-  //       Subscription.reference = json['data']['reference'];
-  //       Subscription.access_code = json['data']['access_code'];
-  //       Subscription.price = json['data']['price'];
-  //     } else {
-  //       showMessage(scaffold, 'Initiate Subscription Failed.');
-  //     }
-  //     return true;
-  //   }
-  // }
-
-  // static Future verifyPayment(String reference) async {
-  //   var resp = await http.post(
-  //       "https://spicyguitaracademy.com/api/subscription/verify/$reference",
-  //       headers: {'JWToken': User.token},
-  //       body: {'plan': reference});
-
-  //   if (resp.statusCode != 200) {
-  //     print('Error Occurred.');
-  //   } else {
-  //     final respb = resp.body;
-  //     Map<String, dynamic> json = jsonDecode(respb);
-  //     if (json['success']) {
-  //       Subscription.paystatus = true;
-  //       // getUserSubscriptionStatus();
-  //     }
-  //   }
-  // }
-
-  // static Future chooseCategory(String category) async {
-  //   var resp = await http.post(
-  //       'https://spicyguitaracademy.com/api/student/category/select',
-  //       headers: {'JWToken': User.token, 'cache-control': 'no-cache'},
-  //       body: {'category': category});
-
-  //   if (resp.statusCode != 200) {
-  //     print('Getting Student Subscription Status Failed. (${resp.body}) ');
-  //     return false;
-  //   } else {
-  //     var respb = resp.body;
-  //     print(respb);
-  //     Map<String, dynamic> json = jsonDecode(respb);
-  //     print("response message: ${json['message']}");
-
-  //     await studentStatistics();
-  //   }
-  // }
-
-  // static Future getAllCourses() async {
-  //   var resp = await http.get('https://spicyguitaracademy.com/api/course/all',
-  //       headers: {'JWToken': User.token, 'cache-control': 'no-cache'});
-
-  //   if (resp.statusCode != 200) {
-  //     print('${resp.statusCode} Getting Student Subscription Status Failed.');
-  //     return false;
-  //   } else {
-  //     var respb = resp.body;
-  //     print(respb);
-  //     Map<String, dynamic> json = jsonDecode(respb);
-  //     Courses.allCourses = json;
-  //     return true;
-  //   }
-  // }
-
-  // static Future studyingCourses() async {
-  //   var resp = await http.get(
-  //       'https://spicyguitaracademy.com/api/student/courses/studying',
-  //       headers: {'JWToken': User.token, 'cache-control': 'no-cache'});
-
-  //   if (resp.statusCode != 200) {
-  //     print('${resp.statusCode} Getting Student Subscription Status Failed.');
-  //     return false;
-  //   } else {
-  //     var respb = resp.body;
-  //     print(respb);
-  //     Map<String, dynamic> json = jsonDecode(respb);
-  //     Courses.studyingCourses = json['courses'];
-  //     print(json['courses']);
-  //     return true;
-  //   }
-  // }
-
-  // static Future courseLessons(int course) async {
-  //   var resp = await http.get(
-  //       'https://spicyguitaracademy.com/api/course/$course/lessons',
-  //       headers: {'JWToken': User.token, 'cache-control': 'no-cache'});
-
-  //   if (resp.statusCode != 200) {
-  //     print('${resp.statusCode} Getting Student Subscription Status Failed.');
-  //     return false;
-  //   } else {
-  //     var respb = resp.body;
-  //     print(respb);
-  //     // Map<String, dynamic> json = jsonDecode(respb);
-  //     // showMessage(json['status']);
-  //     return true;
-  //   }
-  // }
-
-  // static Future getLesson(int lesson) async {
-  //   var resp = await http.get(
-  //       'https://spicyguitaracademy.com/api/lesson/$lesson',
-  //       headers: {'JWToken': User.token, 'cache-control': 'no-cache'});
-
-  //   if (resp.statusCode != 200) {
-  //     print('${resp.statusCode} Getting Student Subscription Status Failed.');
-  //     return false;
-  //   } else {
-  //     var respb = resp.body;
-  //     print(respb);
-  //     // Map<String, dynamic> json = jsonDecode(respb);
-  //     // showMessage(json['status']);
-  //     return true;
-  //   }
-  // }
-
-  // static Future studyingLesson(lesson) async {
-  //   var resp = await http.get(
-  //       'https://spicyguitaracademy.com/api/student/lesson/$lesson',
-  //       headers: {'JWToken': User.token, 'cache-control': 'no-cache'});
-
-  //   if (resp.statusCode != 200) {
-  //     print('${resp.statusCode} Getting Student Subscription Status Failed.');
-  //     return false;
-  //   } else {
-  //     var respb = resp.body;
-  //     print(respb);
-  //     // Map<String, dynamic> json = jsonDecode(respb);
-  //     // showMessage(json['status']);
-  //     return true;
-  //   }
-  // }
-
-  // static Future nextLesson(lesson) async {
-  //   var resp = await http.get(
-  //       'https://spicyguitaracademy.com/api/student/lesson/$lesson/next?course=${User.studyingCourse}',
-  //       headers: {'JWToken': User.token, 'cache-control': 'no-cache'});
-
-  //   if (resp.statusCode != 200) {
-  //     print('${resp.statusCode} Getting Student Subscription Status Failed.');
-  //     return false;
-  //   } else {
-  //     var respb = resp.body;
-  //     print(respb);
-  //     // Map<String, dynamic> json = jsonDecode(respb);
-  //     // showMessage(json['status']);
-  //     return true;
-  //   }
-  // }
-
-  // static Future prevLesson(lesson) async {
-  //   var resp = await http.get(
-  //       'https://spicyguitaracademy.com/api/student/lesson/$lesson/previous?course=${User.studyingCourse}',
-  //       headers: {'JWToken': User.token, 'cache-control': 'no-cache'});
-
-  //   if (resp.statusCode != 200) {
-  //     print('${resp.statusCode} Getting Student Subscription Status Failed.');
-  //     return false;
-  //   } else {
-  //     var respb = resp.body;
-  //     print(respb);
-  //     // Map<String, dynamic> json = jsonDecode(respb);
-  //     // showMessage(json['status']);
-  //     return true;
-  //   }
-  // }
-
-  // static Future answerAssignment(assignment) async {
-  //   var resp = await http.post(
-  //       'https://spicyguitaracademy.com/api/student/assignment/answer',
-  //       headers: {'JWToken': User.token, 'cache-control': 'no-cache'},
-  //       body: {'assignment': assignment});
-
-  //   if (resp.statusCode != 200) {
-  //     print('${resp.statusCode} Getting Student Subscription Status Failed.');
-  //     return false;
-  //   } else {
-  //     var respb = resp.body;
-  //     print(respb);
-  //     // Map<String, dynamic> json = jsonDecode(respb);
-  //     // showMessage(json['status']);
-  //     return true;
-  //   }
-  // }
-
   static Future search(query) async {
     var resp = await http.get(
         'https://spicyguitaracademy.com/api/courses/search?q=$query',
@@ -363,24 +171,6 @@ class App extends Common {
       return true;
     }
   }
-
-  // static Future inviteAFriend(String friend) async {
-  //   var resp = await http.post(
-  //       'https://spicyguitaracademy.com/api/invite-a-friend',
-  //       headers: {'JWToken': User.token, 'cache-control': 'no-cache'},
-  //       body: {'friend': friend});
-
-  //   if (resp.statusCode != 200) {
-  //     print('${resp.statusCode} Getting Student Subscription Status Failed.');
-  //     return false;
-  //   } else {
-  //     var respb = resp.body;
-  //     print(respb);
-  //     // Map<String, dynamic> json = jsonDecode(respb);
-  //     // showMessage(json['status']);
-  //     return true;
-  //   }
-  // }
 
   static Future uploadAvatar(String base64Image) async {
     var resp = await http.post(
@@ -400,71 +190,8 @@ class App extends Common {
     }
   }
 
-  // static Future quicklessons() async {
-  //   var resp = await http.get(
-  //       'https://spicyguitaracademy.com/api/student/quicklessons',
-  //       headers: {'JWToken': User.token, 'cache-control': 'no-cache'});
-
-  //   if (resp.statusCode != 200) {
-  //     print('${resp.statusCode} Getting Student Subscription Status Failed.');
-  //     return false;
-  //   } else {
-  //     var respb = resp.body;
-  //     print(respb);
-  //     // Map<String, dynamic> json = jsonDecode(respb);
-  //     // showMessage(json['status']);
-  //     return true;
-  //   }
-  // }
-
-  // static Future quicklesson(lesson) async {
-  //   var resp = await http.get(
-  //       'https://spicyguitaracademy.com/api/student/quicklesson/$lesson',
-  //       headers: {'JWToken': User.token, 'cache-control': 'no-cache'});
-
-  //   if (resp.statusCode != 200) {
-  //     print('${resp.statusCode} Getting Student Subscription Status Failed.');
-  //     return false;
-  //   } else {
-  //     var respb = resp.body;
-  //     print(respb);
-  //     // Map<String, dynamic> json = jsonDecode(respb);
-  //     // showMessage(json['status']);
-  //     return true;
-  //   }
-  // }
-
-  // static Future freelesson() async {
-  //   var resp = await http.get(
-  //       'https://spicyguitaracademy.com/api/student/freelessons',
-  //       headers: {'JWToken': User.token, 'cache-control': 'no-cache'});
-
-  //   if (resp.statusCode != 200) {
-  //     print('${resp.statusCode} Getting Student Subscription Status Failed.');
-  //     return false;
-  //   } else {
-  //     var respb = resp.body;
-  //     print(respb);
-  //     Map<String, dynamic> json = jsonDecode(respb);
-  //     if (json['lessons'] != null) Courses.freeLessons = json['lessons'];
-  //     print(Courses.freeLessons);
-  //   }
-  // }
-
   static showMessage(scaffoldKey, String message) {
     Common.showMessage(scaffoldKey, message);
-  }
-
-  static showInfo(scaffoldKey, String message) {
-    Common.showInfo(scaffoldKey, message);
-  }
-
-  static showSuccess(String message) {
-    Common.showSuccess(message);
-  }
-
-  static showError(String message) {
-    Common.showError(message);
   }
 }
 
@@ -561,9 +288,11 @@ class Tutorial {
 
 class Assignment {
   static String id;
+  static String answerId;
   static String questionNote;
   static String questionVideo;
   static String tutor;
+  static String tutorId;
   static String answerNote;
   static String answerVideo;
   static String answerRating;
@@ -582,8 +311,8 @@ void message(context, String message) {
           scrollable: true,
           title: Row(
             children: [
-              Text("Message", style: TextStyle(color: Colors.lightBlueAccent)),
               Icon(Icons.info, color: Colors.lightBlueAccent),
+              Text(" Message", style: TextStyle(color: Colors.lightBlueAccent)),
             ],
             mainAxisAlignment: MainAxisAlignment.start,
           ),
@@ -594,7 +323,7 @@ void message(context, String message) {
   );
 }
 
-void loading(context) {
+void loading(context, {String message = 'Loading'}) {
   showDialog(
     context: context,
     barrierDismissible: false,
@@ -604,7 +333,7 @@ void loading(context) {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             new CircularProgressIndicator(),
-            new Text("     Loading..."),
+            new Text("     $message..."),
           ],
         ),
       );
@@ -620,11 +349,8 @@ void success(context, String message) {
         scrollable: true,
         title: Row(
           children: [
-            Text("Success", style: TextStyle(color: Colors.green)),
-            Icon(
-              Icons.done,
-              color: Colors.green,
-            ),
+            Icon(Icons.done, color: Colors.green),
+            Text(" Success", style: TextStyle(color: Colors.green)),
           ],
           mainAxisAlignment: MainAxisAlignment.start,
         ),
@@ -643,8 +369,8 @@ void error(context, String message) {
         scrollable: true,
         title: Row(
           children: [
-            Text("Error", style: TextStyle(color: Colors.red)),
             Icon(Icons.error, color: Colors.red),
+            Text(" Error", style: TextStyle(color: Colors.red)),
           ],
           mainAxisAlignment: MainAxisAlignment.start,
         ),

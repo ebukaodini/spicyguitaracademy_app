@@ -178,7 +178,7 @@ class TutorialPracticeState extends State<TutorialPractice> {
                     },
                     icon: Icon(Icons.arrow_back),
                   ),
-                  Text("Listen to Practice Audio",
+                  Text("Practice Loop",
                       style: TextStyle(
                           color: Color.fromRGBO(112, 112, 112, 1.0),
                           fontWeight: FontWeight.w500,

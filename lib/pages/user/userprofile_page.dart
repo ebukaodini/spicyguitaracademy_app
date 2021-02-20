@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'dart:core';
 import '../../services/app.dart';
+import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 // import 'package:'
 
 class UserProfilePage extends StatefulWidget {
@@ -37,6 +39,7 @@ class UserProfilePageState extends State<UserProfilePage> {
   @override
   Widget build(BuildContext context) {
     String _name = User.firstname + ' ' + User.lastname;
+    File file;
 
     // external properties
     int _completedCourses = User.categoryStats['takenCourses'] ?? 0;
@@ -112,7 +115,38 @@ class UserProfilePageState extends State<UserProfilePage> {
                               )
                             ],
                           ),
-                          onPressed: () {})),
+                          onPressed: () async {
+                            try {
+                              FilePickerResult result =
+                                  await FilePicker.platform.pickFiles(
+                                      type: FileType.image);
+                                      // allowedExtensions: ["jpg", "png"]
+                              if (result != null) {
+                                file = File(result.files.single.path);
+                              }
+
+                              loading(context, message: 'Uploading');
+
+                              var resp = await upload(
+                                  'POST',
+                                  '/api/student/avatar/update',
+                                  'avatar',
+                                  file,
+                                  'image/png');
+
+                              Navigator.pop(context);
+
+                              if (resp['status'] == true) {
+                                success(context, resp['message']);
+                                setState(() {});
+                              } else {
+                                error(context, resp['message']);
+                              }
+                            } catch (e) {
+                              Navigator.pop(context);
+                              error(context, e.toString());
+                            }
+                          })),
                 ],
               ),
 

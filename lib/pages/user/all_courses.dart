@@ -212,96 +212,108 @@ class AllCoursesPageState extends State<AllCoursesPage> {
         margin: EdgeInsets.symmetric(vertical: 0, horizontal: 0),
         child: CupertinoButton(
             onPressed: () async {
-              loading(context);
-              List<dynamic> lessons = await getLessons(course.courseId);
-              Navigator.pop(context);
-              Navigator.pushNamed(context, "/allcourses_lessons", arguments: {
-                'courseLessons': lessons,
-                'courseTitle': course.title,
-                'noLessons': course.lessons ?? 0
-              });
+              if (User.category == (_courseCategory + 1)) {
+                loading(context);
+                List<dynamic> lessons = await getLessons(course.courseId);
+                Navigator.pop(context);
+                Navigator.pushNamed(context, "/allcourses_lessons", arguments: {
+                  'courseLessons': lessons,
+                  'courseTitle': course.title,
+                  'noLessons': course.lessons ?? 0
+                });
+              }
             },
-            child: Stack(
-              children: <Widget>[
+            child: 
+            // Stack(
+            //   children: <Widget>[
+                // course detail card
                 Container(
-                    margin: EdgeInsets.only(left: 70),
-                    width: MediaQuery.of(context).copyWith().size.width - 100,
-                    height: 160.00,
-                    decoration: new BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(25)),
-                      boxShadow: [
-                        BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 10.0,
-                            spreadRadius: 2.0)
-                      ],
-                    ),
-                    child: Container(
-                        margin: EdgeInsets.only(
-                            left: 60, right: 3, top: 30, bottom: 30),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  // margin: EdgeInsets.only(left: 70),
+                  width: MediaQuery.of(context).copyWith().size.width, // - 100,
+                  height: 160.00,
+                  decoration: new BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.all(Radius.circular(25)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 10.0,
+                        spreadRadius: 2.0
+                      )
+                    ],
+                  ),
+                  child: Container(
+                    margin: EdgeInsets.only(left: 60, right: 3, top: 30, bottom: 30),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        // tutor
+                        Text(
+                          course.tutor,
+                          style: TextStyle(
+                            color: Color.fromRGBO(112, 112, 112, 1.0),
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        // title and no_lessons
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            Text(
-                              course.tutor,
-                              style: TextStyle(
-                                color: Color.fromRGBO(112, 112, 112, 1.0),
-                                fontSize: 14.0,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Container(
-                                  width: orientation == Orientation.portrait
-                                      ? MediaQuery.of(context)
-                                              .copyWith()
-                                              .size
-                                              .width -
-                                          300
-                                      : MediaQuery.of(context)
-                                              .copyWith()
-                                              .size
-                                              .width -
-                                          300,
-                                  child: Text(
-                                    course.title,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      color: Color.fromRGBO(107, 43, 20, 1.0),
-                                      fontSize: 20.0,
-                                      fontWeight: FontWeight.w800,
-                                    ),
-                                  ),
+                            Container(
+                              width: orientation == Orientation.portrait
+                                  ? MediaQuery.of(context)
+                                          .copyWith()
+                                          .size
+                                          .width -
+                                      300
+                                  : MediaQuery.of(context)
+                                          .copyWith()
+                                          .size
+                                          .width -
+                                      300,
+                              child: Text(
+                                course.title,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: Color.fromRGBO(107, 43, 20, 1.0),
+                                  fontSize: 20.0,
+                                  fontWeight: FontWeight.w800,
                                 ),
-                                Padding(
-                                  padding: EdgeInsets.only(right: 10.0),
-                                  child: Text(
-                                    "${course.lessons ?? 0} lessons",
-                                    style: TextStyle(
-                                      color: Color.fromRGBO(112, 112, 112, 1.0),
-                                      fontSize: 12.0,
-                                      fontWeight: FontWeight.w800,
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                            Text(
-                              course.description,
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 2,
-                              style: TextStyle(
-                                color: Color.fromRGBO(112, 112, 112, 1.0),
-                                fontSize: 15.0,
-                                fontWeight: FontWeight.w400,
                               ),
                             ),
+                            Padding(
+                              padding: EdgeInsets.only(right: 10.0),
+                              child: Text(
+                                "${course.lessons ?? 0} lessons",
+                                style: TextStyle(
+                                  color: Color.fromRGBO(112, 112, 112, 1.0),
+                                  fontSize: 12.0,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                            )
                           ],
-                        ))),
+                        ),
+                        // description
+                        Text(
+                          course.description,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                          style: TextStyle(
+                            color: Color.fromRGBO(112, 112, 112, 1.0),
+                            fontSize: 15.0,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
+                    )
+                  )
+                ),
+
+                // course thumbanil
+                /*
                 Container(
                   margin: EdgeInsets.symmetric(vertical: 20),
                   width: 120.00,
@@ -320,8 +332,10 @@ class AllCoursesPageState extends State<AllCoursesPage> {
                     borderRadius: BorderRadius.all(Radius.circular(25)),
                   ),
                 ),
-              ],
-            )),
+                */
+            //   ],
+            // )
+          ),
       ));
     });
 
@@ -332,8 +346,9 @@ class AllCoursesPageState extends State<AllCoursesPage> {
   Widget build(BuildContext context) {
     return new Scaffold(
         backgroundColor: Color.fromRGBO(243, 243, 243, 1.0),
-        body: OrientationBuilder(builder: (context, orientation) {
-          // All Page
+        body: 
+        OrientationBuilder(builder: (context, orientation) {
+          // All Courses
           return SingleChildScrollView(
             child: Column(children: <Widget>[
               // The top text
@@ -398,6 +413,7 @@ class AllCoursesPageState extends State<AllCoursesPage> {
               // the category identification
               Container(
                 margin: EdgeInsets.symmetric(vertical: 30),
+                width: MediaQuery.of(context).copyWith().size.width,
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[

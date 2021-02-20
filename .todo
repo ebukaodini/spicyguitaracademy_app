@@ -1,0 +1,56 @@
+Pending Tasks
+✔ Change practice to audio to practice loop @done(21-02-15 03:46)
+✔ Under the all courses, only currently studying course should be available to view its lessons @done(21-02-15 04:01)
+☐ The Loading is not animating
+☐ Side bar does not have any features
+☐ There is no content for the home page
+☐ Notification is not working too
+☐ Make the questions collapsable with the topest showing the most recent
+☐ In the courses section, the width for the titles is breaking @critical
+☐ The width on the allcourses > lessons is not working @critical 
+☐ Maximize video is not working
+☐ Search is not working
+☐ Settings page is not active
+☐ Search should only bring courses and only studying courses should be accessible
+☐ Featured video is not working
+☐ Handle navigation properly
+☐ Sort by order should be added
+☐ Implement the forgot password feature for mobile
+☐ Implement the forgot password feature for the web
+☐ Implement update  profile picture
+☐ Add tablatures to tutorial
+
+
+@homepage-content
+- current category
+- number of courses completed
+- number of lessons watched
+- percentage completed
+- ongoing lessons in course
+- tutors
+
+@sidebar-features
+- user avatar
+- user's fullname
+- course statistics
++ navs
+- home
+- notifications
+- videos
+- profile
+- settings
+- help
+
+@notes-on-search 
+- serach should return courses that the user is currently studying
+- when the user clicks on the course, it should go on and show lessons on the course
+- the lessons that are the current course would be playabale while those not would not be playable
+- the playable courses lead to the tutorial page
+
+@notes-on-navigating
+@authentication
+- whenever there is a http request that returns with authentication error, the context is used to push the login page
+- on successful logins, the page is popped else it keeps requesting authentication
+@subscription
+- once a user subscription expires
+

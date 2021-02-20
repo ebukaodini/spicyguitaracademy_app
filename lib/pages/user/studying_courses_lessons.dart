@@ -54,7 +54,8 @@ class StudyingCoursesLessonsState extends State<StudyingCoursesLessons> {
   Widget assignmentWidget = Container();
   var courseId = 0;
 
-  renderAssignment(resp) async {
+  renderAssignment(resp) {
+    print(resp['status']);
     if (resp['status'] == false) {
       setState(() {
         assignmentWidget = Container();
@@ -62,13 +63,22 @@ class StudyingCoursesLessonsState extends State<StudyingCoursesLessons> {
     } else {
       // currently returns details on the question only
       // should return for the question and the answer
-      Map<String, dynamic> json = resp['data'];
-      var assignmentNote = json['note'];
+      Map<String, dynamic> data = resp['data'];
+      // var assignmentNote = json['note'];
+      Assignment.id = data['id'];
+      Assignment.answerId = data['answerId'];
+      Assignment.questionNote = data['questionNote'];
+      Assignment.questionVideo = data['questionVideo'];
+      Assignment.tutor = data['tutor'];
+      Assignment.tutorId = data['tutor_id'];
+      Assignment.answerNote = data['answerNote'];
+      Assignment.answerVideo = data['answerVideo'];
+      Assignment.answerRating = data['rating'];
+      Assignment.answerDate = data['answerDate'];
       setState(() {
         assignmentWidget = new CupertinoButton(
             onPressed: () {
               Navigator.pushNamed(context, '/assignment_page');
-              // currentTutorial = lesson;
             },
             child: Container(
                 margin: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
@@ -103,7 +113,7 @@ class StudyingCoursesLessonsState extends State<StudyingCoursesLessons> {
                       Container(
                         margin: EdgeInsets.only(top: 3, bottom: 10),
                         child: Text(
-                          "by Tutor",
+                          Assignment.tutor ?? 'No Tutor',
                           // textAlign: TextAlign.left,
                           style: TextStyle(
                             color: Color.fromRGBO(112, 112, 112, 0.5),
@@ -115,7 +125,7 @@ class StudyingCoursesLessonsState extends State<StudyingCoursesLessons> {
                       Container(
                         width: 300,
                         child: Text(
-                          assignmentNote,
+                          Assignment.questionNote ?? 'No note',
                           overflow: TextOverflow.visible,
                           style: TextStyle(
                             color: Color.fromRGBO(112, 112, 112, 1.0),
@@ -124,6 +134,20 @@ class StudyingCoursesLessonsState extends State<StudyingCoursesLessons> {
                           ),
                         ),
                       ),
+                      Container(
+                            margin: EdgeInsets.only(top: 10.0),
+                            child: Text('Answer Ratings', style: TextStyle(color: Color.fromRGBO(107, 43, 20, 1.0))),
+                          ),
+                      Container(
+                        // width: 300,
+                        child: Row(children: [
+                          Icon(int.parse(Assignment.answerRating) > 0 ? Icons.star : Icons.star_border_outlined, color: Color.fromRGBO(107, 43, 20, 1.0)),
+                          Icon(int.parse(Assignment.answerRating) > 1 ? Icons.star : Icons.star_border_outlined, color: Color.fromRGBO(107, 43, 20, 1.0)),
+                          Icon(int.parse(Assignment.answerRating) > 2 ? Icons.star : Icons.star_border_outlined, color: Color.fromRGBO(107, 43, 20, 1.0)),
+                          Icon(int.parse(Assignment.answerRating) > 3 ? Icons.star : Icons.star_border_outlined, color: Color.fromRGBO(107, 43, 20, 1.0)),
+                          Icon(int.parse(Assignment.answerRating) > 4 ? Icons.star : Icons.star_border_outlined, color: Color.fromRGBO(107, 43, 20, 1.0)),
+                        ],)
+                      )
                     ])));
       });
     }
