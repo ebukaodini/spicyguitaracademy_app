@@ -1,7 +1,4 @@
-// import 'package:Spicy_Guitar_Academy/services/common.dart';
 import 'package:flutter/material.dart';
-// import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
 import '../../services/app.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -247,8 +244,8 @@ class RegisterPageState extends State<RegisterPage> {
                       ),
                       FlatButton(
                           onPressed: () {
-                            //{Navigator.pushNamed(context, "/forgotpassword_page");},
-                            // refirect to the terms and confitions page
+                            Navigator.pushNamed(
+                                context, "/terms_and_condition");
                           },
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
