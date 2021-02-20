@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../services/app.dart';
+import 'package:spicyguitaracademy/common.dart';
+import 'package:spicyguitaracademy/models.dart';
 
 class WelcomeNotePage extends StatefulWidget {
   @override

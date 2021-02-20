@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
-import '../../services/app.dart';
+import 'package:spicyguitaracademy/common.dart';
+import 'package:spicyguitaracademy/models.dart';
 // import '../../services/common.dart';
 
 class InviteFriend extends StatefulWidget {

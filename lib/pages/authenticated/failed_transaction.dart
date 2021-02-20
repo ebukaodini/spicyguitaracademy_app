@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../services/app.dart';
-// import '../../services/common.dart';
-
-class SuccessfulTransaction extends StatefulWidget{
+class FailedTransaction extends StatefulWidget{
   @override
-  SuccessfulTransactionState createState() => new SuccessfulTransactionState();
+  FailedTransactionState createState() => new FailedTransactionState();
 }
 
-class SuccessfulTransactionState extends State<SuccessfulTransaction>{
+class FailedTransactionState extends State<FailedTransaction>{
 
   @override
   void initState() {
@@ -59,7 +56,7 @@ class SuccessfulTransactionState extends State<SuccessfulTransaction>{
                     Container(
                       margin: const EdgeInsets.only(top: 0.0),
                       child: Text(
-                        "successful",
+                        "Failed",
                         style: TextStyle(
                           color: Color.fromRGBO(107, 43, 20, 1.0),
                           fontSize: 40.0,
@@ -72,7 +69,7 @@ class SuccessfulTransactionState extends State<SuccessfulTransaction>{
                     Container(
                       margin: const EdgeInsets.symmetric(vertical: 50.0),
                       child: SvgPicture.asset(
-                        "assets/imgs/icons/payment_successful_icon.svg",
+                        "assets/imgs/icons/payment_failed_icon.svg",
                         matchTextDirection: true,
                       ),
                     ),
@@ -82,13 +79,7 @@ class SuccessfulTransactionState extends State<SuccessfulTransaction>{
                       width: orientation == Orientation.portrait ? MediaQuery.of(context).copyWith().size.width : 400,
                       child: RaisedButton(
                         padding: EdgeInsets.symmetric(vertical: 18, horizontal: 20),
-                        onPressed: () {
-                          if (User.categoryStats == null) {
-                            Navigator.popAndPushNamed(context, "/choose_category");
-                          } else {
-                            Navigator.popAndPushNamed(context, "/ready_to_play");
-                          }
-                        },
+                        onPressed: () {Navigator.popAndPushNamed(context, "/choose_plan");},
                         color: Color.fromRGBO(107, 43, 20, 1.0),
                         textColor: Colors.white,
                         shape: RoundedRectangleBorder(
@@ -99,7 +90,7 @@ class SuccessfulTransactionState extends State<SuccessfulTransaction>{
                         child: Container(
                           alignment: Alignment.center,
                           margin: EdgeInsets.symmetric(horizontal: 50),
-                          child: Text("Continue",style: TextStyle( fontSize: 20.0)),
+                          child: Text("Go Back",style: TextStyle( fontSize: 20.0)),
                         ),
                         
                       ),

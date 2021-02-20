@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-// import '../../services/app.dart';
-// import '../../services/common.dart';
+import 'package:spicyguitaracademy/common.dart';
+import 'package:spicyguitaracademy/models.dart';
 
-class FailedTransaction extends StatefulWidget{
+class SuccessfulTransaction extends StatefulWidget{
   @override
-  FailedTransactionState createState() => new FailedTransactionState();
+  SuccessfulTransactionState createState() => new SuccessfulTransactionState();
 }
 
-class FailedTransactionState extends State<FailedTransaction>{
+class SuccessfulTransactionState extends State<SuccessfulTransaction>{
 
   @override
   void initState() {
@@ -59,7 +59,7 @@ class FailedTransactionState extends State<FailedTransaction>{
                     Container(
                       margin: const EdgeInsets.only(top: 0.0),
                       child: Text(
-                        "Failed",
+                        "successful",
                         style: TextStyle(
                           color: Color.fromRGBO(107, 43, 20, 1.0),
                           fontSize: 40.0,
@@ -72,7 +72,7 @@ class FailedTransactionState extends State<FailedTransaction>{
                     Container(
                       margin: const EdgeInsets.symmetric(vertical: 50.0),
                       child: SvgPicture.asset(
-                        "assets/imgs/icons/payment_failed_icon.svg",
+                        "assets/imgs/icons/payment_successful_icon.svg",
                         matchTextDirection: true,
                       ),
                     ),
@@ -82,7 +82,13 @@ class FailedTransactionState extends State<FailedTransaction>{
                       width: orientation == Orientation.portrait ? MediaQuery.of(context).copyWith().size.width : 400,
                       child: RaisedButton(
                         padding: EdgeInsets.symmetric(vertical: 18, horizontal: 20),
-                        onPressed: () {Navigator.popAndPushNamed(context, "/choose_plan");},
+                        onPressed: () {
+                          if (User.categoryStats == null) {
+                            Navigator.popAndPushNamed(context, "/choose_category");
+                          } else {
+                            Navigator.popAndPushNamed(context, "/ready_to_play");
+                          }
+                        },
                         color: Color.fromRGBO(107, 43, 20, 1.0),
                         textColor: Colors.white,
                         shape: RoundedRectangleBorder(
@@ -93,7 +99,7 @@ class FailedTransactionState extends State<FailedTransaction>{
                         child: Container(
                           alignment: Alignment.center,
                           margin: EdgeInsets.symmetric(horizontal: 50),
-                          child: Text("Go Back",style: TextStyle( fontSize: 20.0)),
+                          child: Text("Continue",style: TextStyle( fontSize: 20.0)),
                         ),
                         
                       ),

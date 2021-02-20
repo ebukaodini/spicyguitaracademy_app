@@ -2,7 +2,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
-import '../../services/app.dart';
+import 'package:spicyguitaracademy/common.dart';
+import 'package:spicyguitaracademy/models.dart';
 
 // import the all and the studying
 // import './all_courses.dart';

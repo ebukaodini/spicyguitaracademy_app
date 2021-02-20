@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:spicyguitaracademy/common.dart';
+import 'package:spicyguitaracademy/models.dart';
 
 class AllCoursesLessons extends StatefulWidget {
   AllCoursesLessons();

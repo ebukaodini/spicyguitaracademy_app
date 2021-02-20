@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../services/app.dart';
+import 'package:spicyguitaracademy/common.dart';
+import 'package:spicyguitaracademy/models.dart';
 
 class QuickLessonsPage extends StatefulWidget {
   final Orientation orientation;

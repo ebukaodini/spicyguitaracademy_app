@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 // import '../../services/app.dart';
-import './home_page.dart';
-import './courses_page.dart';
-import './quicklesson_page.dart';
-import './userprofile_page.dart';
+import 'package:spicyguitaracademy/pages/authenticated/home_page.dart';
+import 'package:spicyguitaracademy/pages/authenticated/courses_page.dart';
+import 'package:spicyguitaracademy/pages/authenticated/quicklesson_page.dart';
+import 'package:spicyguitaracademy/pages/authenticated/userprofile_page.dart';
 
 class Dashboard extends StatefulWidget {
   @override

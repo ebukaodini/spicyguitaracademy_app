@@ -1,25 +1,60 @@
 import 'package:flutter/material.dart';
-import '../../services/app.dart';
+import 'package:spicyguitaracademy/common.dart';
+import 'package:spicyguitaracademy/models.dart';
 
-class ReChooseCategory extends StatefulWidget {
+class ChooseCategory extends StatefulWidget {
   @override
-  ReChooseCategoryState createState() => new ReChooseCategoryState();
+  ChooseCategoryState createState() => new ChooseCategoryState();
 }
 
-class ReChooseCategoryState extends State<ReChooseCategory> {
+class ChooseCategoryState extends State<ChooseCategory> {
+  // properties
+  String _selectedCategory = "";
+  final _scaffoldKey = new GlobalKey<ScaffoldState>();
+
   @override
   void initState() {
     super.initState();
   }
-  final _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
-    // internal properties
-    int _completedCourses = User.categoryStats['takenCourses'];
-    int _totalCourses = User.categoryStats['allCourses'];
-    int _selectedCategory = User.category ?? 0;
-    // String _selectedCategory;
+    _titleOrient(orientation) {
+      if (orientation == Orientation.landscape) {
+        return Container(
+          child: Text(
+            "Choose a Category",
+            textWidthBasis: TextWidthBasis.longestLine,
+            style: TextStyle(
+                color: Color.fromRGBO(107, 43, 20, 1.0),
+                fontSize: 35.0,
+                fontWeight: FontWeight.w600),
+            strutStyle: StrutStyle(
+              fontSize: 35.0,
+              height: 1.8,
+            ),
+          ),
+        );
+      } else {
+        return Column(children: <Widget>[
+          Container(
+            child: Text("Choose a",
+                style: TextStyle(
+                    color: Color.fromRGBO(107, 43, 20, 1.0),
+                    fontSize: 35.0,
+                    fontWeight: FontWeight.w600)),
+          ),
+          Container(
+            margin: const EdgeInsets.only(top: 10.0),
+            child: Text("Category",
+                style: TextStyle(
+                    color: Color.fromRGBO(107, 43, 20, 1.0),
+                    fontSize: 35.0,
+                    fontWeight: FontWeight.w600)),
+          ),
+        ]);
+      }
+    }
 
     return new Scaffold(
         key: _scaffoldKey,
@@ -29,7 +64,6 @@ class ReChooseCategoryState extends State<ReChooseCategory> {
             minimum: EdgeInsets.all(20),
             child: SingleChildScrollView(
                 child: Column(children: <Widget>[
-              // back button
               Container(
                 alignment: Alignment.topLeft,
                 margin: EdgeInsets.only(top: 20, left: 2, bottom: 10),
@@ -37,6 +71,7 @@ class ReChooseCategoryState extends State<ReChooseCategory> {
                   minWidth: 20,
                   color: Colors.white,
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+                  // onPressed: (){ Navigator.popAndPushNamed(context, "/welcome_note");},
                   onPressed: () {
                     Navigator.pop(context);
                   },
@@ -50,39 +85,11 @@ class ReChooseCategoryState extends State<ReChooseCategory> {
                       side: BorderSide(color: Colors.white)),
                 ),
               ),
-
               Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
-                  // title text
-                  Container(
-                    child: Text("Choose a \nCategory",
-                        overflow: TextOverflow.clip,
-                        maxLines: 2,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            color: Color.fromRGBO(107, 43, 20, 1.0),
-                            fontSize: 35.0,
-                            fontWeight: FontWeight.w600)),
-                  ),
-
-                  // message test
-                  Container(
-                    margin: const EdgeInsets.symmetric(vertical: 20.0),
-                    width: 300,
-                    child: Text(
-                      // _completedCourses == _totalCourses ?  : "You have not completed all courses in this category." ,
-                      "You have completed $_completedCourses out $_totalCourses courses in this category!",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          color: Color.fromRGBO(
-                              112, 112, 112, 1.0), //(107, 43, 20, 1.0),
-                          fontSize: 20.0),
-                    ),
-                  ),
-
-                  // category blocks
+                  _titleOrient(orientation),
                   Container(
                       margin: const EdgeInsets.only(top: 60.0),
                       child: Row(
@@ -98,14 +105,12 @@ class ReChooseCategoryState extends State<ReChooseCategory> {
                             child: RaisedButton(
                               padding: EdgeInsets.symmetric(
                                   vertical: 20, horizontal: 30),
-                              onPressed: () {
-                                if (_completedCourses == _totalCourses)
-                                  setState(() => _selectedCategory = 1);
-                              },
-                              color: _selectedCategory == 1
+                              onPressed: () => setState(
+                                  () => _selectedCategory = "Beginner"),
+                              color: _selectedCategory == "Beginner"
                                   ? Color.fromRGBO(107, 43, 20, 1.0)
                                   : Colors.white,
-                              textColor: _selectedCategory == 1
+                              textColor: _selectedCategory == "Beginner"
                                   ? Colors.white
                                   : Color.fromRGBO(107, 43, 20, 1.0),
                               shape: RoundedRectangleBorder(
@@ -130,14 +135,12 @@ class ReChooseCategoryState extends State<ReChooseCategory> {
                             child: RaisedButton(
                               padding: EdgeInsets.symmetric(
                                   vertical: 20, horizontal: 30),
-                              onPressed: () {
-                                if (_completedCourses == _totalCourses)
-                                  setState(() => _selectedCategory = 2);
-                              },
-                              color: _selectedCategory == 2
+                              onPressed: () =>
+                                  setState(() => _selectedCategory = "Amateur"),
+                              color: _selectedCategory == "Amateur"
                                   ? Color.fromRGBO(107, 43, 20, 1.0)
                                   : Colors.white,
-                              textColor: _selectedCategory == 2
+                              textColor: _selectedCategory == "Amateur"
                                   ? Colors.white
                                   : Color.fromRGBO(107, 43, 20, 1.0),
                               shape: RoundedRectangleBorder(
@@ -156,7 +159,6 @@ class ReChooseCategoryState extends State<ReChooseCategory> {
                           )
                         ],
                       )),
-
                   Container(
                       margin: EdgeInsets.only(
                         top: orientation == Orientation.portrait ? 20.0 : 40.0,
@@ -174,14 +176,12 @@ class ReChooseCategoryState extends State<ReChooseCategory> {
                             child: RaisedButton(
                               padding: EdgeInsets.symmetric(
                                   vertical: 20, horizontal: 16),
-                              onPressed: () {
-                                if (_completedCourses == _totalCourses)
-                                  setState(() => _selectedCategory = 3);
-                              },
-                              color: _selectedCategory == 3
+                              onPressed: () => setState(
+                                  () => _selectedCategory = "Intermediate"),
+                              color: _selectedCategory == "Intermediate"
                                   ? Color.fromRGBO(107, 43, 20, 1.0)
                                   : Colors.white,
-                              textColor: _selectedCategory == 3
+                              textColor: _selectedCategory == "Intermediate"
                                   ? Colors.white
                                   : Color.fromRGBO(107, 43, 20, 1.0),
                               shape: RoundedRectangleBorder(
@@ -206,14 +206,12 @@ class ReChooseCategoryState extends State<ReChooseCategory> {
                             child: RaisedButton(
                               padding: EdgeInsets.symmetric(
                                   vertical: 20, horizontal: 25),
-                              onPressed: () {
-                                if (_completedCourses == _totalCourses)
-                                  setState(() => _selectedCategory = 4);
-                              },
-                              color: _selectedCategory == 4
+                              onPressed: () => setState(
+                                  () => _selectedCategory = "Advanced"),
+                              color: _selectedCategory == "Advanced"
                                   ? Color.fromRGBO(107, 43, 20, 1.0)
                                   : Colors.white,
-                              textColor: _selectedCategory == 4
+                              textColor: _selectedCategory == "Advanced"
                                   ? Colors.white
                                   : Color.fromRGBO(107, 43, 20, 1.0),
                               shape: RoundedRectangleBorder(
@@ -232,22 +230,33 @@ class ReChooseCategoryState extends State<ReChooseCategory> {
                           )
                         ],
                       )),
-
-                  // confirm btn
                   Container(
                     margin: const EdgeInsets.only(top: 100.0, bottom: 30.0),
                     width: 310,
                     child: RaisedButton(
                       padding:
                           EdgeInsets.symmetric(vertical: 18, horizontal: 20),
-                      onPressed: (_selectedCategory == User.category || _selectedCategory == 0)
+                      onPressed: _selectedCategory == ""
                           ? null
                           : () async {
-                              // Navigator.pushNamed(context, "/ready_to_play");
-                              // go back and select another category
-                              String category = _selectedCategory.toString();
-                              
-                              
+                              String category = '0';
+                              switch (_selectedCategory) {
+                                case "Beginner":
+                                  category = '1';
+                                  break;
+                                case "Amateur":
+                                  category = '2';
+                                  break;
+                                case "Intermediate":
+                                  category = '3';
+                                  break;
+                                case "Advanced":
+                                  category = '4';
+                                  break;
+                                default:
+                                  category = '1';
+                              }
+
                               loading(context);
                               var resp = await request('POST', chooseCategory,
                                   body: {'category': category});
@@ -280,14 +289,13 @@ class ReChooseCategoryState extends State<ReChooseCategory> {
                                       context, "/ready_to_play");
                                 }
                               }
-
                             },
-                      color: _selectedCategory == 0
+                      color: _selectedCategory == ""
                           ? Colors.white
                           : Color.fromRGBO(107, 43, 20, 1.0),
                       disabledColor: Colors.white,
                       disabledTextColor: Color.fromRGBO(107, 43, 20, 1.0),
-                      textColor: _selectedCategory == 0
+                      textColor: _selectedCategory == ""
                           ? Color.fromRGBO(107, 43, 20, 1.0)
                           : Colors.white,
                       shape: RoundedRectangleBorder(

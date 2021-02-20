@@ -8,36 +8,35 @@ import 'package:spicyguitaracademy/pages/public/landing_page.dart';
 import 'package:spicyguitaracademy/pages/public/welcome_page.dart';
 import 'package:spicyguitaracademy/pages/public/register_page.dart';
 import 'package:spicyguitaracademy/pages/public/login_page.dart';
-import 'package:spicyguitaracademy/pages/user/welcome_note.dart';
-import 'package:spicyguitaracademy/pages/user/choose_plan.dart';
-// import 'package:spicyguitaracademy/pages/user/paystack_page.dart';
-import 'package:spicyguitaracademy/pages/user/successful_transaction.dart';
-import 'package:spicyguitaracademy/pages/user/failed_transaction.dart';
-import 'package:spicyguitaracademy/pages/user/ready_to_play.dart';
-import 'package:spicyguitaracademy/pages/user/start_loading.dart';
-import 'package:spicyguitaracademy/pages/user/choose_category.dart';
-import 'package:spicyguitaracademy/pages/user/dashboard.dart';
-import 'package:spicyguitaracademy/pages/user/search_page.dart';
-import 'package:spicyguitaracademy/pages/user/rechoose_plan.dart';
-import 'package:spicyguitaracademy/pages/user/rechoose_category.dart';
-import 'package:spicyguitaracademy/pages/user/invite_friend.dart';
-import 'package:spicyguitaracademy/pages/user/userprofile_page.dart';
-import 'package:spicyguitaracademy/pages/user/all_courses_lessons.dart';
-import 'package:spicyguitaracademy/pages/user/studying_courses_lessons.dart';
-import 'package:spicyguitaracademy/pages/user/quicklesson_video.dart';
-import 'package:spicyguitaracademy/pages/user/tutorial_page.dart';
-import 'package:spicyguitaracademy/pages/user/assignment_page.dart';
-import 'package:spicyguitaracademy/pages/user/tutorial_practice.dart';
-import 'package:spicyguitaracademy/services/imgupload.dart';
+import 'package:spicyguitaracademy/pages/authenticated/welcome_note.dart';
+import 'package:spicyguitaracademy/pages/authenticated/choose_plan.dart';
+import 'package:spicyguitaracademy/pages/authenticated/successful_transaction.dart';
+import 'package:spicyguitaracademy/pages/authenticated/failed_transaction.dart';
+import 'package:spicyguitaracademy/pages/authenticated/ready_to_play.dart';
+import 'package:spicyguitaracademy/pages/authenticated/start_loading.dart';
+import 'package:spicyguitaracademy/pages/authenticated/choose_category.dart';
+import 'package:spicyguitaracademy/pages/authenticated/dashboard.dart';
+import 'package:spicyguitaracademy/pages/authenticated/search_page.dart';
+import 'package:spicyguitaracademy/pages/authenticated/rechoose_plan.dart';
+import 'package:spicyguitaracademy/pages/authenticated/rechoose_category.dart';
+import 'package:spicyguitaracademy/pages/authenticated/invite_friend.dart';
+import 'package:spicyguitaracademy/pages/authenticated/userprofile_page.dart';
+import 'package:spicyguitaracademy/pages/authenticated/all_courses_lessons.dart';
+import 'package:spicyguitaracademy/pages/authenticated/studying_courses_lessons.dart';
+import 'package:spicyguitaracademy/pages/authenticated/quicklesson_video.dart';
+import 'package:spicyguitaracademy/pages/authenticated/tutorial_page.dart';
+import 'package:spicyguitaracademy/pages/authenticated/assignment_page.dart';
+import 'package:spicyguitaracademy/pages/authenticated/tutorial_practice.dart';
+// import 'package:spicyguitaracademy/pages/authenticated/paystack_page.dart';
+// import 'package:spicyguitaracademy/services/imgupload.dart';
 
 // import 'services/app.dart';
 
 void main()
 {
   // SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
-  //   .then((_) {
-      runApp(new MyApp());
-    // });
+  // .then((_) {});
+  runApp(new MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -47,6 +46,8 @@ class MyApp extends StatelessWidget {
 
     // cache
     // precacheImage(AssetImage("assets/imgs/icons/spicy_guitar_logo.png"), context);
+    // width: DeviceUtil.getScreenWidth(context),
+    // height: DeviceUtil.getScreenHeight(context),
 
     return new MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -55,7 +56,15 @@ class MyApp extends StatelessWidget {
         // colors
         primaryColor: Color(0xFF6B2B14),
         // accentColor: Color(0xFF471D0E),
-        buttonColor: Color(0xFF6B2B14),
+        // buttonColor: Color(0xFF6B2B14),
+
+        buttonTheme: ButtonThemeData(
+          buttonColor: Color(0xFF6B2B14),
+          focusColor: Color(0xFF471D0E),
+          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          layoutBehavior: ButtonBarLayoutBehavior.padded,
+          splashColor: Color(0xFF471D0E)
+        ),
 
         // brightness
         brightness: Brightness.light,
@@ -91,9 +100,9 @@ class MyApp extends StatelessWidget {
       routes: <String, WidgetBuilder> {
         '/': (BuildContext context) => new LandingPage(), // landing_page
         '/welcome_page': (BuildContext context) => new WelcomePage(),
-        '/register_page': (BuildContext context) => new RegisterPage(),
+        '/register': (BuildContext context) => new RegisterPage(),
         '/terms_and_condition': (BuildContext context) => new TermsAndCondition(),
-        '/login_page': (BuildContext context) => new LoginPage(),
+        '/login': (BuildContext context) => new LoginPage(),
         '/welcome_note': (BuildContext context) => new WelcomeNotePage(),
         '/choose_plan': (BuildContext context) => new ChoosePlan(),
         '/successful_transaction': (BuildContext context) => new SuccessfulTransaction(),
@@ -113,7 +122,7 @@ class MyApp extends StatelessWidget {
         '/tutorial_page': (BuildContext context) => new TutorialPage(),
         '/assignment_page': (BuildContext context) => new AssignmentPage(),
         '/tutorial_practice': (BuildContext context) => new TutorialPractice(),
-        '/demo': (BuildContext context) => new UploadImageDemo()
+        // '/demo': (BuildContext context) => new UploadImageDemo()
       },
     );
   }

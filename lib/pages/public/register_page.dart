@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../services/app.dart';
+import 'package:spicyguitaracademy/common.dart';
+import 'package:spicyguitaracademy/models.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -268,32 +269,46 @@ class RegisterPageState extends State<RegisterPage> {
                       margin: const EdgeInsets.symmetric(vertical: 30.0),
                       child: RaisedButton(
                           onPressed: () async {
-                            if (_agreedTCPP == true) {
-                              // submit
+                            try {
                               loading(context);
-                              var resp = await request('GET', register, body: {
-                                'firstname': _fname.text,
-                                'lastname': _lname.text,
-                                'email': _email.text,
-                                'telephone': _tel.text,
-                                'password': _pass.text,
-                                'cpassword': _cpass.text
-                              });
+
+                              if (_agreedTCPP == true) {
+                                throw Exception(
+                                    'Please agree to Terms and Condition.');
+                              }
+
+                              var resp = await request('/api/register',
+                                  method: 'POST',
+                                  body: {
+                                    'firstname': _fname.text,
+                                    'lastname': _lname.text,
+                                    'email': _email.text,
+                                    'telephone': _tel.text,
+                                    'password': _pass.text,
+                                    'cpassword': _cpass.text
+                                  });
+
                               Navigator.pop(context);
+
                               if (resp['status'] == true) {
-                                Navigator.pushNamed(context, "/login_page");
+                                success(context, 'Registeration Successful');
+                                Navigator.pushNamed(context, "/login");
                               } else {
+                                
                                 // TODO: handle error messages
                                 // if (resp['data'] != null) {
                                 //   String msg = resp['data'].toList();
                                 // }
+
                                 error(context, resp['message']);
                               }
-                            } else {
-                              error(context,
-                                  'Please agree to Terms and Condition.');
+                            } catch (e) {
+                              Navigator.pop(context);
+                              error(context, e);
+                              return false;
                             }
                           },
+                          
                           color: Color.fromRGBO(107, 43, 20, 1.0),
                           textColor: Colors.white,
                           autofocus: false,

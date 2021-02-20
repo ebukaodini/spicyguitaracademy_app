@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 // import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../../services/app.dart';
+import 'package:spicyguitaracademy/common.dart';
+import 'package:spicyguitaracademy/models.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -130,37 +131,44 @@ class LoginPageState extends State<LoginPage> {
                     width: double.infinity,
                     child: RaisedButton(
                         onPressed: () async {
-                          loading(context);
-                          var resp = await request('POST', login, body: {
-                            'email': _email.text,
-                            'password': _pass.text
-                          });
-                          Navigator.pop(context);
-                          if (resp == false)
-                            Navigator.pushNamedAndRemoveUntil(
-                                context, '/login_page', (route) => false);
-                          // Map<String, dynamic> json = resp;
-                          if (resp['status'] == true) {
-                            var data = resp['data'];
-                            User.reset();
-                            User.id = data['student']['id'];
-                            User.firstname = data['student']['firstname'];
-                            User.lastname = data['student']['lastname'];
-                            User.email = data['student']['email'];
-                            User.telephone = data['student']['telephone'];
-                            User.avatar = data['student']['avatar'];
-                            User.token = data['token'];
-                            User.justLoggedIn = true;
+                          try {
+                            loading(context);
+                            var resp = await request('/api/login',
+                                method: 'POST',
+                                body: {
+                                  'email': _email.text,
+                                  'password': _pass.text
+                                });
 
-                            // if (User.wasLoggedIn == true) {
-                            //   Navigator.pushNamed(context, "/ready_to_play");
-                            // } else {
-                            User.wasLoggedIn = true;
-                            Navigator.pushNamed(context, "/welcome_note");
-                            // }
-                          } else {
-                            error(context, resp['message']);
+                            Navigator.pop(context);
+
+                            if (resp['status'] == true) {
+                              var data = resp['data'];
+                              User.reset();
+                              User.id = data['student']['id'];
+                              User.firstname = data['student']['firstname'];
+                              User.lastname = data['student']['lastname'];
+                              User.email = data['student']['email'];
+                              User.telephone = data['student']['telephone'];
+                              User.avatar = data['student']['avatar'];
+                              User.token = data['token'];
+                              User.justLoggedIn = true;
+
+                              if (reAuthentication == true) {
+                                reAuthentication = false;
+                                Navigator.pop(context);
+                              } else {
+                                Navigator.pushNamed(context, "/welcome_note");
+                              }
+
+                            } else {
+                              error(context, resp['message']);
+                            }
+                          } catch (e) {
+                            Navigator.pop(context);
+                            error(context, e);
                           }
+
                         },
                         color: Color.fromRGBO(107, 43, 20, 1.0),
                         textColor: Colors.white,

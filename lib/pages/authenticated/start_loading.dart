@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-// import 'dart:async';
 
-import 'package:spicyguitaracademy/services/app.dart';
+import 'package:spicyguitaracademy/common.dart';
+import 'package:spicyguitaracademy/models.dart';
 
 class StartLoading extends StatefulWidget {
   @override

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-// import 'dart:math';
+import 'package:spicyguitaracademy/common.dart';
+import 'package:spicyguitaracademy/models.dart';
 
 class SearchPage extends StatefulWidget {
   

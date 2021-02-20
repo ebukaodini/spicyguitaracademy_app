@@ -3,7 +3,8 @@ import 'package:cache_audio_player/cache_audio_player.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
-import '../../services/app.dart';
+import 'package:spicyguitaracademy/common.dart';
+import 'package:spicyguitaracademy/models.dart';
 
 class TutorialPractice extends StatefulWidget {
   TutorialPractice();

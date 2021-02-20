@@ -17,7 +17,8 @@ import 'package:flutter/cupertino.dart';
 // import 'package:flutter_full_pdf_viewer/full_pdf_viewer_scaffold.dart';
 // import 'package:path_provider/path_provider.dart';
 
-import '../../services/app.dart';
+import 'package:spicyguitaracademy/common.dart';
+import 'package:spicyguitaracademy/models.dart';
 
 // // Audio
 // import 'dart:io';

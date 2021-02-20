@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 // import 'dart:math';
 
 // import the all and the studying
-import './all_courses.dart';
-import './studying_courses.dart';
-import './not_studying_courses.dart';
+import 'package:spicyguitaracademy/pages/authenticated/all_courses.dart';
+import 'package:spicyguitaracademy/pages/authenticated/studying_courses.dart';
+import 'package:spicyguitaracademy/pages/authenticated/not_studying_courses.dart';
 
 class CoursesPage extends StatefulWidget{
 

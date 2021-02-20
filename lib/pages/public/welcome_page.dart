@@ -45,18 +45,7 @@ class WelcomePage extends StatelessWidget {
                 Container(
                   margin: const EdgeInsets.only(top: 10.0, bottom: 5.0),
                   child: Text(
-                    "Hi, Welcome to Spicy Guitar",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20.0
-                    )
-                  ),
-                ),
-
-                Container(
-                  margin: const EdgeInsets.only(top: 5.0, bottom: 20.0),
-                  child: Text(
-                    "Academy",
+                    "Hi, Welcome to Spicy Guitar Academy",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20.0
@@ -67,7 +56,7 @@ class WelcomePage extends StatelessWidget {
                 Container(
                   margin: const EdgeInsets.only(top: 15.0, bottom: 15.0),
                   child: RaisedButton(
-                    onPressed: () {Navigator.pushNamed(context, "/login_page");},
+                    onPressed: () {Navigator.pushNamed(context, "/login");},
                     color: Colors.transparent,
                     textColor: Colors.white,
                     shape: RoundedRectangleBorder(
@@ -80,14 +69,15 @@ class WelcomePage extends StatelessWidget {
                 ),
 
                 Container(
-                  margin: const EdgeInsets.only(top: 15.0, bottom: 15.0),
+                  width: MediaQuery.of(context).copyWith().size.width - 30.0,
                   child: RaisedButton(
-                    onPressed: () {Navigator.pushNamed(context, "/register_page");},
-                    color: Color.fromRGBO(107, 43, 20, 1.0),
+                    onPressed: () {
+                      Navigator.pushNamed(context, "/register");
+                    },
                     textColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: new BorderRadius.circular(15.0),
-                      // side: BorderSide(color: Colors.white)
+                      side: BorderSide(color: Colors.white)
                     ),
                     padding: EdgeInsets.fromLTRB(135, 10, 135, 10),
                     child: Text("Signup",style: TextStyle( fontSize: 20.0 )),
