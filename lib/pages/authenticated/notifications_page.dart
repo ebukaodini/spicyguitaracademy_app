@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:spicyguitaracademy/common.dart';
 import 'package:spicyguitaracademy/models.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
-class SearchPage extends StatefulWidget {
+class NotificationPage extends StatefulWidget {
   @override
-  SearchPageState createState() => new SearchPageState();
+  NotificationPageState createState() => new NotificationPageState();
 }
 
-class SearchPageState extends State<SearchPage> {
+class NotificationPageState extends State<NotificationPage> {
   // properties
   List<Widget> _searchResult = [];
   TextEditingController _search = TextEditingController();
@@ -27,15 +28,14 @@ class SearchPageState extends State<SearchPage> {
       var title = course.title.trim().toLowerCase();
       var description = course.description.trim().toLowerCase();
 
-      // print("q: " + course.title);
+      print("q: " + course.title);
       if (title.contains(value) || description.contains(value)) {
-        // print("r: " + course.title);
+        print("r: " + course.title);
         result.add(renderCourse(course, context, () async {
           loading(context);
           await Lessons.getLessons(context, course.id);
           await Courses.getAssigment(context, course.id);
           Navigator.pop(context);
-          Lessons.source = LessonSource.normal;
           Navigator.pushNamed(context, "/lessons_page", arguments: {
             'courseTitle': course.title,
             'courseActive': course.status,
@@ -63,44 +63,21 @@ class SearchPageState extends State<SearchPage> {
         backgroundColor: grey,
         centerTitle: true,
         title: Text(
-          'Search',
+          'Notifications',
           style: TextStyle(
               color: brown,
-              fontSize: 30,
+              // fontSize: 30,
               fontFamily: "Poppins",
               fontWeight: FontWeight.normal),
         ),
         elevation: 0,
       ),
       body: SingleChildScrollView(
-          child: Column(children: <Widget>[
-        // Search container
-        Container(
-            padding: EdgeInsets.all(5),
-            width: screen(context).width,
-            decoration: BoxDecoration(
-              color: grey,
-            ),
-            child: TextField(
-                controller: _search,
-                autocorrect: true,
-                textInputAction: TextInputAction.search,
-                onSubmitted: (value) => _searchCourses(value),
-                style: TextStyle(fontSize: 20.0, color: brown),
-                decoration: InputDecoration(
-                    hintText: "Search",
-                    suffix: IconButton(
-                        onPressed: () {
-                          // _searchCourses(_search.text);
-                        },
-                        icon: Icon(
-                          Icons.search,
-                          color: brown,
-                        ))))),
-
-        Column(
-          children: _searchResult,
-        )
+        child: Column(children: <Widget>[
+        
+          Column(
+            children: _searchResult,
+          )
       ])),
     );
   }

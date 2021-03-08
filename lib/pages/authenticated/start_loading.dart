@@ -16,38 +16,29 @@ class StartLoadingState extends State<StartLoading> {
   }
 
   void _initializeCoursesAndLessons() async {
-    {
-      var resp = await request('GET', allCourses);
-      if (resp == false)
-        Navigator.pushNamedAndRemoveUntil(
-            context, '/login_page', (route) => false);
-      // Map<String, dynamic> json = resp;
-      Courses.allCourses = resp['data'];
+    // get all courses
+    await Courses.getAllCourses(context);
+
+    if (Student.subscription == true && Student.studyingCategory != 0) {
+      // get the courses currently being studied
+      await Courses.getStudyingCourses(context);
+    } else {
+      // get the courses studied by this student in the past
+      // get the lessons studied by this student in the past
     }
-    {
-      var resp = await request('GET', studyingCourses);
-      if (resp == false)
-        Navigator.pushNamedAndRemoveUntil(
-            context, '/login_page', (route) => false);
-      // List<dynamic> json = resp['courses'];
-      Courses.studyingCourses = resp['data'];
-    }
-    {
-      var resp = await request('GET', allQuickLessons);
-      if (resp == false)
-        Navigator.pushNamedAndRemoveUntil(
-            context, '/login_page', (route) => false);
-      // List<dynamic> json = resp['lessons'];
-      Courses.allQuickLessons = resp['status'] == true ? resp['data'] : [];
-    }
-    {
-      var resp = await request('GET', freeLessons);
-      if (resp == false)
-        Navigator.pushNamedAndRemoveUntil(
-            context, '/login_page', (route) => false);
-      // List<dynamic> json = resp['lessons'];
-      Courses.freeLessons = resp['status'] == true ? resp['data'] : [];
-    }
+
+    // get featured courses
+    await Courses.getAllFeaturedCourses(context);
+
+    // get my fewatured courses
+    await Courses.getMyFeaturedCourses(context);
+
+    // get free lessons
+    await Lessons.getFreeLessons(context);
+
+    Student.isLoaded = true;
+
+    // route to dashboard
     Navigator.pushReplacementNamed(context, "/dashboard");
   }
 
@@ -65,8 +56,7 @@ class StartLoadingState extends State<StartLoading> {
                 margin: EdgeInsets.only(top: 30.0),
                 child: Text(
                   "Loading...",
-                  style: TextStyle(
-                      color: Color.fromRGBO(107, 43, 20, 1.0), fontSize: 20),
+                  style: TextStyle(color: brown, fontSize: 20),
                 ))
           ],
         ),

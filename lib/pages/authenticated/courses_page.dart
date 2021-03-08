@@ -1,128 +1,91 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-// import 'dart:math';
-
+import 'package:spicyguitaracademy/common.dart';
+import 'package:spicyguitaracademy/models.dart';
 // import the all and the studying
 import 'package:spicyguitaracademy/pages/authenticated/all_courses.dart';
 import 'package:spicyguitaracademy/pages/authenticated/studying_courses.dart';
-import 'package:spicyguitaracademy/pages/authenticated/not_studying_courses.dart';
+import 'package:spicyguitaracademy/pages/authenticated/no_studying_courses.dart';
 
-class CoursesPage extends StatefulWidget{
-
+class CoursesPage extends StatefulWidget {
   CoursesPage();
 
   @override
   CoursesPageState createState() => new CoursesPageState();
 }
 
-class CoursesPageState extends State<CoursesPage> with SingleTickerProviderStateMixin {
-
+class CoursesPageState extends State<CoursesPage>
+    with SingleTickerProviderStateMixin {
   CoursesPageState();
 
   TabController _tabController;
+  int tabPageIndex = 0;
+  List<dynamic> tabPageOption = [
+    // Studying Page
+    Student.studyingCategory == 0
+        ? NoStudyingCoursesPage()
+        : StudyingCoursesPage(),
+    AllCoursesPage()
+  ];
 
   @override
   void initState() {
     super.initState();
-    // TabController 
+    // TabController
     _tabController = new TabController(vsync: this, length: 2);
   }
 
   @override
   Widget build(BuildContext context) {
-    
-    int _currentCourse = 4;
-    
-    return new Scaffold(
-      backgroundColor: Color.fromRGBO(243, 243, 243, 1.0),
-      body: OrientationBuilder(
-        
-        builder: (context, orientation) {
-          
-          return SafeArea(
-            child: new Scaffold(
-              backgroundColor: Color.fromRGBO(243, 243, 243, 1.0),
-              
-              appBar: new PreferredSize(
-                preferredSize: Size.fromHeight(100),
-                child: 
-                Container(
-                  margin: EdgeInsets.symmetric(vertical: 20.0, horizontal: 10.0),
-                  height: 60,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(30)
-                    ),
-                  ),
-                  child: 
-                  TabBar(
-                    controller: _tabController,
-                    onTap: (index) {},
-                    indicatorSize: TabBarIndicatorSize.tab,
-                    indicator: BoxDecoration(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(30)
-                      ),
-                      color: Color.fromRGBO(107, 43, 20, 1.0),
-                    ),
-                    unselectedLabelColor: Color.fromRGBO(107, 43, 20, 1.0),
-                    unselectedLabelStyle: TextStyle(
-                      fontWeight: FontWeight.w500
-                    ),
-                    
-                    tabs: <Widget>[
-                      
-                      Tab(
-                        child: Text(
-                          "ALL",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w500
-                          ),
-                        )
-                      ),
-
-                      Tab(
-                        child: Text(
-                          "STUDYING",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w500
-                          ),
-                        )
-                      ),
-                    
-                    ],
-                  ),
-                ),
+    return Scaffold(
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(100),
+          child: Container(
+            height: 50,
+            margin: EdgeInsets.only(bottom: 5),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.all(Radius.circular(30)),
+            ),
+            child: TabBar(
+              controller: _tabController,
+              onTap: (index) {
+                setState(() => tabPageIndex = index);
+              },
+              indicatorSize: TabBarIndicatorSize.tab,
+              indicator: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(30)),
+                color: brown,
               ),
-              
-              body:
-              SafeArea(
-                minimum: EdgeInsets.symmetric(vertical: 0.0, horizontal: 7.0),
-                
-                child: TabBarView(
-                  dragStartBehavior: DragStartBehavior.start,
-                  controller: _tabController,
-                  children: <Widget>[
-                    // _tabController.index.toString()
+              unselectedLabelColor: brown,
+              unselectedLabelStyle: TextStyle(fontWeight: FontWeight.w500),
+              tabs: <Widget>[
+                Tab(
+                    child: Text(
+                  "STUDYING COURSES",
+                  style: TextStyle(fontWeight: FontWeight.w500),
+                )),
+                Tab(
+                    child: Text(
+                  "ALL COURSES",
+                  style: TextStyle(fontWeight: FontWeight.w500),
+                )),
+              ],
+            ),
+          ),
+        ),
+        body: TabBarView(
+            dragStartBehavior: DragStartBehavior.start,
+            controller: _tabController,
+            children: <Widget>[
+              // Studying Page
+              Student.studyingCategory == 0
+                  ? NoStudyingCoursesPage()
+                  : StudyingCoursesPage(),
 
-                    // All Page
-                    new AllCoursesPage(),
-
-                    // Studying Page
-                    _currentCourse == 0 ? new NotStyudyingCoursesPage() : new StyudyingCoursesPage(),
-
-                  ]
-
-                )
-              )
-            )
-          );
-
-        }
-      )
-    );
+              // All Page
+              AllCoursesPage(),
+            ]));
   }
-
 }

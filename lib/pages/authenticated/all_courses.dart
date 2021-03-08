@@ -1,7 +1,6 @@
 // import 'package:flutter/gestures.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'dart:math';
 import 'package:spicyguitaracademy/common.dart';
 import 'package:spicyguitaracademy/models.dart';
 
@@ -10,539 +9,212 @@ import 'package:spicyguitaracademy/models.dart';
 // import './studying_courses.dart';
 
 class AllCoursesPage extends StatefulWidget {
-  AllCoursesPage();
-
   @override
   AllCoursesPageState createState() => new AllCoursesPageState();
 }
 
-class Course {
-  // the properties on the class
-  String thumbnail, tutor, title, description, lessons, courseId;
-
-  // constructing from json
-  Course.fromJson(Map<String, dynamic> json) {
-    courseId = json['id'];
-    thumbnail = json['thumbnail'];
-    tutor = json['tutor'];
-    title = json['course'];
-    description = json['description'];
-    lessons = json['lessons'];
-  }
-}
-
-parseCourses(_courses) {
-  var courses = <dynamic>[];
-  for (var course in _courses) {
-    courses.add(new Course.fromJson(course));
-  }
-  return courses;
-}
-
-getLessons(courseId) async {
-  var resp = await request('GET', courseLessons(courseId));
-  if (resp == false) return [];
-  // List<dynamic> json = resp['lessons'];
-  if (resp['status'] == true)
-    return resp['data'];
-  else
-    return [];
-}
-
 class AllCoursesPageState extends State<AllCoursesPage> {
-  AllCoursesPageState();
-
   @override
   void initState() {
     super.initState();
   }
 
-  final beginnersCourses = parseCourses(Courses.allCourses['beginners']);
-
-  final amateurCourses = parseCourses(Courses.allCourses['amateurs']);
-
-  final intermediateCourses = parseCourses(Courses.allCourses['intermediates']);
-
-  final advancedCourses = parseCourses(Courses.allCourses['advanceds']);
-
-  final categoryThumbnails = [];
-  String beginnersCategoryThumbnails =
-      "assets/imgs/pictures/beginners_thumbnail.jpg";
-  String amateurCategoryThumbnails =
-      "assets/imgs/pictures/amateur_thumbnail.jpg";
-  String intermediaryCategoryThumbnails =
-      "assets/imgs/pictures/intermediate_thumbnail.jpg";
-  String advancedCategoryThumbnails =
-      "assets/imgs/pictures/advanced_thumbnail.jpg";
-
-  String _sortBeginnersValue = "Tutor";
-  String _sortAmateurValue = "Tutor";
-  String _sortIntermediateValue = "Tutor";
-  String _sortAdvancedValue = "Tutor";
-  int _courseCategory = 0;
+  int _courseCategory = 1;
+  String _sortValue = "Order";
 
   // function to sort the courses either by tutor or by title
   void _sortCourses() {
-    switch (_courseCategory) {
-      case 0:
-        if (_sortBeginnersValue == "Tutor") {
-          setState(() {
-            beginnersCourses.sort(
-                (a, b) => a.tutor.toString().compareTo(b.tutor.toString()));
-            _sortBeginnersValue = "Title";
-          });
-        } else {
-          setState(() {
-            beginnersCourses.sort(
-                (a, b) => a.title.toString().compareTo(b.title.toString()));
-            _sortBeginnersValue = "Tutor";
-          });
-        }
-        print(_sortBeginnersValue);
+    switch (_sortValue) {
+      case 'Order':
+        setState(() {
+          Courses.sortByOrder(beginnersCourses);
+          Courses.sortByOrder(amateurCourses);
+          Courses.sortByOrder(intermediateCourses);
+          Courses.sortByOrder(advancedCourses);
+        });
         break;
-      case 1:
-        if (_sortAmateurValue == "Tutor") {
-          setState(() {
-            amateurCourses.sort(
-                (a, b) => a.tutor.toString().compareTo(b.tutor.toString()));
-            _sortAmateurValue = "Title";
-          });
-        } else {
-          setState(() {
-            amateurCourses.sort(
-                (a, b) => a.title.toString().compareTo(b.title.toString()));
-            _sortAmateurValue = "Tutor";
-          });
-        }
+      case 'Tutor':
+        setState(() {
+          Courses.sortByTutor(beginnersCourses);
+          Courses.sortByTutor(amateurCourses);
+          Courses.sortByTutor(intermediateCourses);
+          Courses.sortByTutor(advancedCourses);
+        });
         break;
-      case 2:
-        if (_sortIntermediateValue == "Tutor") {
-          setState(() {
-            intermediateCourses.sort(
-                (a, b) => a.tutor.toString().compareTo(b.tutor.toString()));
-            _sortIntermediateValue = "Title";
-          });
-        } else {
-          setState(() {
-            intermediateCourses.sort(
-                (a, b) => a.title.toString().compareTo(b.title.toString()));
-            _sortIntermediateValue = "Tutor";
-          });
-        }
-        break;
-      case 3:
-        if (_sortAdvancedValue == "Tutor") {
-          setState(() {
-            advancedCourses.sort(
-                (a, b) => a.tutor.toString().compareTo(b.tutor.toString()));
-            _sortAdvancedValue = "Title";
-          });
-        } else {
-          setState(() {
-            advancedCourses.sort(
-                (a, b) => a.title.toString().compareTo(b.title.toString()));
-            _sortAdvancedValue = "Tutor";
-          });
-        }
+      case 'Title':
+        setState(() {
+          Courses.sortByTitle(beginnersCourses);
+          Courses.sortByTitle(amateurCourses);
+          Courses.sortByTitle(intermediateCourses);
+          Courses.sortByTitle(advancedCourses);
+        });
         break;
       default:
+        setState(() {
+          Courses.sortByOrder(beginnersCourses);
+          Courses.sortByOrder(amateurCourses);
+          Courses.sortByOrder(intermediateCourses);
+          Courses.sortByOrder(advancedCourses);
+        });
         break;
     }
-
-    // });
   }
 
-  Widget _loadCourses(Orientation orientation) {
+  loadLessons(Course course) async {
+    // if (Student.studyingCategory == (_courseCategory + 1)) {
+    //   // loading(context);
+    //   List<dynamic> lessons =
+    //       await Lessons.getLessons(context, course.id);
+    //   Navigator.pop(context);
+    //   Navigator.pushNamed(context, "/allcourses_lessons", arguments: {
+    //     'courseLessons': lessons,
+    //     'courseTitle': course.title,
+    //     'noLessons': course.allLessons ?? 0
+    //   });
+    // }
+  }
+
+  Widget _loadCourses() {
     List<Widget> vids = new List<Widget>();
-
-    // Map<String, dynamic> lessonsParsed = json.jsonDecode(lessonsJson);
-    // Lessons lessons = Lessons.fromJson(lessonsParsed);
-
-    var videos;
-    // _sortCourses();
+    List<dynamic> videos;
 
     switch (_courseCategory) {
-      case 0:
+      case 1:
         videos = beginnersCourses;
         break;
-      case 1:
+      case 2:
         videos = amateurCourses;
         break;
-      case 2:
+      case 3:
         videos = intermediateCourses;
         break;
-      case 3:
+      case 4:
         videos = advancedCourses;
         break;
       default:
-    }
-
-    var thumbnail;
-    switch (_courseCategory) {
-      case 0:
-        thumbnail = beginnersCategoryThumbnails;
+      videos = beginnersCourses;
         break;
-      case 1:
-        thumbnail = amateurCategoryThumbnails;
-        break;
-      case 2:
-        thumbnail = intermediaryCategoryThumbnails;
-        break;
-      case 3:
-        thumbnail = advancedCategoryThumbnails;
-        break;
-      default:
     }
 
     // add the image for the category
     vids.add(Container(
-      margin: EdgeInsets.symmetric(vertical: 20),
-      width: MediaQuery.of(context).copyWith().size.width,
-      height: 200.00,
+      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 2),
+      width: screen(context).width,
+      height: 120,
       decoration: new BoxDecoration(
+        border:
+            Border.all(color: darkgrey, width: 1.0, style: BorderStyle.solid),
         image: new DecorationImage(
-          image: ExactAssetImage(thumbnail),
+          image: ExactAssetImage(
+              getStudentCategoryThumbnail(category: _courseCategory)),
           fit: BoxFit.fitWidth,
         ),
-        borderRadius: BorderRadius.all(Radius.circular(25)),
+        borderRadius: BorderRadius.all(Radius.circular(5)),
       ),
     ));
 
     videos.forEach((course) {
-      vids.add(new Container(
-        margin: EdgeInsets.symmetric(vertical: 0, horizontal: 0),
-        child: CupertinoButton(
-            onPressed: () async {
-              if (User.category == (_courseCategory + 1)) {
-                loading(context);
-                List<dynamic> lessons = await getLessons(course.courseId);
-                Navigator.pop(context);
-                Navigator.pushNamed(context, "/allcourses_lessons", arguments: {
-                  'courseLessons': lessons,
-                  'courseTitle': course.title,
-                  'noLessons': course.lessons ?? 0
-                });
-              }
-            },
-            child: 
-            // Stack(
-            //   children: <Widget>[
-                // course detail card
-                Container(
-                  // margin: EdgeInsets.only(left: 70),
-                  width: MediaQuery.of(context).copyWith().size.width, // - 100,
-                  height: 160.00,
-                  decoration: new BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(25)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 10.0,
-                        spreadRadius: 2.0
-                      )
-                    ],
-                  ),
-                  child: Container(
-                    margin: EdgeInsets.only(left: 60, right: 3, top: 30, bottom: 30),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        // tutor
-                        Text(
-                          course.tutor,
-                          style: TextStyle(
-                            color: Color.fromRGBO(112, 112, 112, 1.0),
-                            fontSize: 14.0,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        // title and no_lessons
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Container(
-                              width: orientation == Orientation.portrait
-                                  ? MediaQuery.of(context)
-                                          .copyWith()
-                                          .size
-                                          .width -
-                                      300
-                                  : MediaQuery.of(context)
-                                          .copyWith()
-                                          .size
-                                          .width -
-                                      300,
-                              child: Text(
-                                course.title,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  color: Color.fromRGBO(107, 43, 20, 1.0),
-                                  fontSize: 20.0,
-                                  fontWeight: FontWeight.w800,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(right: 10.0),
-                              child: Text(
-                                "${course.lessons ?? 0} lessons",
-                                style: TextStyle(
-                                  color: Color.fromRGBO(112, 112, 112, 1.0),
-                                  fontSize: 12.0,
-                                  fontWeight: FontWeight.w800,
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                        // description
-                        Text(
-                          course.description,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 2,
-                          style: TextStyle(
-                            color: Color.fromRGBO(112, 112, 112, 1.0),
-                            fontSize: 15.0,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ],
-                    )
-                  )
-                ),
-
-                // course thumbanil
-                /*
-                Container(
-                  margin: EdgeInsets.symmetric(vertical: 20),
-                  width: 120.00,
-                  height: 120.00,
-                  decoration: new BoxDecoration(
-                    image: new DecorationImage(
-                      image: NetworkImage('${App.appurl}/${course.thumbnail}'),
-                      fit: BoxFit.fitHeight,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 7.0,
-                          spreadRadius: 5.0)
-                    ],
-                    borderRadius: BorderRadius.all(Radius.circular(25)),
-                  ),
-                ),
-                */
-            //   ],
-            // )
-          ),
-      ));
+      vids.add(renderCourse(course, context, () => {},
+          showProgress: false));
     });
 
     return new Column(children: vids);
   }
 
+  Widget categoryIdentification(category, categoryLabel) {
+    return InkWell(
+        onTap: () {
+          setState(() {
+            _courseCategory = category;
+          });
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '$categoryLabel',
+              style: TextStyle(
+                color: _courseCategory == category ? brown : darkgrey,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 5),
+              width: 40,
+              height: 5,
+              color: _courseCategory == category ? brown : Colors.transparent)
+          ],
+        ));
+  }
+
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-        backgroundColor: Color.fromRGBO(243, 243, 243, 1.0),
-        body: 
-        OrientationBuilder(builder: (context, orientation) {
-          // All Courses
-          return SingleChildScrollView(
-            child: Column(children: <Widget>[
-              // The top text
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  // description text
-                  Container(
-                    margin: EdgeInsets.only(top: 10, left: 5),
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            "Find Amazing",
-                            textAlign: TextAlign.start,
-                            maxLines: 2,
-                            style: TextStyle(
-                                fontSize: 30.0,
-                                color: Color.fromRGBO(107, 43, 20, 1.0),
-                                fontWeight: FontWeight.w500),
-                          ),
-                          Text(
-                            "Courses",
-                            textAlign: TextAlign.start,
-                            maxLines: 2,
-                            style: TextStyle(
-                                fontSize: 30.0,
-                                color: Color.fromRGBO(107, 43, 20, 1.0),
-                                fontWeight: FontWeight.w500),
-                          ),
-                        ]),
-                  ),
+    return SingleChildScrollView(
+      child: Column(children: <Widget>[
+      // The top text
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          // description text
+          Text(
+            "Find Amazing\nCourses",
+            textAlign: TextAlign.start,
+            style: TextStyle(fontSize: 30.0, color: brown, fontWeight: FontWeight.w500),
+          ),
 
-                  // the sort button
-                  Container(
-                    margin: EdgeInsets.only(top: 10, right: 5),
-                    child: MaterialButton(
-                      minWidth: 15,
-                      color: Colors.white,
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                      onPressed: () => setState(() {
-                        _sortCourses();
-                      }),
-                      child: Transform.rotate(
-                        angle: pi / 2,
-                        child: Icon(
-                          Icons.tune,
-                          color: Color.fromRGBO(107, 43, 20, 1.0),
-                          size: 25.0,
-                        ),
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                        // side: BorderSide(color: Color.fromRGBO(107, 43, 20, 1.0))
-                      ),
-                    ),
-                  )
-                ],
-              ),
+          // the sort button
+          Container(
+            // margin: EdgeInsets.only(top: 10, right: 5),
+            child: MaterialButton(
+              minWidth: 30,
+              color: Colors.white,
+              padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+              onPressed: () {
+                List<String> sortValues = ['Order', 'Title', 'Tutor'];
+                setState(() {
+                  _sortValue = _sortValue == 'Tutor'
+                      ? 'Order'
+                      : sortValues[sortValues.indexOf(_sortValue) + 1];
+                  _sortCourses();
+                });
+              },
+              child: Row(children: [
+                Text(
+                  "$_sortValue",
+                  style: TextStyle(color: brown, fontSize: 16),
+                ),
+                Icon(
+                  Icons.sort,
+                  color: brown,
+                ),
+              ]),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5.0)),
+            ),
+          )
+        ],
+      ),
 
-              // the category identification
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 30),
-                width: MediaQuery.of(context).copyWith().size.width,
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      MaterialButton(
-                          onPressed: () => setState(() {
-                                _courseCategory = 0;
-                                // _loadCourses();
-                              }),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: <Widget>[
-                              Text(
-                                "Beginners",
-                                textAlign: TextAlign.start,
-                                style: TextStyle(
-                                  fontSize: _courseCategory == 0 ? 15 : 12,
-                                  color: _courseCategory == 0
-                                      ? Color.fromRGBO(107, 43, 20, 1.0)
-                                      : Color.fromRGBO(112, 112, 112, 1.0),
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(top: 10),
-                                height: 6,
-                                width: 20,
-                                color: _courseCategory == 0
-                                    ? Color.fromRGBO(107, 43, 20, 1.0)
-                                    : Colors.transparent,
-                              )
-                            ],
-                          )),
-                      MaterialButton(
-                          onPressed: () => setState(() {
-                                _courseCategory = 1;
-                                // _loadCourses();
-                              }),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(
-                                "Amateur",
-                                textAlign: TextAlign.start,
-                                style: TextStyle(
-                                  fontSize: _courseCategory == 1 ? 15 : 12,
-                                  color: _courseCategory == 1
-                                      ? Color.fromRGBO(107, 43, 20, 1.0)
-                                      : Color.fromRGBO(112, 112, 112, 1.0),
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(top: 10),
-                                height: 6,
-                                width: 20,
-                                color: _courseCategory == 1
-                                    ? Color.fromRGBO(107, 43, 20, 1.0)
-                                    : Colors.transparent,
-                              )
-                            ],
-                          )),
-                      MaterialButton(
-                          minWidth: 10.0,
-                          onPressed: () => setState(() {
-                                _courseCategory = 2;
-                                // _loadCourses();
-                              }),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(
-                                "Intermediate",
-                                textAlign: TextAlign.start,
-                                style: TextStyle(
-                                  fontSize: _courseCategory == 2 ? 15 : 12,
-                                  color: _courseCategory == 2
-                                      ? Color.fromRGBO(107, 43, 20, 1.0)
-                                      : Color.fromRGBO(112, 112, 112, 1.0),
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(top: 10),
-                                height: 6,
-                                width: 20,
-                                color: _courseCategory == 2
-                                    ? Color.fromRGBO(107, 43, 20, 1.0)
-                                    : Colors.transparent,
-                              )
-                            ],
-                          )),
-                      MaterialButton(
-                          padding: EdgeInsets.all(0.0),
-                          onPressed: () => setState(() {
-                                _courseCategory = 3;
-                                // _loadCourses();
-                              }),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(
-                                "Advanced",
-                                textAlign: TextAlign.start,
-                                style: TextStyle(
-                                  fontSize: _courseCategory == 3 ? 15 : 12,
-                                  color: _courseCategory == 3
-                                      ? Color.fromRGBO(107, 43, 20, 1.0)
-                                      : Color.fromRGBO(112, 112, 112, 1.0),
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(top: 10),
-                                height: 6,
-                                width: 20,
-                                color: _courseCategory == 3
-                                    ? Color.fromRGBO(107, 43, 20, 1.0)
-                                    : Colors.transparent,
-                              )
-                            ],
-                          )),
-                    ]),
-              ),
+      // the category identification
+      Container(
+        width: screen(context).width,
+        // height: 50,
+        padding: EdgeInsets.symmetric(vertical: 5),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            categoryIdentification(1, 'Beginners'),
+            categoryIdentification(2, 'Amateurs'),
+            categoryIdentification(3, 'Intermediates'),
+            categoryIdentification(4, 'Advanced')
+          ],
+        )),
 
-              _loadCourses(orientation)
-            ]),
-          );
-        }));
+      _loadCourses()
+    ]));
   }
+
+
 }

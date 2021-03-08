@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:spicyguitaracademy/common.dart';
 import 'package:spicyguitaracademy/models.dart';
 
-class StudyingCoursesPage extends StatefulWidget {
+class MyFeaturedCoursesPage extends StatefulWidget {
   @override
-  StudyingCoursesPageState createState() => new StudyingCoursesPageState();
+  MyFeaturedCoursesPageState createState() => new MyFeaturedCoursesPageState();
 }
 
-class StudyingCoursesPageState extends State<StudyingCoursesPage> {
+class MyFeaturedCoursesPageState extends State<MyFeaturedCoursesPage> {
   String _sortValue = "Order";
   int _courseCategory = 0;
   // dynamic courses;
@@ -17,33 +17,28 @@ class StudyingCoursesPageState extends State<StudyingCoursesPage> {
   @override
   void initState() {
     super.initState();
-
-    if (studyingCourses.length > 0) {
-      _courseCategory = studyingCourses[0].category ?? 1;
-      // courses = studyingCourses;
-    }
   }
 
   void _sortCourses() {
     switch (_sortValue) {
       case 'Order':
         setState(() {
-          Courses.sortByOrder(studyingCourses);
+          Courses.sortByOrder(myFeaturedCourses);
         });
         break;
       case 'Tutor':
         setState(() {
-          Courses.sortByTutor(studyingCourses);
+          Courses.sortByTutor(myFeaturedCourses);
         });
         break;
       case 'Title':
         setState(() {
-          Courses.sortByTitle(studyingCourses);
+          Courses.sortByTitle(myFeaturedCourses);
         });
         break;
       default:
         setState(() {
-          Courses.sortByOrder(studyingCourses);
+          Courses.sortByOrder(myFeaturedCourses);
         });
         break;
     }
@@ -73,26 +68,21 @@ class StudyingCoursesPageState extends State<StudyingCoursesPage> {
       ),
     ));
 
-    if (studyingCourses.length > 0) {
-      studyingCourses.forEach((course) {
+    if (myFeaturedCourses.length > 0) {
+      myFeaturedCourses.forEach((course) {
         vids.add(renderCourse(course, context, () async {
           // get the lessons on this course
           // and the assignments for the course
-          Lessons.source = LessonSource.normal;
-          Courses.currentCourse = course;
           loading(context);
-          await Courses.activateCourse(context);
           await Lessons.getLessons(context, course.id);
           await Courses.getAssigment(context, course.id);
           Navigator.pop(context);
-          if (Courses.activateCourseErrMsg.isNotEmpty) {
-            error(context, Courses.activateCourseErrMsg);
-            Courses.activateCourseErrMsg = "";
-          }
+          Lessons.source = LessonSource.featured;
+          Courses.currentCourse = course;
           Navigator.pushNamed(context, "/lessons_page", arguments: {
-            'courseTitle': Courses.currentCourse.title,
-            'courseActive': Courses.currentCourse.status,
-            'courseId': Courses.currentCourse.id,
+            'courseTitle': course.title,
+            'courseActive': course.status,
+            'courseId': course.id,
           });
         }));
       });
@@ -110,14 +100,13 @@ class StudyingCoursesPageState extends State<StudyingCoursesPage> {
         child: Column(children: <Widget>[
       // The top text
       Container(
-        margin: EdgeInsets.symmetric(vertical: 10),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             // description text
             Text(
-              "Your\nCourses",
+              "Bought\nCourses",
               textAlign: TextAlign.start,
               style: TextStyle(
                   fontSize: 30.0, color: brown, fontWeight: FontWeight.w500),

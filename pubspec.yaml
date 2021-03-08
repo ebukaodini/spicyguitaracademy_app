@@ -27,19 +27,13 @@ dependencies:
   # For Http
   http: ^0.12.2
   
-  # For audio and video player
-  cache_audio_player: ^1.0.0
-  cached_video_player: ^1.0.3
-  # audioplayer: ^0.8.1
-  
   # For PDF
-  # pdf_flutter: ^1.1.3
+  pdf_flutter: ^1.1.4
   # flutter_full_pdf_viewer: ^1.0.6
   # path_provider: ^1.6.13
   # flutter_plugin_pdf_viewer: ^1.0.7
 
   # For rendering SVG Images
-  # flutter_svg: ^0.13.0
   flutter_svg: ^0.19.0
 
   # For Payments with Paystack
@@ -52,9 +46,18 @@ dependencies:
   # For Launcher icon
   flutter_launcher_icons: ^0.7.4
 
+  # For video player
+  video_player: ^1.0.1
+  chewie: ^0.12.2
+  # For audio player
+  chewie_audio: ^1.1.2
+
+  # For sanitizing possible html string
+  sanitize_html: ^1.4.1 # 2.0.0
+
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^0.1.3
+  # cupertino_icons: ^0.1.3
 
   
 dev_dependencies:

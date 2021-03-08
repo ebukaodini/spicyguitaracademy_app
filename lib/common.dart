@@ -1,7 +1,20 @@
+// import 'dart:html';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
+import 'package:spicyguitaracademy/models.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'dart:convert';
+import 'dart:async';
+
+class AuthException {
+  AuthException(String message) {
+    throw Exception(message);
+  }
+}
 
 const String baseUrl = "https://spicyguitaracademy.com";
 
@@ -11,10 +24,16 @@ const String paystackPublicKey =
     "pk_test_2aedc9b8a06baff2b47a08a08cd1b0237c260e4a";
 // pk_live_a62de957d87c74871330cec4084b73f8446fc5ad
 
-// dynamic headers = {'cache-control': 'no-cache', 'JWToken': User.token};
+// dynamic headers = {'cache-control': 'no-cache', 'JWToken': Student.token};
 
 bool reAuthentication = false;
 
+// dynamic headers = {'cache-control': 'no-cache', 'JWToken': Student.token};
+// Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+
+// class Http {
+
+// static
 Future request(String uri,
     {String method, dynamic body, dynamic headers}) async {
   try {
@@ -48,10 +67,10 @@ Future request(String uri,
     } else {
       switch (response.statusCode) {
         case 401:
-          throw Exception("Session Timed Out");
+          throw AuthException("Session Timed Out");
           break;
         case 403:
-          throw Exception("Authorization Failed");
+          throw AuthException("Authorization Failed");
           break;
         case 500:
           throw Exception("Server Error");
@@ -61,16 +80,16 @@ Future request(String uri,
           break;
       }
     }
+  } on SocketException catch (e) {
+    throw Exception("Network Error");
   } catch (e) {
     throw Exception(e);
   }
 }
 
-// dynamic headers = {'cache-control': 'no-cache', 'JWToken': User.token};
-// Navigator.pushNamedAndRemoveUntil(context, '/login_page', (route) => false);
-
+// static
 Future upload(String uri, String filename, dynamic file,
-    {String method, dynamic body, dynamic headers}) async {
+    {String method, Map<String, String> body, dynamic headers}) async {
   try {
     http.StreamedResponse response;
     List<String> contentType;
@@ -84,6 +103,7 @@ Future upload(String uri, String filename, dynamic file,
         file.toString().replaceAll("'", "").split(".").reversed.first;
     switch (fileType) {
       case 'jpg':
+      case 'jpeg':
         contentType = ["image", "jpeg"];
         break;
       case 'png':
@@ -99,11 +119,10 @@ Future upload(String uri, String filename, dynamic file,
     }
 
     var request = http.MultipartRequest(method, Uri.parse(baseUrl + uri));
-    request.fields.addAll(body);
+    if (body != null) request.fields.addAll(body);
     request.files.add(await http.MultipartFile.fromPath(filename, file.path,
         contentType: new MediaType(contentType[0], contentType[1])));
     request.headers.addAll(headers);
-
     response = await request.send();
     String responseBody = await response.stream.bytesToString();
 
@@ -129,14 +148,24 @@ Future upload(String uri, String filename, dynamic file,
         }
       }
     }
+  } on SocketException catch (e) {
+    throw Exception("Network Error");
+  } on AuthException catch (e) {
+    throw AuthException(e.toString());
   } catch (e) {
     throw Exception(e);
   }
 }
 
+// }
+
 void reAuthenticate(context) {
   reAuthentication = true;
   Navigator.pushNamed(context, '/login');
+}
+
+screen(BuildContext context) {
+  return MediaQuery.of(context).copyWith().size;
 }
 
 void loading(BuildContext context, {String message: 'Loading'}) {
@@ -145,11 +174,14 @@ void loading(BuildContext context, {String message: 'Loading'}) {
     barrierDismissible: false,
     builder: (context) {
       return AlertDialog(
-        content: new Row(
+        content: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            new CircularProgressIndicator(),
-            new Text("     $message..."),
+            CircularProgressIndicator(),
+            SizedBox(
+              width: 20.0,
+            ),
+            Text("$message..."),
           ],
         ),
       );
@@ -218,6 +250,10 @@ void error(BuildContext context, String message, {String title: 'Error'}) {
       );
     },
   );
+  // SnackBar(
+  //   content: Text(message, style: TextStyle(color: Colors.red)),
+  //   backgroundColor: Colors.white
+  // );
 }
 
 void snackbar(BuildContext context, String message) {
@@ -228,28 +264,346 @@ void snackbar(BuildContext context, String message) {
   );
 }
 
-String register = '/api/register';
-String login = '/api/login';
-String studentStats = '/api/student/statistics';
-String subscriptionPlan = '/api/subscription/plans';
-String initiatePayment = '/api/subscription/initiate';
-String verifyPayment(String reference) => '/api/subscription/verify/$reference';
-String chooseCategory = '/api/student/category/select';
-String allCourses = '/api/course/all';
-String studyingCourses = '/api/student/courses/studying';
-String courseLessons(course) => '/api/course/$course/lessons';
-String getLesson(int lesson) => '/api/lesson/$lesson';
-String studyingLesson(int lesson) => '/api/student/lesson/$lesson';
-String nextLesson(int lesson, int course) =>
-    '/api/student/lesson/$lesson/next?course=$course';
-String prevLesson(int lesson, int course) =>
-    '/api/student/lesson/$lesson/previous?course=$course';
-String answerAssignment = '/api/student/assignment/answer';
-String search(String query) => '/api/courses/search?q=$query';
-String invite = '/api/invite-a-friend';
-String updateAvatar = '/api/student/avatar/update';
-String allQuickLessons = '/api/student/featuredlessons/all';
-String quickLessons = '/api/student/featuredlessons';
-String quickLesson(int lesson) => '/api/student/featuredlesson/$lesson';
-String freeLessons = '/api/student/freelessons';
-String subscriptionStatus = '/api/subscription/status';
+Widget backButton(context,
+    {double radius: 5,
+    double size: 20,
+    double minWidth: 20,
+    double padding: 20}) {
+  return MaterialButton(
+    minWidth: minWidth,
+    color: Colors.white,
+    padding: EdgeInsets.symmetric(horizontal: padding, vertical: padding - 2),
+    onPressed: () {
+      Navigator.pop(context);
+    },
+    child: new Icon(Icons.arrow_back, color: brown, size: size),
+    shape: RoundedRectangleBorder(
+        borderRadius: new BorderRadius.circular(radius),
+        side: BorderSide(color: Colors.white)),
+  );
+}
+
+Color brown = Color(0xFF6B2B14);
+Color darkbrown = Color(0xFF471D0E);
+Color grey = Color(0xFFF3F3F3);
+Color darkgrey = Color(0xFF707070);
+
+String defaultThumbnail = "assets/imgs/pictures/course_img_default.jpg";
+String beginnersThumbnail = "assets/imgs/pictures/beginners_thumbnail.jpg";
+String amateurThumbnail = "assets/imgs/pictures/amateur_thumbnail.jpg";
+String intermediateThumbnail =
+    "assets/imgs/pictures/intermediate_thumbnail.jpg";
+String advancedThumbnail = "assets/imgs/pictures/advanced_thumbnail.jpg";
+
+String getStudentCategoryThumbnail({int category = -1}) {
+  switch (category > -1 ? category : Student.studyingCategory) {
+    case 0:
+      return defaultThumbnail;
+    case 1:
+      return beginnersThumbnail;
+    case 2:
+      return amateurThumbnail;
+    case 3:
+      return intermediateThumbnail;
+    case 4:
+      return advancedThumbnail;
+    default:
+      return defaultThumbnail;
+  }
+}
+
+Widget renderCourse(Course course, context, Function callback,
+    {bool showProgress = true, bool showPricings = false}) {
+  return CupertinoButton(
+    onPressed: () => callback(),
+    child: Container(
+      // padding: EdgeInsets.only(bottom: 20),
+      decoration: new BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.all(Radius.circular(5)),
+        boxShadow: [
+          BoxShadow(color: Colors.black12, blurRadius: 10.0, spreadRadius: 2.0)
+        ],
+      ),
+      child: Row(
+        children: <Widget>[
+          // add the thumbnail for the lesson
+          Container(
+            // margin: EdgeInsets.only(bottom: 10),
+            width: screen(context).width * 0.28,
+            height: 120,
+            decoration: new BoxDecoration(
+              image: new DecorationImage(
+                image: NetworkImage('$baseUrl/${course.thumbnail}',
+                    headers: {'cache-control': 'max-age=0, must-revalidate'}),
+                fit: BoxFit.cover,
+              ),
+              borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(5), topLeft: Radius.circular(5)),
+            ),
+            child: course.status == false
+                ? SvgPicture.asset("assets/imgs/icons/lock_icon.svg",
+                    color: Colors.white, fit: BoxFit.scaleDown)
+                : SvgPicture.asset(
+                    "assets/imgs/icons/play_video_icon.svg",
+                    color: Colors.white,
+                    fit: BoxFit.scaleDown,
+                  ),
+          ),
+          SizedBox(width: 10),
+          Expanded(
+              child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 5.0),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(course.tutor,
+                            style: TextStyle(
+                                color: darkgrey,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14)),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(
+                                child: Text(course.title,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                        color: brown,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w800))),
+                            Text(
+                              "${course.allLessons} lessons",
+                              style: TextStyle(
+                                  color: darkgrey,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w800),
+                            )
+                          ],
+                        ),
+                        Text(course.description,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                fontWeight: FontWeight.normal,
+                                fontSize: 14,
+                                color: darkgrey)),
+                        SizedBox(height: 5),
+                        showProgress == true
+                            ? Column(
+                                children: [
+                                  // progress indicator
+                                  Stack(
+                                    alignment: Alignment.topLeft,
+                                    children: <Widget>[
+                                      Container(
+                                        margin: EdgeInsets.only(right: 5),
+                                        child: FractionallySizedBox(
+                                          widthFactor: 1.0,
+                                          child: Container(
+                                            height: 2.0,
+                                            color: grey,
+                                          ),
+                                        ),
+                                      ),
+                                      FractionallySizedBox(
+                                        widthFactor:
+                                            course.completedLessons == 0
+                                                ? 0.005
+                                                : (course.completedLessons /
+                                                    course.allLessons),
+                                        child: Container(
+                                          height: 2.0,
+                                          color: brown,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  // progress note
+                                  Align(
+                                      alignment: Alignment.centerRight,
+                                      child: Text(
+                                        "${course.completedLessons} of ${course.allLessons} lessons",
+                                        textAlign: TextAlign.right,
+                                        style: TextStyle(
+                                            color: darkgrey,
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w800),
+                                      ))
+                                ],
+                              )
+                            : SizedBox(),
+                        showPricings == true
+                            ?
+                            // display price
+                            Align(
+                                alignment: Alignment.centerRight,
+                                child: Text(
+                                  "₦${course.featuredprice}",
+                                  textAlign: TextAlign.right,
+                                  style: TextStyle(
+                                      color: darkgrey,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w800),
+                                ))
+                            : SizedBox(),
+                      ]))),
+          SizedBox(width: 10)
+        ],
+      ),
+    ),
+  );
+}
+
+Widget renderLesson(Lesson lesson, context, Function callback,
+    {bool courseLocked = true}) {
+  return CupertinoButton(
+    onPressed: () => (courseLocked == false) ? callback() : null,
+    child: Container(
+      padding: EdgeInsets.only(bottom: 20),
+      decoration: new BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.all(Radius.circular(5)),
+        boxShadow: [
+          BoxShadow(color: Colors.black12, blurRadius: 10.0, spreadRadius: 2.0)
+        ],
+      ),
+      child: Column(
+        children: <Widget>[
+          // add the thumbnail for the lesson
+          Container(
+            margin: EdgeInsets.only(bottom: 10),
+            width: screen(context).width,
+            height: 120,
+            decoration: new BoxDecoration(
+              image: new DecorationImage(
+                image: NetworkImage('$baseUrl/${lesson.thumbnail}',
+                    headers: {'cache-control': 'max-age=0, must-revalidate'}),
+                fit: BoxFit.fitWidth,
+              ),
+              borderRadius: BorderRadius.all(Radius.circular(5)),
+            ),
+            child: courseLocked == true
+                ? SvgPicture.asset("assets/imgs/icons/lock_icon.svg",
+                    color: Colors.white, fit: BoxFit.scaleDown)
+                : SvgPicture.asset(
+                    "assets/imgs/icons/play_video_icon.svg",
+                    color: Colors.white,
+                    fit: BoxFit.scaleDown,
+                  ),
+          ),
+          Container(
+              width: screen(context).width,
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              child: Column(children: [
+                Text(
+                  "${lesson.title}",
+                  overflow: TextOverflow.clip,
+                  style: TextStyle(
+                    color: brown,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Text(
+                  lesson.tutor,
+                  style: TextStyle(
+                    color: Color.fromRGBO(112, 112, 112, 0.5),
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Text(
+                  "${lesson.description}",
+                  overflow: TextOverflow.clip,
+                  style: TextStyle(
+                    color: Color.fromRGBO(112, 112, 112, 1.0),
+                    fontSize: 15.0,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ])),
+        ],
+      ),
+    ),
+  );
+}
+
+Widget renderAssignment(context) {
+  return CupertinoButton(
+      onPressed: () {
+        Navigator.pushNamed(context, '/assignment_page');
+      },
+      child: Container(
+          padding: EdgeInsets.all(20),
+          decoration: new BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(5)),
+            boxShadow: [
+              BoxShadow(
+                  color: Colors.black12, blurRadius: 10.0, spreadRadius: 2.0)
+            ],
+          ),
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Text(
+                  "Course Assignment",
+                  overflow: TextOverflow.clip,
+                  style: TextStyle(
+                    color: brown,
+                    fontSize: 25,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Text(
+                  Assignment.tutor ?? 'No Tutor',
+                  style: TextStyle(
+                    color: Color.fromRGBO(112, 112, 112, 0.5),
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Text(
+                  Assignment.questionNote ?? 'No note',
+                  overflow: TextOverflow.visible,
+                  style: TextStyle(
+                    color: Color.fromRGBO(112, 112, 112, 1.0),
+                    fontSize: 15.0,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+                SizedBox(height: 10.0),
+                Text('Answer Ratings', style: TextStyle(color: brown)),
+                Row(
+                  children: [
+                    Icon(
+                        Assignment.answerRating > 0
+                            ? Icons.star
+                            : Icons.star_border_outlined,
+                        color: brown),
+                    Icon(
+                        Assignment.answerRating > 1
+                            ? Icons.star
+                            : Icons.star_border_outlined,
+                        color: brown),
+                    Icon(
+                        Assignment.answerRating > 2
+                            ? Icons.star
+                            : Icons.star_border_outlined,
+                        color: brown),
+                    Icon(
+                        Assignment.answerRating > 3
+                            ? Icons.star
+                            : Icons.star_border_outlined,
+                        color: brown),
+                    Icon(
+                        Assignment.answerRating > 4
+                            ? Icons.star
+                            : Icons.star_border_outlined,
+                        color: brown),
+                  ],
+                )
+              ])));
+}

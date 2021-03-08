@@ -32,7 +32,6 @@ class LandingPageState extends State<LandingPage> {
             
             SvgPicture.asset(
               "assets/imgs/icons/spicy_guitar_logo.svg",
-              // matchTextDirection: true,
             ),
 
           ],

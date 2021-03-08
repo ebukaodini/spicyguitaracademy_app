@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 
 class WelcomePage extends StatelessWidget {
-  
   @override
-  Widget build (BuildContext context) {
+  Widget build(BuildContext context) {
     return new Scaffold(
-      backgroundColor: Color.fromRGBO(107, 43, 20, 0.5),
-      body:
-      Stack(
-        children: <Widget>[
+        backgroundColor: Color.fromRGBO(107, 43, 20, 0.5),
+        body: Stack(children: <Widget>[
           ShaderMask(
             shaderCallback: (rect) {
               return LinearGradient(
@@ -16,16 +13,16 @@ class WelcomePage extends StatelessWidget {
                 end: Alignment.bottomCenter,
                 colors: [
                   // Colors.accents,
-                  Colors.black.withOpacity(0.6), 
+                  Colors.black.withOpacity(0.6),
                   Colors.black.withOpacity(0.9),
-                  Colors.black.withOpacity(1.0) 
+                  Colors.black.withOpacity(1.0)
                 ],
               ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
             },
             blendMode: BlendMode.srcOver,
-            child: Container (
+            child: Container(
               decoration: BoxDecoration(
-                // color: Color.fromRGBO(107, 43, 20, 1.0),
+                // color: brown,
                 image: DecorationImage(
                   image: AssetImage('assets/imgs/pictures/welcome_picture.jpg'),
                   fit: BoxFit.cover,
@@ -34,7 +31,6 @@ class WelcomePage extends StatelessWidget {
               ),
             ),
           ),
-
           Container(
             alignment: Alignment.bottomCenter,
             margin: const EdgeInsets.only(top: 10.0, bottom: 100.0),
@@ -44,30 +40,25 @@ class WelcomePage extends StatelessWidget {
               children: <Widget>[
                 Container(
                   margin: const EdgeInsets.only(top: 10.0, bottom: 5.0),
-                  child: Text(
-                    "Hi, Welcome to Spicy Guitar Academy",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20.0
-                    )
-                  ),
+                  child: Text("Hi, Welcome to Spicy Guitar Academy",
+                      style: TextStyle(color: Colors.white, fontSize: 20.0)),
                 ),
-                
                 Container(
+                  width: MediaQuery.of(context).copyWith().size.width - 30.0,
                   margin: const EdgeInsets.only(top: 15.0, bottom: 15.0),
                   child: RaisedButton(
-                    onPressed: () {Navigator.pushNamed(context, "/login");},
+                    onPressed: () {
+                      Navigator.pushNamed(context, "/login");
+                    },
                     color: Colors.transparent,
                     textColor: Colors.white,
                     shape: RoundedRectangleBorder(
-                      borderRadius: new BorderRadius.circular(15.0),
-                      side: BorderSide(color: Colors.white)
-                    ),
+                        borderRadius: new BorderRadius.circular(5.0),
+                        side: BorderSide(color: Colors.white)),
                     padding: EdgeInsets.fromLTRB(140, 10, 140, 10),
-                    child: Text("Login",style: TextStyle( fontSize: 20.0 )),
+                    child: Text("Login", style: TextStyle(fontSize: 20.0)),
                   ),
                 ),
-
                 Container(
                   width: MediaQuery.of(context).copyWith().size.width - 30.0,
                   child: RaisedButton(
@@ -76,21 +67,15 @@ class WelcomePage extends StatelessWidget {
                     },
                     textColor: Colors.white,
                     shape: RoundedRectangleBorder(
-                      borderRadius: new BorderRadius.circular(15.0),
-                      side: BorderSide(color: Colors.white)
-                    ),
+                        borderRadius: new BorderRadius.circular(5.0),
+                        side: BorderSide(color: Colors.white)),
                     padding: EdgeInsets.fromLTRB(135, 10, 135, 10),
-                    child: Text("Signup",style: TextStyle( fontSize: 20.0 )),
+                    child: Text("Signup", style: TextStyle(fontSize: 20.0)),
                   ),
                 )
-
               ],
             ),
           )
-        ]
-      )
-    );
-    
+        ]));
   }
-
-}       
+}

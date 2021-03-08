@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:spicyguitaracademy/common.dart';
 import 'package:spicyguitaracademy/models.dart';
@@ -8,7 +10,6 @@ class RegisterPage extends StatefulWidget {
 }
 
 class RegisterPageState extends State<RegisterPage> {
-  final _scaffoldKey = new GlobalKey<ScaffoldState>();
   TextEditingController _fname = TextEditingController();
   TextEditingController _lname = TextEditingController();
   TextEditingController _email = TextEditingController();
@@ -17,8 +18,9 @@ class RegisterPageState extends State<RegisterPage> {
   TextEditingController _cpass = TextEditingController();
 
   // properties
-  bool _agreedTCPP = false;
+  bool _agreeToTermsAndCondition = false;
   bool _obscurePwd = true;
+  bool _obscureCPwd = true;
 
   @override
   void initState() {
@@ -27,303 +29,204 @@ class RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-        key: _scaffoldKey,
-        backgroundColor: Color.fromRGBO(243, 243, 243, 1.0),
-        // extendBody: true,
-        body: SafeArea(
-          minimum: EdgeInsets.all(20),
-          child: SingleChildScrollView(
-              child: Column(children: <Widget>[
-            Container(
-              alignment: Alignment.topLeft,
-              margin: EdgeInsets.only(top: 20, left: 2, bottom: 50),
-              child: MaterialButton(
-                minWidth: 20,
-                color: Colors.white,
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: new Icon(
-                  Icons.arrow_back_ios,
-                  color: Color.fromRGBO(107, 43, 20, 1.0),
-                  size: 20.0,
-                ),
-                shape: RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(15.0),
-                    side: BorderSide(color: Colors.white)),
+    return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: 70,
+        iconTheme: IconThemeData(color: brown),
+        backgroundColor: grey,
+        centerTitle: true,
+        title: Text(
+          'Create Account',
+          style: TextStyle(
+              color: brown,
+              fontSize: 30,
+              fontFamily: "Poppins",
+              fontWeight: FontWeight.normal),
+        ),
+        elevation: 0,
+      ),
+      body: SafeArea(
+        minimum: EdgeInsets.all(5.0),
+        child: SingleChildScrollView(
+            child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            SizedBox(height: 40.0),
+
+            // Firstname field
+            TextField(
+              controller: _fname,
+              textInputAction: TextInputAction.next,
+              style: TextStyle(fontSize: 20.0, color: brown),
+              decoration: InputDecoration(
+                labelText: "First Name",
               ),
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                  margin: const EdgeInsets.only(top: 0.0, bottom: 0.0),
-                  child: Text("Create",
-                      style: TextStyle(
-                          color: Color.fromRGBO(107, 43, 20, 1.0),
-                          fontSize: 35.0)),
-                ),
-
-                Container(
-                  margin: const EdgeInsets.only(top: 0.0, bottom: 20.0),
-                  child: Text("Account",
-                      style: TextStyle(
-                          color: Color.fromRGBO(107, 43, 20, 1.0),
-                          fontSize: 35.0)),
-                ),
-
-                // Firstname field
-                Container(
-                  margin: const EdgeInsets.only(bottom: 20.0),
-                  child: TextField(
-                    controller: _fname,
-                    cursorColor: Color.fromRGBO(107, 43, 20, 1.0),
-                    autofocus: true,
-                    style: TextStyle(
-                        // color: Color.fromRGBO(107, 43, 20, 1.0),
-                        color: Color.fromRGBO(112, 112, 112, 1.0),
-                        fontSize: 20.0),
-                    decoration: InputDecoration(
-                      labelText: "First Name",
-                      labelStyle: TextStyle(
-                          color: Color.fromRGBO(112, 112, 112, 1.0),
-                          fontSize: 20.0),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: const BorderSide(
-                            color: Color.fromRGBO(107, 43, 20, 1.0)),
-                      ),
-                    ),
-                  ),
-                ),
-
-                // Lastname field
-                Container(
-                  margin: const EdgeInsets.only(bottom: 20.0),
-                  child: TextField(
-                    controller: _lname,
-                    cursorColor: Color.fromRGBO(107, 43, 20, 1.0),
-                    autofocus: true,
-                    style: TextStyle(
-                        // color: Color.fromRGBO(107, 43, 20, 1.0),
-                        color: Color.fromRGBO(112, 112, 112, 1.0),
-                        fontSize: 20.0),
-                    decoration: InputDecoration(
-                      labelText: "Last Name",
-                      labelStyle: TextStyle(
-                          color: Color.fromRGBO(112, 112, 112, 1.0),
-                          fontSize: 20.0),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: const BorderSide(
-                            color: Color.fromRGBO(107, 43, 20, 1.0)),
-                      ),
-                    ),
-                  ),
-                ),
-
-                // Email field
-                Container(
-                  margin: const EdgeInsets.only(bottom: 20.0),
-                  child: TextField(
-                    controller: _email,
-                    cursorColor: Color.fromRGBO(107, 43, 20, 1.0),
-                    style: TextStyle(
-                        // color: Color.fromRGBO(107, 43, 20, 1.0),
-                        color: Color.fromRGBO(112, 112, 112, 1.0),
-                        fontSize: 20.0),
-                    decoration: InputDecoration(
-                      labelText: "Email",
-                      labelStyle: TextStyle(
-                          color: Color.fromRGBO(112, 112, 112, 1.0),
-                          fontSize: 20.0),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: const BorderSide(
-                            color: Color.fromRGBO(107, 43, 20, 1.0)),
-                      ),
-                    ),
-                  ),
-                ),
-
-                // Telephone field
-                Container(
-                  margin: const EdgeInsets.only(bottom: 20.0),
-                  child: TextField(
-                    controller: _tel,
-                    cursorColor: Color.fromRGBO(107, 43, 20, 1.0),
-                    style: TextStyle(
-                        // color: Color.fromRGBO(107, 43, 20, 1.0),
-                        color: Color.fromRGBO(112, 112, 112, 1.0),
-                        fontSize: 20.0),
-                    decoration: InputDecoration(
-                      labelText: "Telephone",
-                      labelStyle: TextStyle(
-                          color: Color.fromRGBO(112, 112, 112, 1.0),
-                          fontSize: 20.0),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: const BorderSide(
-                            color: Color.fromRGBO(107, 43, 20, 1.0)),
-                      ),
-                    ),
-                  ),
-                ),
-
-                // Password field
-                Container(
-                  margin: const EdgeInsets.only(bottom: 20.0),
-                  child: TextField(
-                    controller: _pass,
-                    cursorColor: Color.fromRGBO(107, 43, 20, 1.0),
-                    obscureText: _obscurePwd,
-                    style: TextStyle(
-                        // color: Color.fromRGBO(107, 43, 20, 1.0),
-                        color: Color.fromRGBO(112, 112, 112, 1.0),
-                        fontSize: 20.0),
-                    decoration: InputDecoration(
-                      suffix: FlatButton(
+            SizedBox(
+              height: 20.0,
+            ),
+            // Lastname field
+            TextField(
+              controller: _lname,
+              textInputAction: TextInputAction.next,
+              style: TextStyle(fontSize: 20.0, color: brown),
+              decoration: InputDecoration(
+                labelText: "Last Name",
+              ),
+            ),
+            SizedBox(
+              height: 20.0,
+            ),
+            // Email field
+            TextField(
+              controller: _email,
+              textInputAction: TextInputAction.next,
+              style: TextStyle(fontSize: 20.0, color: brown),
+              decoration: InputDecoration(
+                  labelText: "Email Address",
+                  hintText: "yourname@domain.com"),
+            ),
+            SizedBox(
+              height: 20.0,
+            ),
+            // Telephone field
+            TextField(
+              controller: _tel,
+              textInputAction: TextInputAction.next,
+              style: TextStyle(fontSize: 20.0, color: brown),
+              decoration:
+                  InputDecoration(labelText: "Telephone", hintText: "+234"),
+            ),
+            SizedBox(
+              height: 20.0,
+            ),
+            // Password field
+            TextField(
+                controller: _pass,
+                obscureText: _obscurePwd,
+                textInputAction: TextInputAction.next,
+                style: TextStyle(fontSize: 20.0, color: brown),
+                decoration: InputDecoration(
+                    labelText: "Password",
+                    suffix: IconButton(
                         onPressed: () => setState(() {
-                          _obscurePwd = !_obscurePwd;
-                        }),
-                        // color: Color.fromRGBO(107, 43, 20, 1.0),
-                        child: new Icon(Icons.remove_red_eye,
-                            color: Color.fromRGBO(107, 43, 20, 1.0)),
-                      ),
-                      labelText: "Password",
-                      labelStyle: TextStyle(
-                          color: Color.fromRGBO(112, 112, 112, 1.0),
-                          fontSize: 20.0),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: const BorderSide(
-                            color: Color.fromRGBO(107, 43, 20, 1.0)),
-                      ),
-                    ),
-                  ),
-                ),
-
-                // Confirm Password field
-                Container(
-                  margin: const EdgeInsets.only(bottom: 50.0),
-                  child: TextField(
-                    controller: _cpass,
-                    cursorColor: Color.fromRGBO(107, 43, 20, 1.0),
-                    obscureText: _obscurePwd,
-                    style: TextStyle(
-                        color: Color.fromRGBO(112, 112, 112, 1.0),
-                        fontSize: 20.0),
-                    decoration: InputDecoration(
-                      suffix: FlatButton(
+                              _obscurePwd = !_obscurePwd;
+                            }),
+                        icon: Icon(_obscurePwd == true
+                            ? Icons.visibility_outlined
+                            : Icons.visibility_off_outlined)))),
+            Text(
+                'Your secured password must contain lessters, numbers and must be atleast 8 characters long.'),
+            SizedBox(
+              height: 20.0,
+            ),
+            TextField(
+                controller: _cpass,
+                obscureText: _obscureCPwd,
+                textInputAction: TextInputAction.next,
+                style: TextStyle(fontSize: 20.0, color: brown),
+                decoration: InputDecoration(
+                    labelText: "Confirm Password",
+                    suffix: IconButton(
                         onPressed: () => setState(() {
-                          _obscurePwd = !_obscurePwd;
-                        }),
-                        // color: Color.fromRGBO(107, 43, 20, 1.0),
-                        child: new Icon(Icons.remove_red_eye,
-                            color: Color.fromRGBO(107, 43, 20, 1.0)),
-                      ),
-                      labelText: "Confirm Password",
-                      labelStyle: TextStyle(
-                          color: Color.fromRGBO(112, 112, 112, 1.0),
-                          fontSize: 20.0),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: const BorderSide(
-                            color: Color.fromRGBO(107, 43, 20, 1.0)),
-                      ),
-                    ),
+                              _obscureCPwd = !_obscureCPwd;
+                            }),
+                        icon: Icon(_obscureCPwd == true
+                            ? Icons.visibility_outlined
+                            : Icons.visibility_off_outlined)))),
+            SizedBox(
+              height: 20.0,
+            ),
+            Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Checkbox(
+                    onChanged: (value) => setState(() {
+                      _agreeToTermsAndCondition = !_agreeToTermsAndCondition;
+                    }),
+                    checkColor: Colors.white,
+                    activeColor: brown,
+                    value: _agreeToTermsAndCondition,
                   ),
-                ),
-
-                Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Checkbox(
-                        onChanged: (value) => setState(() {
-                          _agreedTCPP = !_agreedTCPP;
-                        }),
-                        checkColor: Colors.white,
-                        activeColor: Color.fromRGBO(107, 43, 20, 1.0),
-                        value: _agreedTCPP,
-                      ),
-                      FlatButton(
-                          onPressed: () {
+                  Expanded(
+                      child: InkWell(
+                          onTap: () {
                             Navigator.pushNamed(
                                 context, "/terms_and_condition");
                           },
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              Text("I have carfully read and agreed to the",
-                                  style: TextStyle(
-                                      color: Color.fromRGBO(112, 112, 112, 1.0),
-                                      fontSize: 16.0)),
+                              Text("I have carfully read and agreed to the"),
                               Text("Terms and Privacy Policy",
-                                  style: TextStyle(
-                                      color: Color.fromRGBO(107, 43, 20, 1.0),
-                                      fontSize: 16.0)),
+                                  style: TextStyle(color: brown)),
                             ],
-                          ))
-                    ]),
-
-                SizedBox(
-                    width: double.infinity,
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(vertical: 30.0),
-                      child: RaisedButton(
-                          onPressed: () async {
-                            try {
-                              loading(context);
-
-                              if (_agreedTCPP == true) {
-                                throw Exception(
-                                    'Please agree to Terms and Condition.');
-                              }
-
-                              var resp = await request('/api/register',
-                                  method: 'POST',
-                                  body: {
-                                    'firstname': _fname.text,
-                                    'lastname': _lname.text,
-                                    'email': _email.text,
-                                    'telephone': _tel.text,
-                                    'password': _pass.text,
-                                    'cpassword': _cpass.text
-                                  });
-
-                              Navigator.pop(context);
-
-                              if (resp['status'] == true) {
-                                success(context, 'Registeration Successful');
-                                Navigator.pushNamed(context, "/login");
-                              } else {
-                                
-                                // TODO: handle error messages
-                                // if (resp['data'] != null) {
-                                //   String msg = resp['data'].toList();
-                                // }
-
-                                error(context, resp['message']);
-                              }
-                            } catch (e) {
-                              Navigator.pop(context);
-                              error(context, e);
-                              return false;
-                            }
-                          },
-                          
-                          color: Color.fromRGBO(107, 43, 20, 1.0),
-                          textColor: Colors.white,
-                          autofocus: false,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: new BorderRadius.circular(20.0),
-                          ),
-                          padding: EdgeInsets.fromLTRB(130, 15, 130, 15),
-                          child: Text("Signup",
-                              style: TextStyle(
-                                  fontSize: 20.0,
-                                  fontStyle: FontStyle.normal))),
-                    )),
-              ],
+                          )))
+                ]),
+            SizedBox(
+              height: 20.0,
             ),
-          ])),
-        ));
+            Container(
+              width: MediaQuery.of(context).copyWith().size.width,
+              child: RaisedButton(
+                onPressed: () {
+                  register();
+                },
+                textColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                    borderRadius: new BorderRadius.circular(5.0),
+                    side: BorderSide(color: brown)),
+                padding: EdgeInsets.fromLTRB(135, 10, 135, 10),
+                child: Text("Signup", style: TextStyle(fontSize: 20.0)),
+              ),
+            ),
+            SizedBox(
+              height: 40.0,
+            ),
+          ],
+        )),
+      )
+    );
+  }
+
+  void register() async {
+    try {
+      loading(context);
+
+      if (_agreeToTermsAndCondition == false) {
+        throw Exception('Please agree to the Terms and Condition.');
+      }
+
+      var resp = await request('/api/register', method: 'POST', body: {
+        'firstname': _fname.text,
+        'lastname': _lname.text,
+        'email': _email.text,
+        'telephone': _tel.text,
+        'password': _pass.text,
+        'cpassword': _cpass.text
+      });
+
+      if (resp['status'] == true) {
+        Navigator.pop(context);
+        success(context, 'Registeration Successful');
+        Navigator.pushNamed(context, "/login");
+      } else {
+        Map<String, dynamic> data = {};
+        String msg = "";
+        if (resp['data'] != null) {
+          data = resp['data'];
+          int count = 1;
+          data.forEach((key, value) {
+            msg += "$count. $value\n";
+            count++;
+          });
+        }
+        throw Exception("$msg");
+      }
+    } catch (e) {
+      Navigator.pop(context); //??
+      error(context, e.toString().replaceAll("Exception: ", ""),
+          title: "Registeration failed");
+    }
   }
 }
