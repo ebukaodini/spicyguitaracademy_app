@@ -21,7 +21,7 @@ class SuccessfulTransactionState extends State<SuccessfulTransaction> {
         body: SingleChildScrollView(
       child: Container(
         alignment: Alignment.center,
-        margin: EdgeInsets.only(top: 80),
+        margin: EdgeInsets.only(top: 50),
         padding: EdgeInsets.symmetric(horizontal: 35),
         height: screen(context).height,
         decoration: BoxDecoration(
@@ -42,7 +42,7 @@ class SuccessfulTransactionState extends State<SuccessfulTransaction> {
                     fontSize: 40.0,
                     fontWeight: FontWeight.w400,
                   ),
-                  textAlign: TextAlign.left,
+                  textAlign: TextAlign.center,
                 ),
               ),
               Container(
