@@ -51,7 +51,7 @@ class StartLoadingState extends State<StartLoading> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Image.asset("assets/imgs/icons/loading_icon.png"),
+            Image.asset("assets/imgs/icons/loading_icon.gif"),
             Container(
                 margin: EdgeInsets.only(top: 30.0),
                 child: Text(
