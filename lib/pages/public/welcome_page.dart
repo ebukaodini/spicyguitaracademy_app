@@ -39,10 +39,10 @@ class WelcomePage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
                 Container(
-                  margin: const EdgeInsets.only(top: 10.0, bottom: 5.0),
-                  child: Text("Hi, Welcome to Spicy Guitar Academy",
-                      style: TextStyle(color: Colors.white, fontSize: 20.0)),
-                ),
+                    margin: const EdgeInsets.only(top: 10.0, bottom: 5.0),
+                    child: Text("Hi, Welcome to Spicy Guitar Academy",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.white, fontSize: 20.0))),
                 Container(
                   width: MediaQuery.of(context).copyWith().size.width - 30.0,
                   margin: const EdgeInsets.only(top: 15.0, bottom: 15.0),
