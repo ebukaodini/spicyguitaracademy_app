@@ -90,10 +90,11 @@ class AllFeaturedCoursesPageState extends State<AllFeaturedCoursesPage> {
           // update my featured courses
           await Courses.getMyFeaturedCourses(context);
         }
+      } else {
+        throw Exception('Cancelled Transaction');
       }
     } catch (e) {
-      error(context, e.toString());
-      rethrow;
+      error(context, stripExceptions(e));
     }
   }
 
@@ -124,9 +125,9 @@ class AllFeaturedCoursesPageState extends State<AllFeaturedCoursesPage> {
           if (course.status == true) {
             await Lessons.getLessons(context, course.id);
             await Courses.getAssigment(context, course.id);
-            Navigator.pop(context);
             Lessons.source = LessonSource.featured;
             Courses.currentCourse = course;
+            Navigator.pop(context);
             Navigator.pushNamed(context, "/lessons_page", arguments: {
               'courseTitle': course.title,
               'courseActive': course.status,
@@ -138,7 +139,8 @@ class AllFeaturedCoursesPageState extends State<AllFeaturedCoursesPage> {
             _handleCheckout(context);
           }
         } catch (e) {
-          error(context, e.toString());
+          Navigator.pop(context);
+          error(context, stripExceptions(e));
         }
       }, showProgress: false, showPricings: true));
     });
@@ -157,7 +159,8 @@ class AllFeaturedCoursesPageState extends State<AllFeaturedCoursesPage> {
         children: <Widget>[
           // description text
           Text(
-            "Featured\nCourses",
+            "Pick\nCourses",
+            // "Featured\nCourses",
             textAlign: TextAlign.start,
             style: TextStyle(
                 fontSize: 30.0, color: brown, fontWeight: FontWeight.w500),

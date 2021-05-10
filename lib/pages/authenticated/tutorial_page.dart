@@ -44,88 +44,98 @@ class TutorialPageState extends State<TutorialPage> {
   }
 
   _submitComment() async {
-    loading(context);
-    Tutorial.submitComment(
-        context, _comment.text, currentTutorial.id, currentTutorial.tutor);
-    _comment.clear();
-    Navigator.pop(context);
-    loadUserCommentsOnThisLesson();
+    try {
+      loading(context);
+      await Tutorial.submitComment(
+          context, _comment.text, currentTutorial.id, currentTutorial.tutor);
+      _comment.clear();
+      Navigator.pop(context);
+      await loadUserCommentsOnThisLesson();
+    } catch (e) {
+      Navigator.pop(context);
+      error(context, stripExceptions(e));
+    }
   }
 
   loadUserCommentsOnThisLesson() async {
-    List<dynamic> comments = await Tutorial.getTutorialComments(context);
+    try {
+      List<dynamic> comments = await Tutorial.getTutorialComments(context);
 
-    List<Widget> commentsWidgets = new List<Widget>();
-    comments.forEach((comment) {
-      String name, avatar, date, who;
-      if (Student.email == comment['sender']) {
-        name = '${Student.firstname} ${Student.lastname}';
-        avatar = '${Student.avatar}';
-        who = 'me';
-      } else {
-        name = comment['tutor']['name'];
-        avatar = comment['tutor']['avatar'];
-        who = 'tutor';
-      }
-      date = comment['date_added'];
+      List<Widget> commentsWidgets = new List<Widget>();
+      comments.forEach((comment) {
+        String name, avatar, date, who;
+        if (Student.email == comment['sender']) {
+          name = '${Student.firstname} ${Student.lastname}';
+          avatar = '${Student.avatar}';
+          who = 'me';
+        } else {
+          name = comment['tutor']['name'];
+          avatar = comment['tutor']['avatar'];
+          who = 'tutor';
+        }
+        date = comment['date_added'];
 
-      commentsWidgets.add(new Container(
-          decoration: new BoxDecoration(
-            color: Color.fromRGBO(107, 43, 20, 0.2),
-            borderRadius: BorderRadius.all(Radius.circular(5)),
-          ),
-          // alignment: who == "me" ? Alignment.centerRight : Alignment.centerLeft,
-          alignment: Alignment.topRight,
-          width: screen(context).width, // * 0.8,
-          margin: EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
-          padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CircleAvatar(
-                  radius: 20,
-                  backgroundColor: brown,
-                  backgroundImage: NetworkImage('$baseUrl/$avatar', headers: {
-                    'cache-control': 'max-age=0, must-revalidate'
-                  })),
-              Expanded(
-                  child: Container(
-                      margin: EdgeInsets.symmetric(horizontal: 10.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text("$name",
-                                  maxLines: 1,
-                                  overflow: TextOverflow.fade,
-                                  style: TextStyle(
-                                      color: brown,
-                                      fontWeight: FontWeight.bold)),
-                              // Expanded(child:
-                              Text("$date",
-                                  maxLines: 1, style: TextStyle(color: brown)),
-                              // ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 1.0,
-                          ),
-                          Text(
-                            "${comment['comment']}",
-                            textAlign: TextAlign.start,
-                          )
-                        ],
-                      ))),
-            ],
-          )));
-    });
+        commentsWidgets.add(new Container(
+            decoration: new BoxDecoration(
+              color: Color.fromRGBO(107, 43, 20, 0.2),
+              borderRadius: BorderRadius.all(Radius.circular(5)),
+            ),
+            // alignment: who == "me" ? Alignment.centerRight : Alignment.centerLeft,
+            alignment: Alignment.topRight,
+            width: screen(context).width, // * 0.8,
+            margin: EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
+            padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CircleAvatar(
+                    radius: 20,
+                    backgroundColor: brown,
+                    backgroundImage: NetworkImage('$baseUrl/$avatar', headers: {
+                      'cache-control': 'max-age=0, must-revalidate'
+                    })),
+                Expanded(
+                    child: Container(
+                        margin: EdgeInsets.symmetric(horizontal: 10.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text("$name",
+                                    maxLines: 1,
+                                    overflow: TextOverflow.fade,
+                                    style: TextStyle(
+                                        color: brown,
+                                        fontWeight: FontWeight.bold)),
+                                // Expanded(child:
+                                Text("$date",
+                                    maxLines: 1,
+                                    style: TextStyle(color: brown)),
+                                // ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 1.0,
+                            ),
+                            Text(
+                              "${comment['comment']}",
+                              textAlign: TextAlign.start,
+                            )
+                          ],
+                        ))),
+              ],
+            )));
+      });
 
-    setState(() {
-      _commentWidgets = commentsWidgets;
-    });
+      setState(() {
+        _commentWidgets = commentsWidgets;
+      });
+    } catch (e) {
+      error(context, stripExceptions(e));
+    }
   }
 
   Widget renderDisplayScreen() {
@@ -184,35 +194,49 @@ class TutorialPageState extends State<TutorialPage> {
   }
 
   void nextLesson() async {
-    // get the index of the current tutorial in the tutorial lessons list
-    int currentIndex = tutorialLessons.indexOf(currentTutorial);
+    try {
+      loading(context);
+      // get the index of the current tutorial in the tutorial lessons list
+      int currentIndex = tutorialLessons.indexOf(currentTutorial);
 
-    // use the index to get the next lesson if this lesson is not the last
-    if (currentTutorial != tutorialLessons.last) {
-      currentTutorial = tutorialLessons.elementAt(currentIndex + 1);
+      // use the index to get the next lesson if this lesson is not the last
+      if (currentTutorial != tutorialLessons.last) {
+        currentTutorial = tutorialLessons.elementAt(currentIndex + 1);
         if (Lessons.source == LessonSource.normal)
           await Lessons.activateLesson(context);
         else if (Lessons.source == LessonSource.featured)
           await Lessons.activateFeaturedLesson(context);
-      // then route to the lesson
-      Navigator.pushReplacementNamed(context, '/tutorial_page');
+        // then route to the lesson
+        Navigator.pop(context);
+        Navigator.pushReplacementNamed(context, '/tutorial_page');
+      }
+    } catch (e) {
+      Navigator.pop(context);
+      error(context, stripExceptions(e));
     }
   }
 
   void previousLesson() async {
-    // get the index of the current tutorial in the tutorial lessons list
-    int currentIndex = tutorialLessons.indexOf(currentTutorial);
+    try {
+      loading(context);
+      // get the index of the current tutorial in the tutorial lessons list
+      int currentIndex = tutorialLessons.indexOf(currentTutorial);
 
-    // use the index to get the previous lesson if this lesson is not the first
-    if (currentTutorial != tutorialLessons.first) {
-      currentTutorial = tutorialLessons.elementAt(currentIndex - 1);
-      
+      // use the index to get the previous lesson if this lesson is not the first
+      if (currentTutorial != tutorialLessons.first) {
+        currentTutorial = tutorialLessons.elementAt(currentIndex - 1);
+
         if (Lessons.source == LessonSource.normal)
           await Lessons.activateLesson(context);
         else if (Lessons.source == LessonSource.featured)
           await Lessons.activateFeaturedLesson(context);
-      // then route to the lesson
-      Navigator.pushReplacementNamed(context, '/tutorial_page');
+        // then route to the lesson
+        Navigator.pop(context);
+        Navigator.pushReplacementNamed(context, '/tutorial_page');
+      }
+    } catch (e) {
+      Navigator.pop(context);
+      error(context, stripExceptions(e));
     }
   }
 
@@ -248,14 +272,32 @@ class TutorialPageState extends State<TutorialPage> {
                                   ? () => setState(
                                       () => _displayscreen = Screen.video)
                                   : null,
-                              child: Text(
-                                "Video",
-                                style: TextStyle(
-                                    color: _displayscreen == Screen.video
-                                        ? brown
-                                        : currentTutorial.video != null
-                                            ? darkgrey
-                                            : Colors.grey[350]),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Video",
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        color: _displayscreen == Screen.video
+                                            ? brown
+                                            : currentTutorial.video != null
+                                                ? darkgrey
+                                                : Colors.grey[350]),
+                                  ),
+                                  _displayscreen == Screen.video
+                                      ? Container(
+                                          alignment: Alignment.topRight,
+                                          height: 5,
+                                          margin: EdgeInsets.only(top: 2),
+                                          width: 45,
+                                          color: brown,
+                                        )
+                                      : Container()
+                                ],
                               ),
                             ),
                             TextButton(
@@ -263,14 +305,32 @@ class TutorialPageState extends State<TutorialPage> {
                                   ? () => setState(
                                       () => _displayscreen = Screen.audio)
                                   : null,
-                              child: Text(
-                                "Audio",
-                                style: TextStyle(
-                                    color: _displayscreen == Screen.audio
-                                        ? brown
-                                        : currentTutorial.audio != null
-                                            ? darkgrey
-                                            : Colors.grey[350]),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Audio",
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        color: _displayscreen == Screen.audio
+                                            ? brown
+                                            : currentTutorial.audio != null
+                                                ? darkgrey
+                                                : Colors.grey[350]),
+                                  ),
+                                  _displayscreen == Screen.audio
+                                      ? Container(
+                                          alignment: Alignment.topRight,
+                                          height: 5,
+                                          margin: EdgeInsets.only(top: 2),
+                                          width: 45,
+                                          color: brown,
+                                        )
+                                      : Container()
+                                ],
                               ),
                             ),
                             TextButton(
@@ -278,14 +338,32 @@ class TutorialPageState extends State<TutorialPage> {
                                   ? () => setState(
                                       () => _displayscreen = Screen.practice)
                                   : null,
-                              child: Text(
-                                "Practice Loop",
-                                style: TextStyle(
-                                    color: _displayscreen == Screen.practice
-                                        ? brown
-                                        : currentTutorial.practice != null
-                                            ? darkgrey
-                                            : Colors.grey[350]),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Practice Loop",
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        color: _displayscreen == Screen.practice
+                                            ? brown
+                                            : currentTutorial.practice != null
+                                                ? darkgrey
+                                                : Colors.grey[350]),
+                                  ),
+                                  _displayscreen == Screen.practice
+                                      ? Container(
+                                          alignment: Alignment.topRight,
+                                          height: 5,
+                                          margin: EdgeInsets.only(top: 2),
+                                          width: 45,
+                                          color: brown,
+                                        )
+                                      : Container()
+                                ],
                               ),
                             ),
                             TextButton(
@@ -293,14 +371,33 @@ class TutorialPageState extends State<TutorialPage> {
                                   ? () => setState(
                                       () => _displayscreen = Screen.tablature)
                                   : null,
-                              child: Text(
-                                "Tablature",
-                                style: TextStyle(
-                                    color: _displayscreen == Screen.tablature
-                                        ? brown
-                                        : currentTutorial.tablature != null
-                                            ? darkgrey
-                                            : Colors.grey[350]),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Tablature",
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        color: _displayscreen ==
+                                                Screen.tablature
+                                            ? brown
+                                            : currentTutorial.tablature != null
+                                                ? darkgrey
+                                                : Colors.grey[350]),
+                                  ),
+                                  _displayscreen == Screen.tablature
+                                      ? Container(
+                                          alignment: Alignment.topRight,
+                                          height: 5,
+                                          margin: EdgeInsets.only(top: 2),
+                                          width: 45,
+                                          color: brown,
+                                        )
+                                      : Container()
+                                ],
                               ),
                             )
                           ],
@@ -334,7 +431,7 @@ class TutorialPageState extends State<TutorialPage> {
                           overflow: TextOverflow.visible,
                           style: TextStyle(
                             color: darkgrey,
-                            fontSize: 15.0,
+                            fontSize: 15,
                           ),
                         ),
 
@@ -345,8 +442,20 @@ class TutorialPageState extends State<TutorialPage> {
                             ? TextButton(
                                 onPressed: () =>
                                     setState(() => _showNote = !_showNote),
-                                child: Text('Notes',
-                                    style: TextStyle(color: brown)))
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text('Notes',
+                                        style: TextStyle(
+                                            color: brown, fontSize: 16)),
+                                    SizedBox(width: 2),
+                                    Icon(
+                                        _showNote
+                                            ? Icons.arrow_drop_up
+                                            : Icons.arrow_drop_down,
+                                        color: brown)
+                                  ],
+                                ))
                             : Container(),
 
                         // lesson Note
@@ -366,22 +475,26 @@ class TutorialPageState extends State<TutorialPage> {
                           children: [
                             // Previous lesson
                             currentTutorial != tutorialLessons.first
-                                ? TextButton(
+                                ? MaterialButton(
                                     onPressed: () {
                                       previousLesson();
                                     },
-                                    child: Text('Previous Lesson',
-                                        style: TextStyle(color: brown)))
+                                    color: brown,
+                                    textColor: Colors.white,
+                                    child: Text('PREVIOUS',
+                                        style: TextStyle(fontSize: 16)))
                                 : Container(),
 
                             // Next lesson
                             currentTutorial != tutorialLessons.last
-                                ? TextButton(
+                                ? MaterialButton(
                                     onPressed: () {
                                       nextLesson();
                                     },
-                                    child: Text('Next Lesson',
-                                        style: TextStyle(color: brown)))
+                                    color: brown,
+                                    textColor: Colors.white,
+                                    child: Text('NEXT',
+                                        style: TextStyle(fontSize: 16)))
                                 : Container()
                           ],
                         ),
@@ -389,8 +502,20 @@ class TutorialPageState extends State<TutorialPage> {
                         TextButton(
                             onPressed: () =>
                                 setState(() => _showComment = !_showComment),
-                            child: Text('Comments',
-                                style: TextStyle(color: brown))),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text('Comments',
+                                    style:
+                                        TextStyle(color: brown, fontSize: 16)),
+                                SizedBox(width: 2),
+                                Icon(
+                                    _showComment
+                                        ? Icons.arrow_drop_up
+                                        : Icons.arrow_drop_down,
+                                    color: brown)
+                              ],
+                            )),
 
                         _showComment == true
                             ? Column(

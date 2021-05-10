@@ -106,12 +106,10 @@ class InviteFriendState extends State<InviteFriend> {
                               success(context, resp['message']);
                             }
                           } on AuthException catch (e) {
-                            error(context,
-                                e.toString().replaceAll("Exception: ", ""));
+                            error(context, stripExceptions(e));
                             reAuthenticate(context);
                           } catch (e) {
-                            error(context,
-                                e.toString().replaceAll("Exception: ", ""));
+                            error(context, stripExceptions(e));
                           }
                         },
                         color: Colors.white,

@@ -13,10 +13,6 @@ class WelcomeNotePageState extends State<WelcomeNotePage> {
     super.initState();
   }
 
-  // _loadSubscriptionPlans() async {
-
-  // }
-
   @override
   Widget build(BuildContext context) {
     return new Scaffold(

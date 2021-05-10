@@ -30,163 +30,164 @@ class RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 70,
-        iconTheme: IconThemeData(color: brown),
-        backgroundColor: grey,
-        centerTitle: true,
-        title: Text(
-          'Create Account',
-          style: TextStyle(
-              color: brown,
-              fontSize: 30,
-              fontFamily: "Poppins",
-              fontWeight: FontWeight.normal),
+        appBar: AppBar(
+          toolbarHeight: 70,
+          iconTheme: IconThemeData(color: brown),
+          backgroundColor: grey,
+          centerTitle: true,
+          title: Text(
+            'Create Account',
+            style: TextStyle(
+                color: brown,
+                fontSize: 30,
+                fontFamily: "Poppins",
+                fontWeight: FontWeight.normal),
+          ),
+          elevation: 0,
         ),
-        elevation: 0,
-      ),
-      body: SafeArea(
-        minimum: EdgeInsets.all(5.0),
-        child: SingleChildScrollView(
-            child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            SizedBox(height: 40.0),
+        body: SafeArea(
+          minimum: EdgeInsets.all(5.0),
+          child: SingleChildScrollView(
+              child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              SizedBox(height: 40.0),
 
-            // Firstname field
-            TextField(
-              controller: _fname,
-              textInputAction: TextInputAction.next,
-              style: TextStyle(fontSize: 20.0, color: brown),
-              decoration: InputDecoration(
-                labelText: "First Name",
-              ),
-            ),
-            SizedBox(
-              height: 20.0,
-            ),
-            // Lastname field
-            TextField(
-              controller: _lname,
-              textInputAction: TextInputAction.next,
-              style: TextStyle(fontSize: 20.0, color: brown),
-              decoration: InputDecoration(
-                labelText: "Last Name",
-              ),
-            ),
-            SizedBox(
-              height: 20.0,
-            ),
-            // Email field
-            TextField(
-              controller: _email,
-              textInputAction: TextInputAction.next,
-              style: TextStyle(fontSize: 20.0, color: brown),
-              decoration: InputDecoration(
-                  labelText: "Email Address",
-                  hintText: "yourname@domain.com"),
-            ),
-            SizedBox(
-              height: 20.0,
-            ),
-            // Telephone field
-            TextField(
-              controller: _tel,
-              textInputAction: TextInputAction.next,
-              style: TextStyle(fontSize: 20.0, color: brown),
-              decoration:
-                  InputDecoration(labelText: "Telephone", hintText: "+234"),
-            ),
-            SizedBox(
-              height: 20.0,
-            ),
-            // Password field
-            TextField(
-                controller: _pass,
-                obscureText: _obscurePwd,
+              // Firstname field
+              TextField(
+                controller: _fname,
                 textInputAction: TextInputAction.next,
                 style: TextStyle(fontSize: 20.0, color: brown),
                 decoration: InputDecoration(
-                    labelText: "Password",
-                    suffix: IconButton(
-                        onPressed: () => setState(() {
-                              _obscurePwd = !_obscurePwd;
-                            }),
-                        icon: Icon(_obscurePwd == true
-                            ? Icons.visibility_outlined
-                            : Icons.visibility_off_outlined)))),
-            Text(
-                'Your secured password must contain lessters, numbers and must be atleast 8 characters long.'),
-            SizedBox(
-              height: 20.0,
-            ),
-            TextField(
-                controller: _cpass,
-                obscureText: _obscureCPwd,
+                  labelText: "First Name",
+                ),
+              ),
+              SizedBox(
+                height: 20.0,
+              ),
+              // Lastname field
+              TextField(
+                controller: _lname,
                 textInputAction: TextInputAction.next,
                 style: TextStyle(fontSize: 20.0, color: brown),
                 decoration: InputDecoration(
-                    labelText: "Confirm Password",
-                    suffix: IconButton(
-                        onPressed: () => setState(() {
-                              _obscureCPwd = !_obscureCPwd;
-                            }),
-                        icon: Icon(_obscureCPwd == true
-                            ? Icons.visibility_outlined
-                            : Icons.visibility_off_outlined)))),
-            SizedBox(
-              height: 20.0,
-            ),
-            Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Checkbox(
-                    onChanged: (value) => setState(() {
-                      _agreeToTermsAndCondition = !_agreeToTermsAndCondition;
-                    }),
-                    checkColor: Colors.white,
-                    activeColor: brown,
-                    value: _agreeToTermsAndCondition,
-                  ),
-                  Expanded(
-                      child: InkWell(
-                          onTap: () {
-                            Navigator.pushNamed(
-                                context, "/terms_and_condition");
-                          },
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text("I have carfully read and agreed to the"),
-                              Text("Terms and Privacy Policy",
-                                  style: TextStyle(color: brown)),
-                            ],
-                          )))
-                ]),
-            SizedBox(
-              height: 20.0,
-            ),
-            Container(
-              width: MediaQuery.of(context).copyWith().size.width,
-              child: RaisedButton(
-                onPressed: () {
-                  register();
-                },
-                textColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(5.0),
-                    side: BorderSide(color: brown)),
-                padding: EdgeInsets.fromLTRB(135, 10, 135, 10),
-                child: Text("Signup", style: TextStyle(fontSize: 20.0)),
+                  labelText: "Last Name",
+                ),
               ),
-            ),
-            SizedBox(
-              height: 40.0,
-            ),
-          ],
-        )),
-      )
-    );
+              SizedBox(
+                height: 20.0,
+              ),
+              // Email field
+              TextField(
+                controller: _email,
+                textInputAction: TextInputAction.next,
+                style: TextStyle(fontSize: 20.0, color: brown),
+                decoration: InputDecoration(
+                    labelText: "Email Address",
+                    hintText: "yourname@domain.com"),
+              ),
+              SizedBox(
+                height: 20.0,
+              ),
+              // Telephone field
+              TextField(
+                controller: _tel,
+                textInputAction: TextInputAction.next,
+                style: TextStyle(fontSize: 20.0, color: brown),
+                decoration:
+                    InputDecoration(labelText: "Telephone", hintText: "+234"),
+              ),
+              SizedBox(
+                height: 20.0,
+              ),
+              // Password field
+              TextField(
+                  controller: _pass,
+                  obscureText: _obscurePwd,
+                  textInputAction: TextInputAction.next,
+                  style: TextStyle(fontSize: 20.0, color: brown),
+                  decoration: InputDecoration(
+                      labelText: "Password",
+                      suffix: IconButton(
+                          onPressed: () => setState(() {
+                                _obscurePwd = !_obscurePwd;
+                              }),
+                          icon: Icon(_obscurePwd == true
+                              ? Icons.visibility_outlined
+                              : Icons.visibility_off_outlined)))),
+              Text(
+                'Password must contain letters, numbers and must be atleast 8 characters.',
+                style: TextStyle(color: Colors.red),
+              ),
+              SizedBox(
+                height: 20.0,
+              ),
+              TextField(
+                  controller: _cpass,
+                  obscureText: _obscureCPwd,
+                  textInputAction: TextInputAction.next,
+                  style: TextStyle(fontSize: 20.0, color: brown),
+                  decoration: InputDecoration(
+                      labelText: "Confirm Password",
+                      suffix: IconButton(
+                          onPressed: () => setState(() {
+                                _obscureCPwd = !_obscureCPwd;
+                              }),
+                          icon: Icon(_obscureCPwd == true
+                              ? Icons.visibility_outlined
+                              : Icons.visibility_off_outlined)))),
+              SizedBox(
+                height: 20.0,
+              ),
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Checkbox(
+                      onChanged: (value) => setState(() {
+                        _agreeToTermsAndCondition = !_agreeToTermsAndCondition;
+                      }),
+                      checkColor: Colors.white,
+                      activeColor: brown,
+                      value: _agreeToTermsAndCondition,
+                    ),
+                    Expanded(
+                        child: InkWell(
+                            onTap: () {
+                              Navigator.pushNamed(
+                                  context, "/terms_and_condition");
+                            },
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text("I have carfully read and agreed to the"),
+                                Text("Terms and Privacy Policy",
+                                    style: TextStyle(color: brown)),
+                              ],
+                            )))
+                  ]),
+              SizedBox(
+                height: 20.0,
+              ),
+              Container(
+                width: MediaQuery.of(context).copyWith().size.width,
+                child: RaisedButton(
+                  onPressed: () {
+                    register();
+                  },
+                  textColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.circular(5.0),
+                      side: BorderSide(color: brown)),
+                  padding: EdgeInsets.fromLTRB(135, 10, 135, 10),
+                  child: Text("Signup", style: TextStyle(fontSize: 20.0)),
+                ),
+              ),
+              SizedBox(
+                height: 40.0,
+              ),
+            ],
+          )),
+        ));
   }
 
   void register() async {
@@ -208,8 +209,11 @@ class RegisterPageState extends State<RegisterPage> {
 
       if (resp['status'] == true) {
         Navigator.pop(context);
-        success(context, 'Registeration Successful');
-        Navigator.pushNamed(context, "/login");
+        // success(context, 'Registeration Successful');
+        Student.email = _email.text;
+        Student.isNewStudent = true;
+        Navigator.popAndPushNamed(context, "/verify");
+        // Navigator.pushNamed(context, "/login");
       } else {
         Map<String, dynamic> data = {};
         String msg = "";
@@ -220,13 +224,14 @@ class RegisterPageState extends State<RegisterPage> {
             msg += "$count. $value\n";
             count++;
           });
+        } else {
+          msg = resp['message'];
         }
         throw Exception("$msg");
       }
     } catch (e) {
-      Navigator.pop(context); //??
-      error(context, e.toString().replaceAll("Exception: ", ""),
-          title: "Registeration failed");
+      Navigator.pop(context);
+      error(context, stripExceptions(e), title: "Registeration failed");
     }
   }
 }

@@ -75,8 +75,7 @@ class ChoosePlanState extends State<ChoosePlan> {
           Navigator.pop(context);
         }
       } catch (e) {
-        error(context, e.toString());
-        rethrow;
+        error(context, stripExceptions(e));
       }
     }
 
@@ -113,10 +112,10 @@ class ChoosePlanState extends State<ChoosePlan> {
                         child: RaisedButton(
                           padding: EdgeInsets.symmetric(
                               vertical: 20, horizontal: 30),
-                          onPressed: () => 
-                          Student.subscription == false ?
-                          setState(() => _selectedPlan = Subscription.plans[0]['plan_id'])
-                          : null,
+                          onPressed: () => Student.subscription == false
+                              ? setState(() => _selectedPlan =
+                                  Subscription.plans[0]['plan_id'])
+                              : null,
                           color:
                               _selectedPlan == Subscription.plans[0]['plan_id']
                                   ? brown
@@ -156,10 +155,10 @@ class ChoosePlanState extends State<ChoosePlan> {
                         child: RaisedButton(
                           padding: EdgeInsets.symmetric(
                               vertical: 20, horizontal: 30),
-                          onPressed: () => 
-                          Student.subscription == false ?
-                          setState(() => _selectedPlan = Subscription.plans[1]['plan_id'])
-                          : null,
+                          onPressed: () => Student.subscription == false
+                              ? setState(() => _selectedPlan =
+                                  Subscription.plans[1]['plan_id'])
+                              : null,
                           color:
                               _selectedPlan == Subscription.plans[1]['plan_id']
                                   ? brown
@@ -207,10 +206,10 @@ class ChoosePlanState extends State<ChoosePlan> {
                         child: RaisedButton(
                           padding: EdgeInsets.symmetric(
                               vertical: 20, horizontal: 30),
-                          onPressed: () => 
-                            Student.subscription == false ?
-                            setState(() => _selectedPlan = Subscription.plans[2]['plan_id'])
-                            : null,
+                          onPressed: () => Student.subscription == false
+                              ? setState(() => _selectedPlan =
+                                  Subscription.plans[2]['plan_id'])
+                              : null,
                           color:
                               _selectedPlan == Subscription.plans[2]['plan_id']
                                   ? brown
@@ -250,10 +249,10 @@ class ChoosePlanState extends State<ChoosePlan> {
                         child: RaisedButton(
                           padding: EdgeInsets.symmetric(
                               vertical: 20, horizontal: 30),
-                          onPressed: () => 
-                          Student.subscription == false ?
-                          setState(() => _selectedPlan = Subscription.plans[3]['plan_id'])
-                          : null,
+                          onPressed: () => Student.subscription == false
+                              ? setState(() => _selectedPlan =
+                                  Subscription.plans[3]['plan_id'])
+                              : null,
                           color:
                               _selectedPlan == Subscription.plans[3]['plan_id']
                                   ? brown
@@ -316,37 +315,38 @@ class ChoosePlanState extends State<ChoosePlan> {
 
                   SizedBox(height: 20.0),
 
-                  Student.subscription == false ?
-                  Container(
-                    width: screen(context).width - 40,
-                    child: RaisedButton(
-                        padding:
-                            EdgeInsets.symmetric(vertical: 18, horizontal: 20),
-                        textColor: Colors.white,
-                        disabledColor: Colors.white,
-                        onPressed: _selectedPlan == "0"
-                            ? null
-                            : () async {
-                                try {
-                                  loading(context);
-                                  await Subscription.initiatePayment(
-                                      _selectedPlan);
-                                  _handleCheckout(context);
-                                } catch (e) {
-                                  error(context, e.toString());
-                                }
-                              },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Icon(Icons.credit_card, size: 25.0),
-                            SizedBox(width: 10.0),
-                            Text("Continue Payment",
-                                style: TextStyle(fontSize: 20.0)),
-                          ],
-                        )),
-                  )
-                  : Container(),
+                  Student.subscription == false
+                      ? Container(
+                          width: screen(context).width - 40,
+                          child: RaisedButton(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 18, horizontal: 20),
+                              textColor: Colors.white,
+                              disabledColor: Colors.white,
+                              onPressed: _selectedPlan == "0"
+                                  ? null
+                                  : () async {
+                                      try {
+                                        loading(context);
+                                        await Subscription.initiatePayment(
+                                            _selectedPlan);
+                                        _handleCheckout(context);
+                                      } catch (e) {
+                                        Navigator.pop(context);
+                                        error(context, stripExceptions(e));
+                                      }
+                                    },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Icon(Icons.credit_card, size: 25.0),
+                                  SizedBox(width: 10.0),
+                                  Text("Continue Payment",
+                                      style: TextStyle(fontSize: 20.0)),
+                                ],
+                              )),
+                        )
+                      : Container(),
 
                   SizedBox(height: 20),
 

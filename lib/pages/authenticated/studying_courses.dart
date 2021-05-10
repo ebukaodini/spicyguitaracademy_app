@@ -76,24 +76,26 @@ class StudyingCoursesPageState extends State<StudyingCoursesPage> {
     if (studyingCourses.length > 0) {
       studyingCourses.forEach((course) {
         vids.add(renderCourse(course, context, () async {
-          // get the lessons on this course
-          // and the assignments for the course
-          Lessons.source = LessonSource.normal;
-          Courses.currentCourse = course;
-          loading(context);
-          await Courses.activateCourse(context);
-          await Lessons.getLessons(context, course.id);
-          await Courses.getAssigment(context, course.id);
-          Navigator.pop(context);
-          if (Courses.activateCourseErrMsg.isNotEmpty) {
-            error(context, Courses.activateCourseErrMsg);
-            Courses.activateCourseErrMsg = "";
+          try {
+            // get the lessons on this course
+            // and the assignments for the course
+            Lessons.source = LessonSource.normal;
+            Courses.currentCourse = course;
+            loading(context);
+            await Courses.activateCourse(context);
+            await Lessons.getLessons(context, course.id);
+            await Courses.getAssigment(context, course.id);
+
+            Navigator.pop(context);
+            Navigator.pushNamed(context, "/lessons_page", arguments: {
+              'courseTitle': Courses.currentCourse.title,
+              'courseActive': Courses.currentCourse.status,
+              'courseId': Courses.currentCourse.id,
+            });
+          } catch (e) {
+            Navigator.pop(context);
+            error(context, stripExceptions(e));
           }
-          Navigator.pushNamed(context, "/lessons_page", arguments: {
-            'courseTitle': Courses.currentCourse.title,
-            'courseActive': Courses.currentCourse.status,
-            'courseId': Courses.currentCourse.id,
-          });
         }));
       });
     } else {

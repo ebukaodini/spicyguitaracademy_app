@@ -52,7 +52,7 @@ class ReChoosePlanState extends State<ReChoosePlan> {
     }
 
     return new Scaffold(
-        backgroundColor: Color.fromRGBO(243, 243, 243, 1.0),
+        backgroundColor: grey,
         body: OrientationBuilder(builder: (context, orientation) {
           return SafeArea(
             minimum: EdgeInsets.all(20),

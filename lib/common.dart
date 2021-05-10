@@ -1,6 +1,7 @@
 // import 'dart:html';
 import 'dart:io';
 
+import 'package:html/parser.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
@@ -17,6 +18,7 @@ class AuthException {
 }
 
 const String baseUrl = "https://spicyguitaracademy.com";
+// const String baseUrl = "http://10.0.2.2/spicyguitaracademy_backend";
 
 const String appName = "Spicy Guitar Academy";
 
@@ -81,6 +83,7 @@ Future request(String uri,
       }
     }
   } on SocketException catch (e) {
+    print(e);
     throw Exception("Network Error");
   } catch (e) {
     throw Exception(e);
@@ -149,6 +152,7 @@ Future upload(String uri, String filename, dynamic file,
       }
     }
   } on SocketException catch (e) {
+    print(e);
     throw Exception("Network Error");
   } on AuthException catch (e) {
     throw AuthException(e.toString());
@@ -312,12 +316,16 @@ String getStudentCategoryThumbnail({int category = -1}) {
   }
 }
 
+String stripExceptions(errmsg) {
+  return errmsg.toString().replaceAll("Exception: ", "");
+}
+
 Widget renderCourse(Course course, context, Function callback,
     {bool showProgress = true, bool showPricings = false}) {
   return CupertinoButton(
     onPressed: () => callback(),
+    padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 10.0),
     child: Container(
-      // padding: EdgeInsets.only(bottom: 20),
       decoration: new BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.all(Radius.circular(5)),
@@ -327,29 +335,32 @@ Widget renderCourse(Course course, context, Function callback,
       ),
       child: Row(
         children: <Widget>[
-          // add the thumbnail for the lesson
-          Container(
-            // margin: EdgeInsets.only(bottom: 10),
-            width: screen(context).width * 0.28,
-            height: 120,
-            decoration: new BoxDecoration(
-              image: new DecorationImage(
-                image: NetworkImage('$baseUrl/${course.thumbnail}',
-                    headers: {'cache-control': 'max-age=0, must-revalidate'}),
-                fit: BoxFit.cover,
-              ),
-              borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(5), topLeft: Radius.circular(5)),
-            ),
-            child: course.status == false
-                ? SvgPicture.asset("assets/imgs/icons/lock_icon.svg",
-                    color: Colors.white, fit: BoxFit.scaleDown)
-                : SvgPicture.asset(
-                    "assets/imgs/icons/play_video_icon.svg",
-                    color: Colors.white,
-                    fit: BoxFit.scaleDown,
-                  ),
-          ),
+          loadImage(context, course, '$baseUrl/${course.thumbnail}'),
+          // Container(
+          //   // margin: EdgeInsets.only(bottom: 10),
+          //   width: screen(context).width * 0.28,
+          //   height: 120,
+          //   decoration: new BoxDecoration(
+          //     image: // Image.asset(''), // ,
+          //         DecorationImage(
+          //       //   // Future
+          //       image: loadImage(context,
+          //           '$baseUrl/${course.thumbnail}'), // AssetImage(''), // NetworkImage('$baseUrl/${course.thumbnail}',
+          //       //       headers: {'cache-control': 'max-age=0, must-revalidate'}),
+          //       fit: BoxFit.cover,
+          //     ),
+          //     borderRadius: BorderRadius.only(
+          //         bottomLeft: Radius.circular(5), topLeft: Radius.circular(5)),
+          //   ),
+          //   child: course.status == false
+          //       ? SvgPicture.asset("assets/imgs/icons/lock_icon.svg",
+          //           color: Colors.white, fit: BoxFit.scaleDown)
+          //       : SvgPicture.asset(
+          //           "assets/imgs/icons/play_video_icon.svg",
+          //           color: Colors.white,
+          //           fit: BoxFit.scaleDown,
+          //         ),
+          // ),
           SizedBox(width: 10),
           Expanded(
               child: Container(
@@ -397,6 +408,7 @@ Widget renderCourse(Course course, context, Function callback,
                                   Stack(
                                     alignment: Alignment.topLeft,
                                     children: <Widget>[
+                                      // background
                                       Container(
                                         margin: EdgeInsets.only(right: 5),
                                         child: FractionallySizedBox(
@@ -407,12 +419,21 @@ Widget renderCourse(Course course, context, Function callback,
                                           ),
                                         ),
                                       ),
+
+                                      // indicator
                                       FractionallySizedBox(
-                                        widthFactor:
-                                            course.completedLessons == 0
-                                                ? 0.005
-                                                : (course.completedLessons /
-                                                    course.allLessons),
+                                        widthFactor: course.completedLessons ==
+                                                0
+                                            ? 0.005
+
+                                            // conditional stmt to capture when
+                                            // completed lesson is greater than
+                                            // all lessons
+                                            : (course.completedLessons <=
+                                                    course.allLessons
+                                                ? (course.completedLessons /
+                                                    course.allLessons)
+                                                : 1),
                                         child: Container(
                                           height: 2.0,
                                           color: brown,
@@ -456,10 +477,78 @@ Widget renderCourse(Course course, context, Function callback,
   );
 }
 
+Widget loadImage(context, dynamic course, String url) {
+  // return NetworkImage('$baseUrl/${course.thumbnail}',
+  // headers: {'cache-control': 'max-age=1000000'});
+  return new Container(
+    margin: EdgeInsets.only(bottom: 10),
+    width: screen(context).width * 0.28,
+    height: 120,
+    decoration: new BoxDecoration(
+      image: DecorationImage(
+        image: NetworkImage('$baseUrl/${course.thumbnail}',
+            headers: {'cache-control': 'max-age=0, must-revalidate'}),
+        fit: BoxFit.cover,
+      ),
+      borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(5), topLeft: Radius.circular(5)),
+    ),
+    child: course.status == false
+        ? SvgPicture.asset("assets/imgs/icons/lock_icon.svg",
+            color: Colors.white, fit: BoxFit.scaleDown)
+        : SvgPicture.asset(
+            "assets/imgs/icons/play_video_icon.svg",
+            color: Colors.white,
+            fit: BoxFit.scaleDown,
+          ),
+  );
+  FutureBuilder(
+    future: http.get(url, headers: {'cache-control': 'max-age=1000000'}),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.done) {
+        print("completed snapshot $snapshot");
+        return Container();
+        // return new Container(
+        //   width: screen(context).width * 0.28,
+        //   height: 120,
+        //   decoration: new BoxDecoration(
+        //     image: DecorationImage(
+        //       image: FileImage(snapshot.data),
+        //       // NetworkImage('$baseUrl/${course.thumbnail}',
+        //       //       headers: {'cache-control': 'max-age=0, must-revalidate'}),
+        //       fit: BoxFit.cover,
+        //     ),
+        //     borderRadius: BorderRadius.only(
+        //         bottomLeft: Radius.circular(5), topLeft: Radius.circular(5)),
+        //   ),
+        //   child: course.status == false
+        //       ? SvgPicture.asset("assets/imgs/icons/lock_icon.svg",
+        //           color: Colors.white, fit: BoxFit.scaleDown)
+        //       : SvgPicture.asset(
+        //           "assets/imgs/icons/play_video_icon.svg",
+        //           color: Colors.white,
+        //           fit: BoxFit.scaleDown,
+        //         ),
+        // );
+      } else {
+        print("not completed snapshot $snapshot");
+        return Container();
+        // return new Container(
+        //   width: screen(context).width * 0.28,
+        //   height: 120,
+        //   child:
+        //       Image.asset("assets/imgs/icons/unloaded.png", fit: BoxFit.cover),
+        // );
+      }
+    },
+  );
+}
+
 Widget renderLesson(Lesson lesson, context, Function callback,
     {bool courseLocked = true}) {
   return CupertinoButton(
     onPressed: () => (courseLocked == false) ? callback() : null,
+    padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 10.0),
     child: Container(
       padding: EdgeInsets.only(bottom: 20),
       decoration: new BoxDecoration(
@@ -515,7 +604,9 @@ Widget renderLesson(Lesson lesson, context, Function callback,
                 ),
                 Text(
                   "${lesson.description}",
-                  overflow: TextOverflow.clip,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.justify,
+                  maxLines: 3,
                   style: TextStyle(
                     color: Color.fromRGBO(112, 112, 112, 1.0),
                     fontSize: 15.0,
@@ -529,11 +620,19 @@ Widget renderLesson(Lesson lesson, context, Function callback,
   );
 }
 
+String parseHtmlString(String htmlString) {
+  final document = parse(htmlString);
+  final String parsedString = parse(document.body.text).documentElement.text;
+
+  return parsedString;
+}
+
 Widget renderAssignment(context) {
   return CupertinoButton(
       onPressed: () {
         Navigator.pushNamed(context, '/assignment_page');
       },
+      padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 10.0),
       child: Container(
           padding: EdgeInsets.all(20),
           decoration: new BoxDecoration(

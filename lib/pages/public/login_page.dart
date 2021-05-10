@@ -96,12 +96,17 @@ class LoginPageState extends State<LoginPage> {
 
                   SizedBox(height: 20.0),
 
-                  InkWell(
-                      onTap: () {},
-                      child: Text(
-                        'Forgot Password',
-                        style: TextStyle(color: brown),
-                      ))
+                  Align(
+                      alignment: Alignment.centerLeft,
+                      child: InkWell(
+                          onTap: () {
+                            Navigator.pushNamed(context, '/forgot_password');
+                          },
+                          child: Text(
+                            'Forgot Password',
+                            textAlign: TextAlign.right,
+                            style: TextStyle(color: brown),
+                          )))
                 ]))));
   }
 
@@ -115,22 +120,25 @@ class LoginPageState extends State<LoginPage> {
       if (resp['status'] == true) {
         var data = resp['data'];
         await Student.signin(data['student'], data['token']);
+        _pass.text = "";
 
         Navigator.pop(context);
-
-        if (reAuthentication == true) {
-          reAuthentication = false;
-          Navigator.pop(context);
+        if (Student.status != 'active') {
+          Navigator.pushNamed(context, "/verify");
         } else {
-          Navigator.pushNamed(context, "/welcome_note");
+          if (reAuthentication == true) {
+            reAuthentication = false;
+            Navigator.pop(context);
+          } else {
+            Navigator.pushNamed(context, "/welcome_note");
+          }
         }
       } else {
         throw Exception(resp['message']);
       }
     } catch (e) {
       Navigator.pop(context);
-      error(context, e.toString().replaceAll("Exception: ", ""),
-          title: 'Login failed');
+      error(context, stripExceptions(e), title: 'Login failed');
     }
   }
 }

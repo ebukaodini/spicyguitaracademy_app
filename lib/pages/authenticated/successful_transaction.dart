@@ -58,19 +58,24 @@ class SuccessfulTransactionState extends State<SuccessfulTransaction> {
                 child: RaisedButton(
                   padding: EdgeInsets.symmetric(vertical: 18, horizontal: 20),
                   onPressed: () async {
-                    loading(context);
-                    await Student.getStudentCategoryAndStats();
-                    Navigator.pop(context);
-                    if (Student.studyingCategory == 0) {
-                      Navigator.popAndPushNamed(context, "/choose_category");
-                    } else {
-                      if (Student.isLoaded == true) {
-                        Navigator.popUntil(
-                            context, ModalRoute.withName('/welcome_note'));
-                        Navigator.pushNamed(context, '/ready_to_play');
+                    try {
+                      loading(context);
+                      await Student.getStudentCategoryAndStats();
+                      Navigator.pop(context);
+                      if (Student.studyingCategory == 0) {
+                        Navigator.popAndPushNamed(context, "/choose_category");
                       } else {
-                        Navigator.popAndPushNamed(context, '/ready_to_play');
+                        if (Student.isLoaded == true) {
+                          Navigator.popUntil(
+                              context, ModalRoute.withName('/welcome_note'));
+                          Navigator.pushNamed(context, '/ready_to_play');
+                        } else {
+                          Navigator.popAndPushNamed(context, '/ready_to_play');
+                        }
                       }
+                    } catch (e) {
+                      Navigator.pop(context);
+                      error(context, stripExceptions(e));
                     }
                   },
                   color: brown,

@@ -16,36 +16,41 @@ class StartLoadingState extends State<StartLoading> {
   }
 
   void _initializeCoursesAndLessons() async {
-    // get all courses
-    await Courses.getAllCourses(context);
+    try {
+      // get all courses
+      await Courses.getAllCourses(context);
 
-    if (Student.subscription == true && Student.studyingCategory != 0) {
-      // get the courses currently being studied
-      await Courses.getStudyingCourses(context);
-    } else {
-      // get the courses studied by this student in the past
-      // get the lessons studied by this student in the past
+      if (Student.subscription == true && Student.studyingCategory != 0) {
+        // get the courses currently being studied
+        await Courses.getStudyingCourses(context);
+      } else {
+        // get the courses studied by this student in the past
+        // get the lessons studied by this student in the past
+      }
+
+      // get featured courses
+      await Courses.getAllFeaturedCourses(context);
+
+      // get my fewatured courses
+      await Courses.getMyFeaturedCourses(context);
+
+      // get free lessons
+      await Lessons.getFreeLessons(context);
+
+      Student.isLoaded = true;
+
+      // route to dashboard
+      Navigator.pushReplacementNamed(context, "/dashboard");
+    } catch (e) {
+      Navigator.pop(context);
+      error(context, stripExceptions(e));
     }
-
-    // get featured courses
-    await Courses.getAllFeaturedCourses(context);
-
-    // get my fewatured courses
-    await Courses.getMyFeaturedCourses(context);
-
-    // get free lessons
-    await Lessons.getFreeLessons(context);
-
-    Student.isLoaded = true;
-
-    // route to dashboard
-    Navigator.pushReplacementNamed(context, "/dashboard");
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromRGBO(243, 243, 243, 1.0),
+      backgroundColor: grey,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

@@ -26,12 +26,19 @@ class LessonsPageState extends State<LessonsPage> {
     List<Widget> vids = new List<Widget>();
     courseLessons.forEach((lesson) {
       vids.add(renderLesson(lesson, context, () async {
-        currentTutorial = lesson;
-        if (Lessons.source == LessonSource.normal)
-          await Lessons.activateLesson(context);
-        else if (Lessons.source == LessonSource.featured)
-          await Lessons.activateFeaturedLesson(context);
-        Navigator.pushNamed(context, "/tutorial_page");
+        try {
+          loading(context);
+          currentTutorial = lesson;
+          if (Lessons.source == LessonSource.normal)
+            await Lessons.activateLesson(context);
+          else if (Lessons.source == LessonSource.featured)
+            await Lessons.activateFeaturedLesson(context);
+          Navigator.pop(context);
+          Navigator.pushNamed(context, "/tutorial_page");
+        } catch (e) {
+          Navigator.pop(context);
+          error(context, stripExceptions(e));
+        }
       }, courseLocked: courseLocked));
     });
 
@@ -59,6 +66,7 @@ class LessonsPageState extends State<LessonsPage> {
                 child: Text("$courseTitle",
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.left,
                     style: TextStyle(
                       fontSize: 20.0,
                       fontWeight: FontWeight.w600,
@@ -72,6 +80,8 @@ class LessonsPageState extends State<LessonsPage> {
                       style: TextStyle(
                           fontWeight: FontWeight.w600, color: Colors.white)))
             ])),
-        body: SingleChildScrollView(child: Column(children: _loadLessons())));
+        body: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(horizontal: 10.0),
+            child: Column(children: _loadLessons())));
   }
 }

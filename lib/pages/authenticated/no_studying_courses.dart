@@ -23,8 +23,7 @@ class NotStyudyingCoursesPageState extends State<NoStudyingCoursesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: SingleChildScrollView(
-            child: Container(
-      alignment: Alignment.center,
+            child: Center(
       child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -32,7 +31,6 @@ class NotStyudyingCoursesPageState extends State<NoStudyingCoursesPage> {
             SizedBox(height: 50),
             Text(
               "No Courses!",
-              textAlign: TextAlign.center,
               maxLines: 2,
               style: TextStyle(
                   fontSize: 25.0, color: brown, fontWeight: FontWeight.w500),
@@ -42,7 +40,6 @@ class NotStyudyingCoursesPageState extends State<NoStudyingCoursesPage> {
               Student.subscription == false
                   ? "Choose a subscription plan"
                   : "Choose a category to learn from by tapping the button.",
-              textAlign: TextAlign.center,
               style: TextStyle(
                   fontSize: 20.0, color: darkgrey, fontWeight: FontWeight.w400),
             ),

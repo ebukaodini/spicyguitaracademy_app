@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:spicyguitaracademy/pages/authenticated/forums_page.dart';
+import 'package:spicyguitaracademy/pages/public/contact.dart';
+import 'package:spicyguitaracademy/pages/public/forgot_password.dart';
+import 'package:spicyguitaracademy/pages/public/reset_password.dart';
 
 import 'package:spicyguitaracademy/pages/public/terms_and_condition.dart';
 import 'package:spicyguitaracademy/pages/public/landing_page.dart';
+import 'package:spicyguitaracademy/pages/public/verify_email.dart';
 import 'package:spicyguitaracademy/pages/public/welcome_page.dart';
 import 'package:spicyguitaracademy/pages/public/register_page.dart';
 import 'package:spicyguitaracademy/pages/public/login_page.dart';
@@ -89,15 +94,15 @@ class SpicyGuitarAcademy extends StatelessWidget {
         scaffoldBackgroundColor: Color(0xFFF3F3F3),
 
         buttonTheme: ButtonThemeData(
-            buttonColor: Color(0xFF6B2B14),
-            focusColor: Color(0xFF471D0E),
-            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            layoutBehavior: ButtonBarLayoutBehavior.padded,
-            splashColor: Color(0xFF471D0E),
-            shape: RoundedRectangleBorder(
-                borderRadius: new BorderRadius.circular(5.0),
-                side: BorderSide(color: Color(0xFF6B2B14))),
-          ),
+          buttonColor: Color(0xFF6B2B14),
+          focusColor: Color(0xFF471D0E),
+          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          layoutBehavior: ButtonBarLayoutBehavior.padded,
+          splashColor: Color(0xFF471D0E),
+          shape: RoundedRectangleBorder(
+              borderRadius: new BorderRadius.circular(5.0),
+              side: BorderSide(color: Color(0xFF6B2B14))),
+        ),
 
         // brightness
         brightness: Brightness.light,
@@ -126,7 +131,6 @@ class SpicyGuitarAcademy extends StatelessWidget {
                 fontSize: 16.0,
                 fontFamily: 'Poppins')),
       ),
-      
       routes: <String, WidgetBuilder>{
         '/': (BuildContext context) => new LandingPage(), // landing_page
         '/welcome_page': (BuildContext context) => new WelcomePage(),
@@ -134,10 +138,15 @@ class SpicyGuitarAcademy extends StatelessWidget {
         '/terms_and_condition': (BuildContext context) =>
             new TermsAndCondition(),
         '/login': (BuildContext context) => new LoginPage(),
+        '/forgot_password': (BuildContext context) => new ForgotPasswordPage(),
+        '/verify': (BuildContext context) => new VerifyPage(),
+        '/resetpassword': (BuildContext context) => new ResetPasswordPage(),
         '/welcome_note': (BuildContext context) => new WelcomeNotePage(),
         '/choose_plan': (BuildContext context) => new ChoosePlan(),
-        '/successful_transaction': (BuildContext context) => new SuccessfulTransaction(),
-        '/failed_transaction': (BuildContext context) => new FailedTransaction(),
+        '/successful_transaction': (BuildContext context) =>
+            new SuccessfulTransaction(),
+        '/failed_transaction': (BuildContext context) =>
+            new FailedTransaction(),
         '/ready_to_play': (BuildContext context) =>
             new ReadyToPlayTransaction(),
         '/start_loading': (BuildContext context) => new StartLoading(),
@@ -152,7 +161,9 @@ class SpicyGuitarAcademy extends StatelessWidget {
         '/notification': (BuildContext context) => new NotificationPage(),
         '/help': (BuildContext context) => new HelpPage(),
         '/settings': (BuildContext context) => new SettingsPage(),
+        '/forums': (BuildContext context) => new ForumsPage(),
         '/assignment_page': (BuildContext context) => new AssignmentPage(),
+        '/contactus': (BuildContext context) => new ContactUsPage(),
 
         // '/demo': (BuildContext context) => new UploadImageDemo()
       },

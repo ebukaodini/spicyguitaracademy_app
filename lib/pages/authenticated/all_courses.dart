@@ -92,7 +92,7 @@ class AllCoursesPageState extends State<AllCoursesPage> {
         videos = advancedCourses;
         break;
       default:
-      videos = beginnersCourses;
+        videos = beginnersCourses;
         break;
     }
 
@@ -114,8 +114,7 @@ class AllCoursesPageState extends State<AllCoursesPage> {
     ));
 
     videos.forEach((course) {
-      vids.add(renderCourse(course, context, () => {},
-          showProgress: false));
+      vids.add(renderCourse(course, context, () => {}, showProgress: false));
     });
 
     return new Column(children: vids);
@@ -139,10 +138,10 @@ class AllCoursesPageState extends State<AllCoursesPage> {
               ),
             ),
             Container(
-              margin: EdgeInsets.only(top: 5),
-              width: 40,
-              height: 5,
-              color: _courseCategory == category ? brown : Colors.transparent)
+                margin: EdgeInsets.only(top: 5),
+                width: 40,
+                height: 5,
+                color: _courseCategory == category ? brown : Colors.transparent)
           ],
         ));
   }
@@ -150,7 +149,7 @@ class AllCoursesPageState extends State<AllCoursesPage> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Column(children: <Widget>[
+        child: Column(children: <Widget>[
       // The top text
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -160,7 +159,8 @@ class AllCoursesPageState extends State<AllCoursesPage> {
           Text(
             "Find Amazing\nCourses",
             textAlign: TextAlign.start,
-            style: TextStyle(fontSize: 30.0, color: brown, fontWeight: FontWeight.w500),
+            style: TextStyle(
+                fontSize: 30.0, color: brown, fontWeight: FontWeight.w500),
           ),
 
           // the sort button
@@ -198,23 +198,20 @@ class AllCoursesPageState extends State<AllCoursesPage> {
 
       // the category identification
       Container(
-        width: screen(context).width,
-        // height: 50,
-        padding: EdgeInsets.symmetric(vertical: 5),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            categoryIdentification(1, 'Beginners'),
-            categoryIdentification(2, 'Amateurs'),
-            categoryIdentification(3, 'Intermediates'),
-            categoryIdentification(4, 'Advanced')
-          ],
-        )),
+          width: screen(context).width,
+          padding: EdgeInsets.symmetric(vertical: 5),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              categoryIdentification(1, 'Beginners'),
+              categoryIdentification(2, 'Amateurs'),
+              categoryIdentification(3, 'Intermediates'),
+              categoryIdentification(4, 'Advanced')
+            ],
+          )),
 
       _loadCourses()
     ]));
   }
-
-
 }

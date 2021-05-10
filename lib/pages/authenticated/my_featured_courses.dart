@@ -71,19 +71,24 @@ class MyFeaturedCoursesPageState extends State<MyFeaturedCoursesPage> {
     if (myFeaturedCourses.length > 0) {
       myFeaturedCourses.forEach((course) {
         vids.add(renderCourse(course, context, () async {
-          // get the lessons on this course
-          // and the assignments for the course
-          loading(context);
-          await Lessons.getLessons(context, course.id);
-          await Courses.getAssigment(context, course.id);
-          Navigator.pop(context);
-          Lessons.source = LessonSource.featured;
-          Courses.currentCourse = course;
-          Navigator.pushNamed(context, "/lessons_page", arguments: {
-            'courseTitle': course.title,
-            'courseActive': course.status,
-            'courseId': course.id,
-          });
+          try {
+            // get the lessons on this course
+            // and the assignments for the course
+            loading(context);
+            await Lessons.getLessons(context, course.id);
+            await Courses.getAssigment(context, course.id);
+            Lessons.source = LessonSource.featured;
+            Courses.currentCourse = course;
+            Navigator.pop(context);
+            Navigator.pushNamed(context, "/lessons_page", arguments: {
+              'courseTitle': course.title,
+              'courseActive': course.status,
+              'courseId': course.id,
+            });
+          } catch (e) {
+            Navigator.pop(context);
+            error(context, stripExceptions(e));
+          }
         }));
       });
     } else {

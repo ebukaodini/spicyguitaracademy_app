@@ -34,7 +34,6 @@ class AssignmentPageState extends State<AssignmentPage> {
         Assignment.questionVideo.isNotEmpty) {
       _displayscreen = Screen.video;
     }
-
   }
 
   _uploadAnswer() async {
@@ -69,11 +68,16 @@ class AssignmentPageState extends State<AssignmentPage> {
   }
 
   _submitAnswer() async {
-    loading(context, message: 'Submitting');
-    await Assignment.submitAnswer(context, _answer.text);
-    setState(() => Assignment.answerNote = _answer.text);
-    _answer.clear();
-    Navigator.pop(context);
+    try {
+      loading(context, message: 'Submitting');
+      await Assignment.submitAnswer(context, _answer.text);
+      setState(() => Assignment.answerNote = _answer.text);
+      _answer.clear();
+      Navigator.pop(context);
+    } catch (e) {
+      Navigator.pop(context);
+      error(context, stripExceptions(e));
+    }
   }
 
   Widget renderDisplayScreen() {

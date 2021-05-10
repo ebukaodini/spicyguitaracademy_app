@@ -1,6 +1,6 @@
 // import 'dart:convert';
 
-import 'package:sanitize_html/sanitize_html.dart';
+// import 'package:sanitize_html/sanitize_html.dart';
 import 'package:spicyguitaracademy/common.dart';
 
 class Student {
@@ -10,6 +10,9 @@ class Student {
   static String email;
   static String telephone;
   static String avatar;
+  static String status;
+  static bool isNewStudent;
+  static bool forgotPassword;
 
   static bool subscription;
   static int daysRemaining;
@@ -28,23 +31,30 @@ class Student {
   static bool isLoaded = false;
 
   static signin(Map<String, dynamic> student, String token) async {
-    id = student['id'];
-    firstname = student['firstname'];
-    lastname = student['lastname'];
-    email = student['email'];
-    telephone = student['telephone'];
-    avatar = student['avatar'];
+    try {
+      id = student['id'];
+      firstname = student['firstname'];
+      lastname = student['lastname'];
+      email = student['email'];
+      telephone = student['telephone'];
+      avatar = student['avatar'];
+      status = student['status'];
+      isNewStudent = false;
+      forgotPassword = false;
 
-    Auth.token = token;
+      Auth.token = token;
 
-    // load subscription plans
-    await Subscription.getSubscriptionPlans();
+      // load subscription plans
+      await Subscription.getSubscriptionPlans();
 
-    // get student subscription status, days remaining and subscription plan
-    await getSubscriptionStatus();
+      // get student subscription status, days remaining and subscription plan
+      await getSubscriptionStatus();
 
-    // get the current category and stats
-    await getStudentCategoryAndStats();
+      // get the current category and stats
+      await getStudentCategoryAndStats();
+    } catch (e) {
+      throw (e);
+    }
   }
 
   static signout() {
@@ -55,6 +65,9 @@ class Student {
     email = null;
     telephone = null;
     avatar = null;
+    status = null;
+    isNewStudent = null;
+    forgotPassword = null;
     subscription = null;
     daysRemaining = null;
     subscriptionPlan = null;
@@ -70,73 +83,85 @@ class Student {
   }
 
   static getStudentCategoryAndStats() async {
-    var resp = await request('/api/student/statistics',
-        method: 'GET',
-        headers: {
-          'JWToken': Auth.token,
-          'cache-control': 'max-age=0, must-revalidate'
-        });
+    try {
+      var resp = await request('/api/student/statistics',
+          method: 'GET',
+          headers: {
+            'JWToken': Auth.token,
+            'cache-control': 'max-age=0, must-revalidate'
+          });
 
-    if (resp['status'] == true) {
-      studyingCategory = resp['data']['category'] ?? 0;
-      takenCourses = resp['data']['takenCourses'] ?? 0;
-      allCourses = resp['data']['allCourses'] ?? 0;
-      takenLessons = resp['data']['takenLessons'] ?? 0;
-      allLessons = resp['data']['allLessons'] ?? 0;
-    } else {
-      studyingCategory = 0;
-      takenCourses = 0;
-      allCourses = 0;
-      takenLessons = 0;
-      allLessons = 0;
+      if (resp['status'] == true) {
+        studyingCategory = resp['data']['category'] ?? 0;
+        takenCourses = resp['data']['takenCourses'] ?? 0;
+        allCourses = resp['data']['allCourses'] ?? 0;
+        takenLessons = resp['data']['takenLessons'] ?? 0;
+        allLessons = resp['data']['allLessons'] ?? 0;
+      } else {
+        studyingCategory = 0;
+        takenCourses = 0;
+        allCourses = 0;
+        takenLessons = 0;
+        allLessons = 0;
+      }
+
+      if (subscription == false) studyingCategory = 0;
+
+      studyingCategoryLabel = [
+        "No Category",
+        "Beginner",
+        "Amateur",
+        "Intermediate",
+        "Advanced"
+      ][studyingCategory];
+    } catch (e) {
+      throw (e);
     }
-
-    if (subscription == false) studyingCategory = 0;
-
-    studyingCategoryLabel = [
-      "No Category",
-      "Beginner",
-      "Amateur",
-      "Intermediate",
-      "Advanced"
-    ][studyingCategory];
   }
 
   static getSubscriptionStatus() async {
-    var resp = await request('/api/subscription/status',
-        method: 'GET',
-        headers: {
-          'JWToken': Auth.token,
-          'cache-control': 'max-age=0, must-revalidate'
-        });
+    try {
+      var resp = await request('/api/subscription/status',
+          method: 'GET',
+          headers: {
+            'JWToken': Auth.token,
+            'cache-control': 'max-age=0, must-revalidate'
+          });
 
-    var data = resp['data'];
-    subscription = data['status'] == 'ACTIVE' ? true : false;
-    daysRemaining = data['days'];
-    subscriptionPlan = resp['status'] == true ? data['plan'] : '0';
+      var data = resp['data'];
+      subscription = data['status'] == 'ACTIVE' ? true : false;
+      daysRemaining = data['days'];
+      subscriptionPlan = resp['status'] == true ? data['plan'] : '0';
 
-    subscriptionPlanLabel = [
-      "No Subscription Plan",
-      "1 Month",
-      "3 Months",
-      "6 Months",
-      "12 Months"
-    ][int.parse(subscriptionPlan)];
+      subscriptionPlanLabel = [
+        "No Subscription Plan",
+        "1 Month",
+        "3 Months",
+        "6 Months",
+        "12 Months"
+      ][int.parse(subscriptionPlan)];
+    } catch (e) {
+      throw (e);
+    }
   }
 
   static chooseCategory(String category) async {
-    var resp = await request('/api/student/category/select',
-        method: 'POST',
-        headers: {
-          'JWToken': Auth.token,
-          'cache-control': 'max-age=0, must-revalidate'
-        },
-        body: {
-          'category': category
-        });
+    try {
+      var resp = await request('/api/student/category/select',
+          method: 'POST',
+          headers: {
+            'JWToken': Auth.token,
+            'cache-control': 'max-age=0, must-revalidate'
+          },
+          body: {
+            'category': category
+          });
 
-    if (resp['status'] == true) {
-      await getStudentCategoryAndStats();
+      if (resp['status'] == true) {
+        await getStudentCategoryAndStats();
+      }
+    } catch (e) {
+      throw (e);
     }
   }
 
@@ -166,96 +191,115 @@ class Subscription {
   static List<dynamic> plans;
 
   static getSubscriptionPlans() async {
-    var resp = await request('/api/subscription/plans',
-        method: 'GET',
-        headers: {
-          'JWToken': Auth.token,
-          'cache-control': 'max-age=0, must-revalidate'
-        });
-    plans = resp['data'];
+    try {
+      var resp = await request('/api/subscription/plans',
+          method: 'GET',
+          headers: {
+            'JWToken': Auth.token,
+            'cache-control': 'max-age=0, must-revalidate'
+          });
+      plans = resp['data'];
+    } catch (e) {
+      throw (e);
+    }
   }
 
   static initiateFeaturedPayment(courseId) async {
-    var resp = await request(
-      '/api/subscription/initiate-featured',
-      method: 'POST',
-      body: {'email': Student.email, 'course': courseId.toString()},
-      // continue with the server side and
-      headers: {
-        'JWToken': Auth.token,
-        'cache-control': 'max-age=0, must-revalidate'
-      },
-    );
+    try {
+      var resp = await request(
+        '/api/subscription/initiate-featured',
+        method: 'POST',
+        body: {'email': Student.email, 'course': courseId.toString()},
+        // continue with the server side and
+        headers: {
+          'JWToken': Auth.token,
+          'cache-control': 'max-age=0, must-revalidate'
+        },
+      );
 
-    // Navigator.pushNamedAndRemoveUntil(context,'/login', (route) => false);
-    if (resp['status'] == true) {
-      Subscription.reference = resp['data']['reference'];
-      Subscription.accessCode = resp['data']['access_code'];
-      Subscription.price = resp['data']['price'];
-    } else {
-      throw Exception(resp['message']);
+      // Navigator.pushNamedAndRemoveUntil(context,'/login', (route) => false);
+      if (resp['status'] == true) {
+        Subscription.reference = resp['data']['reference'];
+        Subscription.accessCode = resp['data']['access_code'];
+        Subscription.price = resp['data']['price'];
+      } else {
+        throw Exception(resp['message']);
+      }
+    } catch (e) {
+      throw (e);
     }
   }
 
   static initiatePayment(selectedPlan) async {
-    var resp = await request(
-      '/api/subscription/initiate',
-      method: 'POST',
-      body: {'email': Student.email, 'plan': selectedPlan},
-      headers: {
-        'JWToken': Auth.token,
-        'cache-control': 'max-age=0, must-revalidate'
-      },
-    );
+    try {
+      var resp = await request(
+        '/api/subscription/initiate',
+        method: 'POST',
+        body: {'email': Student.email, 'plan': selectedPlan},
+        headers: {
+          'JWToken': Auth.token,
+          'cache-control': 'max-age=0, must-revalidate'
+        },
+      );
 
-    if (resp['status'] == true) {
-      Subscription.reference = resp['data']['reference'];
-      Subscription.accessCode = resp['data']['access_code'];
-      Subscription.price = resp['data']['price'];
-    } else {
-      throw Exception(resp['message']);
+      if (resp['status'] == true) {
+        Subscription.reference = resp['data']['reference'];
+        Subscription.accessCode = resp['data']['access_code'];
+        Subscription.price = resp['data']['price'];
+      } else {
+        throw Exception(resp['message']);
+      }
+    } catch (e) {
+      throw (e);
     }
   }
 
   static verifySubscription() async {
-    var resp = await request(
-        '/api/subscription/verify/${Subscription.reference}',
-        method: 'POST',
-        headers: {
-          'JWToken': Auth.token,
-          'cache-control': 'max-age=0, must-revalidate'
-        },
-        body: {
-          'email': Student.email
-        });
+    try {
+      var resp = await request(
+          '/api/subscription/verify/${Subscription.reference}',
+          method: 'POST',
+          headers: {
+            'JWToken': Auth.token,
+            'cache-control': 'max-age=0, must-revalidate'
+          },
+          body: {
+            'email': Student.email
+          });
 
-    if (resp['status'] == true) {
-      Subscription.paystatus = true;
-      // get subscription status again
-      await Student.getSubscriptionStatus();
-    } else {
-      Subscription.paystatus = false;
+      if (resp['status'] == true) {
+        Subscription.paystatus = true;
+        // get subscription status again
+        await Student.getSubscriptionStatus();
+      } else {
+        Subscription.paystatus = false;
+      }
+    } catch (e) {
+      throw (e);
     }
   }
 
   static verifyFeatured() async {
-    var resp = await request(
-        '/api/subscription/verify-featured/${Subscription.reference}',
-        method: 'POST',
-        headers: {
-          'JWToken': Auth.token,
-          'cache-control': 'max-age=0, must-revalidate'
-        },
-        body: {
-          'email': Student.email
-        });
+    try {
+      var resp = await request(
+          '/api/subscription/verify-featured/${Subscription.reference}',
+          method: 'POST',
+          headers: {
+            'JWToken': Auth.token,
+            'cache-control': 'max-age=0, must-revalidate'
+          },
+          body: {
+            'email': Student.email
+          });
 
-    if (resp['status'] == true) {
-      Subscription.paystatus = true;
-      // get subscription status again
-      // await Student.getSubscriptionStatus();
-    } else {
-      Subscription.paystatus = false;
+      if (resp['status'] == true) {
+        Subscription.paystatus = true;
+        // get subscription status again
+      } else {
+        Subscription.paystatus = false;
+      }
+    } catch (e) {
+      throw (e);
     }
   }
 }
@@ -306,10 +350,12 @@ class Courses {
         advancedCourses.add(Course.fromJson(course));
       });
     } on AuthException catch (e) {
-      error(context, e.toString().replaceAll("Exception: ", ""));
-      reAuthenticate(context);
+      // error(context, stripExceptions(e));
+      // reAuthenticate(context);
+      throw (e);
     } catch (e) {
-      error(context, e.toString().replaceAll("Exception: ", ""));
+      // error(context, stripExceptions(e));
+      throw (e);
     }
   }
 
@@ -327,10 +373,12 @@ class Courses {
         studyingCourses.add(Course.fromJson(course));
       });
     } on AuthException catch (e) {
-      error(context, e.toString().replaceAll("Exception: ", ""));
-      reAuthenticate(context);
+      // error(context, stripExceptions(e));
+      // reAuthenticate(context);
+      throw (e);
     } catch (e) {
-      error(context, e.toString().replaceAll("Exception: ", ""));
+      // error(context, stripExceptions(e));
+      throw (e);
     }
   }
 
@@ -352,15 +400,18 @@ class Courses {
         studyingCourses[studyingCourses.indexOf(Courses.currentCourse)] =
             Courses.currentCourse;
       } else {
-        activateCourseErrMsg = resp['message'] == "Course already activated"
-            ? ""
-            : resp['message'];
+        // activateCourseErrMsg =
+        if (resp['message'] != "Course already activated") {
+          throw (resp['message']);
+        }
       }
     } on AuthException catch (e) {
-      error(context, e.toString().replaceAll("Exception: ", ""));
-      reAuthenticate(context);
+      throw (e);
+      // error(context, stripExceptions(e));
+      // reAuthenticate(context);
     } catch (e) {
-      error(context, e.toString().replaceAll("Exception: ", ""));
+      throw (e);
+      // error(context, stripExceptions(e));
     }
   }
 
@@ -379,10 +430,12 @@ class Courses {
         featuredCourses.add(Course.fromJson(course));
       });
     } on AuthException catch (e) {
-      error(context, e.toString().replaceAll("Exception: ", ""));
-      reAuthenticate(context);
+      // error(context, stripExceptions(e));
+      // reAuthenticate(context);
+      throw (e);
     } catch (e) {
-      error(context, e.toString().replaceAll("Exception: ", ""));
+      // error(context, stripExceptions(e));
+      throw (e);
     }
   }
 
@@ -400,10 +453,12 @@ class Courses {
         myFeaturedCourses.add(Course.fromJson(course));
       });
     } on AuthException catch (e) {
-      error(context, e.toString().replaceAll("Exception: ", ""));
-      reAuthenticate(context);
+      throw (e);
+      // error(context, stripExceptions(e));
+      // reAuthenticate(context);
     } catch (e) {
-      error(context, e.toString().replaceAll("Exception: ", ""));
+      throw (e);
+      // error(context, stripExceptions(e));
     }
   }
 
@@ -413,9 +468,8 @@ class Courses {
   }
 
   static sortByTitle(courses) {
-    return courses.sort((a, b) => a.title
-        .toString()
-        .compareTo(b.title.toString().replaceAll("Exception: ", "")));
+    return courses
+        .sort((a, b) => a.title.toString().compareTo(stripExceptions(b.title)));
   }
 
   static sortByOrder(courses) {
@@ -438,10 +492,12 @@ class Courses {
         Assignment.status = false;
       }
     } on AuthException catch (e) {
-      error(context, e.toString().replaceAll("Exception: ", ""));
-      reAuthenticate(context);
+      throw (e);
+      // error(context, stripExceptions(e));
+      // reAuthenticate(context);
     } catch (e) {
-      error(context, e.toString().replaceAll("Exception: ", ""));
+      // error(context, stripExceptions(e));
+      throw (e);
     }
   }
 }
@@ -465,8 +521,8 @@ class Course {
   Course.fromJson(Map<String, dynamic> json) {
     id = int.parse(json['id']) ?? 0;
     category = int.parse(json['category']) ?? 0;
-    title = sanitizeHtml(json['course'] ?? 'No title');
-    description = sanitizeHtml(json['description'] ?? 'No description');
+    title = parseHtmlString(json['course'] ?? 'No title');
+    description = parseHtmlString(json['description'] ?? 'No description');
     thumbnail = json['thumbnail'] ?? '';
     tutor = json['tutor'] ?? 'No tutor';
     order = int.parse(json['ord'] ?? '0');
@@ -500,10 +556,12 @@ class Lessons {
         freeLessons.add(Lesson.fromJson(lesson));
       });
     } on AuthException catch (e) {
-      error(context, e.toString().replaceAll("Exception: ", ""));
-      reAuthenticate(context);
+      // error(context, stripExceptions(e));
+      // reAuthenticate(context);
+      throw (e);
     } catch (e) {
-      error(context, e.toString().replaceAll("Exception: ", ""));
+      // error(context, stripExceptions(e));
+      throw (e);
     }
   }
 
@@ -521,12 +579,14 @@ class Lessons {
         courseLessons.add(Lesson.fromJson(lesson));
       });
     } on AuthException catch (e) {
-      error(context, e.toString().replaceAll("Exception: ", ""));
-      reAuthenticate(context);
+      throw (e);
+      // error(context, stripExceptions(e));
+      // reAuthenticate(context);
     } catch (e) {
       // print(e.toString());
       // TODO: if loading is active and this method is called, error won't take effect
-      error(context, e.toString().replaceAll("Exception: ", ""));
+      throw (e);
+      // error(context, stripExceptions(e));
     }
   }
 
@@ -556,10 +616,12 @@ class Lessons {
         }
       }
     } on AuthException catch (e) {
-      error(context, e.toString().replaceAll("Exception: ", ""));
-      reAuthenticate(context);
+      // error(context, stripExceptions(e));
+      // reAuthenticate(context);
+      throw (e);
     } catch (e) {
-      error(context, e.toString().replaceAll("Exception: ", ""));
+      // error(context, stripExceptions(e));
+      throw (e);
     }
   }
 
@@ -582,10 +644,12 @@ class Lessons {
             Courses.currentCourse;
       }
     } on AuthException catch (e) {
-      error(context, e.toString().replaceAll("Exception: ", ""));
-      reAuthenticate(context);
+      // error(context, stripExceptions(e));
+      // reAuthenticate(context);
+      throw (e);
     } catch (e) {
-      error(context, e.toString().replaceAll("Exception: ", ""));
+      // error(context, stripExceptions(e));
+      throw (e);
     }
   }
 }
@@ -611,8 +675,8 @@ class Lesson {
   Lesson.fromJson(Map<String, dynamic> json) {
     id = int.parse(json['id']) ?? 0;
     courseId = int.parse(json['course']) ?? 0;
-    title = sanitizeHtml(json['lesson'] ?? 'No title');
-    description = sanitizeHtml(json['description'] ?? 'No description');
+    title = parseHtmlString(json['lesson'] ?? 'No title');
+    description = parseHtmlString(json['description'] ?? 'No description');
     order = int.parse(json['ord']) ?? 0;
     thumbnail = json['thumbnail'];
     tutor = json['tutor'] ?? 'No tutor';
@@ -621,7 +685,7 @@ class Lesson {
     practice = json['practice_audio'] ?? null;
     tablature = json['tablature'] ?? null;
     note = json['note'] ?? null;
-    note = note != null ? sanitizeHtml(note) : note;
+    note = note != null ? parseHtmlString(note) : note;
   }
 }
 
@@ -644,10 +708,12 @@ class Tutorial {
 
       return resp['data'] ?? [];
     } on AuthException catch (e) {
-      error(context, e.toString().replaceAll("Exception: ", ""));
-      reAuthenticate(context);
+      // error(context, stripExceptions(e));
+      // reAuthenticate(context);
+      throw (e);
     } catch (e) {
-      error(context, e.toString().replaceAll("Exception: ", ""));
+      // error(context, stripExceptions(e));
+      throw (e);
     }
   }
 
@@ -664,10 +730,12 @@ class Tutorial {
 
       return resp['status'] ?? false;
     } on AuthException catch (e) {
-      error(context, e.toString().replaceAll("Exception: ", ""));
-      reAuthenticate(context);
+      // error(context, stripExceptions(e));
+      // reAuthenticate(context);
+      throw (e);
     } catch (e) {
-      error(context, e.toString().replaceAll("Exception: ", ""));
+      throw (e);
+      // error(context, stripExceptions(e));
     }
   }
 }
@@ -693,10 +761,11 @@ class Assignment {
     tutor = json['tutor'] ?? 'No tutor';
     questionNote = json['questionNote'] ?? null;
     questionNote =
-        questionNote != null ? sanitizeHtml(questionNote) : questionNote;
-    questionVideo = json['questionVideo'] == "NULL" ? null : json['questionVideo'] ?? null;
+        questionNote != null ? parseHtmlString(questionNote) : questionNote;
+    questionVideo =
+        json['questionVideo'] == "NULL" ? null : json['questionVideo'] ?? null;
     answerNote = json['answerNote'] ?? null;
-    answerNote = answerNote != null ? sanitizeHtml(answerNote) : answerNote;
+    answerNote = answerNote != null ? parseHtmlString(answerNote) : answerNote;
     answerRating = int.parse(json['rating']) ?? 0;
     answerReview = json['review'] ?? null;
     answerVideo = json['answerVideo'] ?? null;
@@ -705,24 +774,70 @@ class Assignment {
 
   static submitAnswer(context, answer) async {
     try {
-      await request('/api/student/assignment/answer',
-          method: 'POST',
-          body: {
-            'note': answer,
-            'answerId': Assignment.answerId.toString(),
-            'assignment': Assignment.id.toString()
-          },
-          headers: {
-            'JWToken': Auth.token,
-            'cache-control': 'max-age=0, must-revalidate'
-          });
+      await request('/api/student/assignment/answer', method: 'POST', body: {
+        'note': answer,
+        'answerId': Assignment.answerId.toString(),
+        'assignment': Assignment.id.toString()
+      }, headers: {
+        'JWToken': Auth.token,
+        'cache-control': 'max-age=0, must-revalidate'
+      });
     } on AuthException catch (e) {
-      error(context, e.toString().replaceAll("Exception: ", ""));
-      reAuthenticate(context);
+      throw (e);
+      // error(context, stripExceptions(e));
+      // reAuthenticate(context);
     } catch (e) {
-      error(context, e.toString().replaceAll("Exception: ", ""));
+      throw (e);
+      // error(context, stripExceptions(e));
     }
   }
 
   static uploadAnswer() {}
+}
+
+class Forum {
+  static List<dynamic> comments;
+
+  static getForumMessages(context) async {
+    try {
+      var resp = await request(
+          '/api/forums/${Student.studyingCategory}/messages',
+          method: 'GET',
+          headers: {
+            'JWToken': Auth.token,
+            'cache-control': 'max-age=0, must-revalidate'
+          });
+
+      return resp['data'] ?? [];
+    } on AuthException catch (e) {
+      // error(context, stripExceptions(e));
+      // reAuthenticate(context);
+      throw (e);
+    } catch (e) {
+      // error(context, stripExceptions(e));
+      throw (e);
+    }
+  }
+
+  static submitMessage(context, comment, replyId) async {
+    try {
+      var resp = await request('/api/forum/message', method: 'POST', body: {
+        'comment': comment,
+        'categoryId': Student.studyingCategory.toString(),
+        'replyId': replyId
+      }, headers: {
+        'JWToken': Auth.token,
+        'cache-control': 'max-age=0, must-revalidate'
+      });
+
+      return resp['status'] ?? false;
+    } on AuthException catch (e) {
+      // error(context, stripExceptions(e));
+      // reAuthenticate(context);
+      throw (e);
+    } catch (e) {
+      throw (e);
+      // error(context, stripExceptions(e));
+    }
+  }
 }

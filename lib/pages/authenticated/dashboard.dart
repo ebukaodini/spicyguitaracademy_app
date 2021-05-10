@@ -32,9 +32,9 @@ class DashboardState extends State<Dashboard> {
   Widget build(BuildContext context) {
     return new Scaffold(
         // key: dashboardScaffoldKey,
-        backgroundColor: Color.fromRGBO(243, 243, 243, 1.0),
+        backgroundColor: grey,
         appBar: AppBar(
-          toolbarHeight: 70,
+          toolbarHeight: 60,
           iconTheme: IconThemeData(color: brown),
           backgroundColor: grey,
           centerTitle: true,
@@ -71,7 +71,8 @@ class DashboardState extends State<Dashboard> {
           ],
           elevation: 0,
         ),
-        body: SafeArea(minimum: EdgeInsets.all(5.0), child: _pages[_pageIndex]),
+        body:
+            SafeArea(minimum: EdgeInsets.all(10.0), child: _pages[_pageIndex]),
         drawer: Container(
           width: screen(context).width / 2,
           color: Colors.white,
@@ -117,37 +118,49 @@ class DashboardState extends State<Dashboard> {
                       textAlign: TextAlign.center,
                     )),
                 SizedBox(height: 20),
-                sideBarItem("assets/imgs/icons/home_icon_active.svg", "Home",
+                sideBarItem("assets/imgs/icons/sidebar_home_icon.svg", "Home",
                     () {
                   setState(() {
                     _pageIndex = 0;
                   });
                 }),
                 sideBarItem(
-                    "assets/imgs/icons/notification_icon.svg", "Notification",
-                    () {
-                  Navigator.pushNamed(context, '/notification');
-                }),
-                sideBarItem(
                     "assets/imgs/icons/sidebar_video_icon.svg", "Tutorial", () {
                   Navigator.pushNamed(context, '/tutorial_page');
                 }),
-                sideBarItem("assets/imgs/icons/user_icon_active.svg", "Profile",
-                    () {
-                  setState(() {
-                    _pageIndex = 3;
-                  });
+                // Student.subscriptionPlan != '0'
+                sideBarItem("assets/imgs/icons/message_icon.svg", "Forum", () {
+                  Navigator.pushNamed(context, '/forums');
                 }),
+                // : Container(),
+                // sideBarItem("assets/imgs/icons/user_icon_active.svg", "Profile",
+                //     () {
+                //   setState(() {
+                //     _pageIndex = 3;
+                //   });
+                // }),
                 // sideBarItem("assets/imgs/icons/settings_icon.svg", "Settings",
                 //     () {
                 //   Navigator.pushNamed(context, '/settings');
+                // }),
+                // sideBarItem(
+                //     "assets/imgs/icons/notification_icon.svg", "Notification",
+                //     () {
+                //   Navigator.pushNamed(context, '/notification');
                 // }),
                 sideBarItem("assets/imgs/icons/help_circle_icon.svg", "Help",
                     () {
                   Navigator.pushNamed(context, '/help');
                 }),
-                sideBarItem("assets/imgs/icons/signout_icon.svg", "Logout",
+                sideBarItem("assets/imgs/icons/help_circle_icon.svg", "Terms",
                     () {
+                  Navigator.pushNamed(context, '/terms_and_condition');
+                }),
+                sideBarItem(
+                    "assets/imgs/icons/contactus_icon.svg", "Contact Us", () {
+                  Navigator.pushNamed(context, '/contactus');
+                }),
+                sideBarItem("assets/imgs/icons/signout_icon.svg", "Logout", () {
                   Student.signout();
                   Navigator.popUntil(context, ModalRoute.withName('/login'));
                 }),

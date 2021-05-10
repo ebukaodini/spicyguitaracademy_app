@@ -38,58 +38,54 @@ class FeaturedCoursesPageState extends State<FeaturedCoursesPage>
 
   @override
   Widget build(BuildContext context) {
-    return 
-    Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(100),
-        child: Container(
-          height: 50,
-          margin: EdgeInsets.only(bottom: 5),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(30)),
-          ),
-          child: 
-          TabBar(
-            controller: _tabController,
-            onTap: (index) {
-              setState(() => tabPageIndex = index);
-            },
-            indicatorSize: TabBarIndicatorSize.tab,
-            indicator: BoxDecoration(
+    return Scaffold(
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(100),
+          child: Container(
+            height: 50,
+            margin: EdgeInsets.only(bottom: 5),
+            decoration: BoxDecoration(
+              color: Colors.white,
               borderRadius: BorderRadius.all(Radius.circular(30)),
-              color: brown,
             ),
-            unselectedLabelColor: brown,
-            unselectedLabelStyle: TextStyle(fontWeight: FontWeight.w500),
-            tabs: <Widget>[
-              Tab(
-                child: Text(
-                "BOUGHT COURSES",
-                style: TextStyle(fontWeight: FontWeight.w500),
-              )),
-              Tab(
-                child: Text(
-                "FEATURED COURSES",
-                style: TextStyle(fontWeight: FontWeight.w500),
-              )),
-            ],
+            child: TabBar(
+              controller: _tabController,
+              onTap: (index) {
+                setState(() => tabPageIndex = index);
+              },
+              indicatorSize: TabBarIndicatorSize.tab,
+              indicator: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(30)),
+                color: brown,
+              ),
+              unselectedLabelColor: brown,
+              unselectedLabelStyle: TextStyle(fontWeight: FontWeight.w500),
+              tabs: <Widget>[
+                Tab(
+                    child: Text(
+                  "BOUGHT COURSES",
+                  style: TextStyle(fontWeight: FontWeight.w500),
+                )),
+                Tab(
+                    child: Text(
+                  "PICK COURSES",
+                  style: TextStyle(fontWeight: FontWeight.w500),
+                )),
+              ],
+            ),
           ),
         ),
-      ),
+        body: TabBarView(
+            dragStartBehavior: DragStartBehavior.start,
+            controller: _tabController,
+            children: <Widget>[
+              // Bought Page
+              myFeaturedCourses.length == 0
+                  ? NoFeaturedCoursesPage()
+                  : MyFeaturedCoursesPage(),
 
-      body: 
-      TabBarView(
-        dragStartBehavior: DragStartBehavior.start,
-        controller: _tabController,
-        children: <Widget>[
-          // Bought Page
-          myFeaturedCourses.length == 0 ? NoFeaturedCoursesPage() : MyFeaturedCoursesPage(),
-         
-          // All Page
-          AllFeaturedCoursesPage(),
-        ]
-      )
-    );
+              // All Page
+              AllFeaturedCoursesPage(),
+            ]));
   }
 }

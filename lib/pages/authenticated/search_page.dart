@@ -23,24 +23,39 @@ class SearchPageState extends State<SearchPage> {
 
     if (value.trim().isEmpty) return;
 
-    studyingCourses.forEach((Course course) {
+    [
+      ...beginnersCourses,
+      ...amateurCourses,
+      ...intermediateCourses,
+      ...advancedCourses
+    ].forEach((Course course) {
+      // allCourses.forEach((Course course) {
       var title = course.title.trim().toLowerCase();
       var description = course.description.trim().toLowerCase();
+      var tutor = course.tutor.trim().toLowerCase();
 
-      // print("q: " + course.title);
-      if (title.contains(value) || description.contains(value)) {
+      if (title.contains(value) ||
+          description.contains(value) ||
+          tutor.contains(value)) {
         // print("r: " + course.title);
         result.add(renderCourse(course, context, () async {
-          loading(context);
-          await Lessons.getLessons(context, course.id);
-          await Courses.getAssigment(context, course.id);
-          Navigator.pop(context);
-          Lessons.source = LessonSource.normal;
-          Navigator.pushNamed(context, "/lessons_page", arguments: {
-            'courseTitle': course.title,
-            'courseActive': course.status,
-            'courseId': course.id,
-          });
+          try {
+            if (course.status == true) {
+              loading(context);
+              await Lessons.getLessons(context, course.id);
+              await Courses.getAssigment(context, course.id);
+              Lessons.source = LessonSource.normal;
+              Navigator.pop(context);
+              Navigator.pushNamed(context, "/lessons_page", arguments: {
+                'courseTitle': course.title,
+                'courseActive': course.status,
+                'courseId': course.id,
+              });
+            }
+          } catch (e) {
+            Navigator.pop(context);
+            error(context, stripExceptions(e));
+          }
         }, showProgress: false));
       }
     });
@@ -56,7 +71,7 @@ class SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      backgroundColor: Color.fromRGBO(243, 243, 243, 1.0),
+      backgroundColor: grey,
       appBar: AppBar(
         toolbarHeight: 70,
         iconTheme: IconThemeData(color: brown),
@@ -73,35 +88,36 @@ class SearchPageState extends State<SearchPage> {
         elevation: 0,
       ),
       body: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: 10.0),
           child: Column(children: <Widget>[
-        // Search container
-        Container(
-            padding: EdgeInsets.all(5),
-            width: screen(context).width,
-            decoration: BoxDecoration(
-              color: grey,
-            ),
-            child: TextField(
-                controller: _search,
-                autocorrect: true,
-                textInputAction: TextInputAction.search,
-                onSubmitted: (value) => _searchCourses(value),
-                style: TextStyle(fontSize: 20.0, color: brown),
-                decoration: InputDecoration(
-                    hintText: "Search",
-                    suffix: IconButton(
-                        onPressed: () {
-                          // _searchCourses(_search.text);
-                        },
-                        icon: Icon(
-                          Icons.search,
-                          color: brown,
-                        ))))),
+            // Search container
+            Container(
+                padding: EdgeInsets.all(5),
+                width: screen(context).width,
+                decoration: BoxDecoration(
+                  color: grey,
+                ),
+                child: TextField(
+                    controller: _search,
+                    autocorrect: true,
+                    textInputAction: TextInputAction.search,
+                    onSubmitted: (value) => _searchCourses(value),
+                    style: TextStyle(fontSize: 20.0, color: brown),
+                    decoration: InputDecoration(
+                        hintText: "Search",
+                        suffix: IconButton(
+                            onPressed: () {
+                              // _searchCourses(_search.text);
+                            },
+                            icon: Icon(
+                              Icons.search,
+                              color: brown,
+                            ))))),
 
-        Column(
-          children: _searchResult,
-        )
-      ])),
+            Column(
+              children: _searchResult,
+            )
+          ])),
     );
   }
 }
