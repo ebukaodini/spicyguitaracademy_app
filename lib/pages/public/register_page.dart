@@ -1,4 +1,4 @@
-import 'dart:io';
+// import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:spicyguitaracademy/common.dart';
@@ -115,10 +115,6 @@ class RegisterPageState extends State<RegisterPage> {
                           icon: Icon(_obscurePwd == true
                               ? Icons.visibility_outlined
                               : Icons.visibility_off_outlined)))),
-              Text(
-                'Password must contain letters, numbers and must be atleast 8 characters.',
-                style: TextStyle(color: Colors.red),
-              ),
               SizedBox(
                 height: 20.0,
               ),
@@ -136,6 +132,10 @@ class RegisterPageState extends State<RegisterPage> {
                           icon: Icon(_obscureCPwd == true
                               ? Icons.visibility_outlined
                               : Icons.visibility_off_outlined)))),
+              Text(
+                'Password must contain letters, numbers and must be atleast 8 characters.',
+                style: TextStyle(color: Colors.red),
+              ),
               SizedBox(
                 height: 20.0,
               ),
@@ -178,7 +178,7 @@ class RegisterPageState extends State<RegisterPage> {
                   shape: RoundedRectangleBorder(
                       borderRadius: new BorderRadius.circular(5.0),
                       side: BorderSide(color: brown)),
-                  padding: EdgeInsets.fromLTRB(135, 10, 135, 10),
+                  padding: EdgeInsets.symmetric(vertical: 10),
                   child: Text("Signup", style: TextStyle(fontSize: 20.0)),
                 ),
               ),
@@ -198,7 +198,7 @@ class RegisterPageState extends State<RegisterPage> {
         throw Exception('Please agree to the Terms and Condition.');
       }
 
-      var resp = await request('/api/register', method: 'POST', body: {
+      var resp = await request('/api/register_student', method: 'POST', body: {
         'firstname': _fname.text,
         'lastname': _lname.text,
         'email': _email.text,

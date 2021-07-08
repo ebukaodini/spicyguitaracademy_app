@@ -104,7 +104,7 @@ class SearchPageState extends State<SearchPage> {
                     onSubmitted: (value) => _searchCourses(value),
                     style: TextStyle(fontSize: 20.0, color: brown),
                     decoration: InputDecoration(
-                        hintText: "Search",
+                        hintText: "Search courses",
                         suffix: IconButton(
                             onPressed: () {
                               // _searchCourses(_search.text);

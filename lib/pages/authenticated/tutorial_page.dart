@@ -61,17 +61,18 @@ class TutorialPageState extends State<TutorialPage> {
     try {
       List<dynamic> comments = await Tutorial.getTutorialComments(context);
 
-      List<Widget> commentsWidgets = new List<Widget>();
+      List<Widget> commentsWidgets = [];
       comments.forEach((comment) {
-        String name, avatar, date, who;
+        String name, avatar, date;
+        // who;
         if (Student.email == comment['sender']) {
           name = '${Student.firstname} ${Student.lastname}';
           avatar = '${Student.avatar}';
-          who = 'me';
+          // who = 'me';
         } else {
           name = comment['tutor']['name'];
           avatar = comment['tutor']['avatar'];
-          who = 'tutor';
+          // who = 'tutor';
         }
         date = comment['date_added'];
 
@@ -201,7 +202,7 @@ class TutorialPageState extends State<TutorialPage> {
 
       // use the index to get the next lesson if this lesson is not the last
       if (currentTutorial != tutorialLessons.last) {
-        currentTutorial = tutorialLessons.elementAt(currentIndex + 1);
+        setCurrentTutorial(tutorialLessons.elementAt(currentIndex + 1));
         if (Lessons.source == LessonSource.normal)
           await Lessons.activateLesson(context);
         else if (Lessons.source == LessonSource.featured)
@@ -224,7 +225,7 @@ class TutorialPageState extends State<TutorialPage> {
 
       // use the index to get the previous lesson if this lesson is not the first
       if (currentTutorial != tutorialLessons.first) {
-        currentTutorial = tutorialLessons.elementAt(currentIndex - 1);
+        setCurrentTutorial(tutorialLessons.elementAt(currentIndex - 1));
 
         if (Lessons.source == LessonSource.normal)
           await Lessons.activateLesson(context);
@@ -265,7 +266,7 @@ class TutorialPageState extends State<TutorialPage> {
                         // the tutorial options
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.baseline,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             TextButton(
                               onPressed: currentTutorial.video != null

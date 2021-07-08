@@ -14,7 +14,6 @@ class ChooseCategoryState extends State<ChooseCategory> {
   @override
   void initState() {
     _selectedCategory = Student.studyingCategoryLabel;
-    print(_selectedCategory);
     super.initState();
   }
 

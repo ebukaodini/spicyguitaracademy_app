@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:spicyguitaracademy/common.dart';
-import 'package:spicyguitaracademy/models.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+// import 'package:spicyguitaracademy/models.dart';
+// import 'package:flutter_svg/flutter_svg.dart';
 
 class HelpPage extends StatefulWidget {
   @override
@@ -16,41 +16,6 @@ class HelpPageState extends State<HelpPage> {
   void initState() {
     super.initState();
   }
-
-  // void _searchCourses(value) {
-  //   List<Widget> result = [];
-  //   value = value.trim().toLowerCase();
-
-  //   if (value.trim().isEmpty) return;
-
-  //   studyingCourses.forEach((Course course) {
-  //     var title = course.title.trim().toLowerCase();
-  //     var description = course.description.trim().toLowerCase();
-
-  //     print("q: " + course.title);
-  //     if (title.contains(value) || description.contains(value)) {
-  //       print("r: " + course.title);
-  //       result.add(renderCourse(course, context, () async {
-  //         loading(context);
-  //         await Lessons.getLessons(context, course.id);
-  //         await Courses.getAssigment(context, course.id);
-  //         Navigator.pop(context);
-  //         Navigator.pushNamed(context, "/lessons_page", arguments: {
-  //           'courseTitle': course.title,
-  //           'courseActive': course.status,
-  //           'courseId': course.id,
-  //         });
-  //       }, showProgress: false));
-  //     }
-  //   });
-
-  //   setState(() {
-  //     if (result.isEmpty) {
-  //       result.add(Container(child: Text("No result.")));
-  //     }
-  //     _searchResult = result;
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -72,11 +37,21 @@ class HelpPageState extends State<HelpPage> {
         elevation: 0,
       ),
       body: SingleChildScrollView(
-          child: Column(children: <Widget>[
-        Column(
-          children: _searchResult,
-        )
-      ])),
+        child: Center(
+          child: Container(
+            margin: EdgeInsets.symmetric(vertical: 100),
+            child: Column(
+              children: [
+                Icon(Icons.help_outline),
+                SizedBox(
+                  height: 10,
+                ),
+                Text('Unavailable for now')
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

@@ -1,8 +1,16 @@
+import 'dart:io';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:in_app_update/in_app_update.dart';
 import 'package:flutter/services.dart';
+import 'package:spicyguitaracademy/pages/authenticated/coursepreview_page.dart';
+import 'package:spicyguitaracademy/pages/authenticated/editpassword_page.dart';
 import 'package:spicyguitaracademy/pages/authenticated/forums_page.dart';
 import 'package:spicyguitaracademy/pages/public/contact.dart';
+import 'package:spicyguitaracademy/pages/authenticated/editprofile_page.dart';
 import 'package:spicyguitaracademy/pages/public/forgot_password.dart';
+import 'package:spicyguitaracademy/pages/public/privacy_policy.dart';
 import 'package:spicyguitaracademy/pages/public/reset_password.dart';
 
 import 'package:spicyguitaracademy/pages/public/terms_and_condition.dart';
@@ -107,7 +115,7 @@ class SpicyGuitarAcademy extends StatelessWidget {
         // brightness
         brightness: Brightness.light,
 
-        cursorColor: Color(0xFF6B2B14),
+        // cursorColor: Color(0xFF6B2B14),
 
         focusColor: Color(0xFF6B2B14),
 
@@ -137,6 +145,7 @@ class SpicyGuitarAcademy extends StatelessWidget {
         '/register': (BuildContext context) => new RegisterPage(),
         '/terms_and_condition': (BuildContext context) =>
             new TermsAndCondition(),
+        '/privacy': (BuildContext context) => new PrivacyPolicy(),
         '/login': (BuildContext context) => new LoginPage(),
         '/forgot_password': (BuildContext context) => new ForgotPasswordPage(),
         '/verify': (BuildContext context) => new VerifyPage(),
@@ -158,14 +167,16 @@ class SpicyGuitarAcademy extends StatelessWidget {
         '/invite_friend': (BuildContext context) => new InviteFriend(),
         '/lessons_page': (BuildContext context) => new LessonsPage(),
         '/tutorial_page': (BuildContext context) => new TutorialPage(),
+        '/coursepreview_page': (BuildContext context) =>
+            new CoursePreviewPage(),
         '/notification': (BuildContext context) => new NotificationPage(),
         '/help': (BuildContext context) => new HelpPage(),
         '/settings': (BuildContext context) => new SettingsPage(),
         '/forums': (BuildContext context) => new ForumsPage(),
         '/assignment_page': (BuildContext context) => new AssignmentPage(),
         '/contactus': (BuildContext context) => new ContactUsPage(),
-
-        // '/demo': (BuildContext context) => new UploadImageDemo()
+        '/editprofile': (BuildContext context) => new EditProfilePage(),
+        '/editpassword': (BuildContext context) => new EditPasswordPage(),
       },
     );
   }

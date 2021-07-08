@@ -10,6 +10,9 @@ import 'package:spicyguitaracademy/models.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'dart:convert';
 import 'dart:async';
+// import 'package:shared_preferences/shared_preferences.dart';
+
+// Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
 class AuthException {
   AuthException(String message) {
@@ -18,13 +21,12 @@ class AuthException {
 }
 
 const String baseUrl = "https://spicyguitaracademy.com";
-// const String baseUrl = "http://10.0.2.2/spicyguitaracademy_backend";
+// const String baseUrl = "http://10.0.2.2/sga_web";
+// const String baseUrl = "http://localhost/sga_web";
 
 const String appName = "Spicy Guitar Academy";
 
-const String paystackPublicKey =
-    "pk_test_2aedc9b8a06baff2b47a08a08cd1b0237c260e4a";
-// pk_live_a62de957d87c74871330cec4084b73f8446fc5ad
+String paystackPublicKey;
 
 // dynamic headers = {'cache-control': 'no-cache', 'JWToken': Student.token};
 
@@ -161,8 +163,6 @@ Future upload(String uri, String filename, dynamic file,
   }
 }
 
-// }
-
 void reAuthenticate(context) {
   reAuthentication = true;
   Navigator.pushNamed(context, '/login');
@@ -196,20 +196,33 @@ void loading(BuildContext context, {String message: 'Loading'}) {
 void message(BuildContext context, String message, {String title: 'Message'}) {
   showDialog(
     context: context,
+    // barrierDismissible: false,
     builder: (context) {
       return AlertDialog(
-          scrollable: true,
-          title: Row(
-            children: [
-              Icon(Icons.info, color: Colors.lightBlueAccent),
-              SizedBox(width: 2.0),
-              Text("$title", style: TextStyle(color: Colors.lightBlueAccent)),
-            ],
-            mainAxisAlignment: MainAxisAlignment.start,
-          ),
-          content:
-              Text(message, style: TextStyle(color: Colors.lightBlueAccent)),
-          backgroundColor: Colors.white);
+        scrollable: true,
+        title: Row(
+          children: [
+            Icon(Icons.info, color: Colors.lightBlueAccent),
+            SizedBox(width: 2.0),
+            Text("$title", style: TextStyle(color: Colors.lightBlueAccent)),
+          ],
+          mainAxisAlignment: MainAxisAlignment.start,
+        ),
+        content: Column(
+          children: [
+            Text(message, style: TextStyle(color: Colors.lightBlueAccent)),
+          ],
+        ),
+        backgroundColor: Colors.white,
+        // actions: [
+        //   MaterialButton(
+        //     onPressed: () {
+        //       Navigator.pop(context);
+        //     },
+        //     child: Text('Ok'),
+        //   )
+        // ],
+      );
     },
   );
 }
@@ -217,6 +230,7 @@ void message(BuildContext context, String message, {String title: 'Message'}) {
 void success(BuildContext context, String message, {String title: 'Message'}) {
   showDialog(
     context: context,
+    // barrierDismissible: false,
     builder: (context) {
       return AlertDialog(
         scrollable: true,
@@ -230,6 +244,14 @@ void success(BuildContext context, String message, {String title: 'Message'}) {
         ),
         content: Text(message, style: TextStyle(color: Colors.green)),
         backgroundColor: Colors.white,
+        // actions: [
+        //   MaterialButton(
+        //     onPressed: () {
+        //       Navigator.pop(context);
+        //     },
+        //     child: Text('Ok'),
+        //   )
+        // ],
       );
     },
   );
@@ -238,6 +260,7 @@ void success(BuildContext context, String message, {String title: 'Message'}) {
 void error(BuildContext context, String message, {String title: 'Error'}) {
   showDialog(
     context: context,
+    // barrierDismissible: false,
     builder: (context) {
       return AlertDialog(
         scrollable: true,
@@ -251,6 +274,14 @@ void error(BuildContext context, String message, {String title: 'Error'}) {
         ),
         content: Text(message, style: TextStyle(color: Colors.red)),
         backgroundColor: Colors.white,
+        // actions: [
+        //   MaterialButton(
+        //     onPressed: () {
+        //       Navigator.pop(context);
+        //     },
+        //     child: Text('Ok'),
+        //   )
+        // ],
       );
     },
   );
@@ -261,7 +292,7 @@ void error(BuildContext context, String message, {String title: 'Error'}) {
 }
 
 void snackbar(BuildContext context, String message) {
-  Scaffold.of(context).showSnackBar(
+  ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       content: Text(message),
     ),
@@ -335,32 +366,27 @@ Widget renderCourse(Course course, context, Function callback,
       ),
       child: Row(
         children: <Widget>[
-          loadImage(context, course, '$baseUrl/${course.thumbnail}'),
-          // Container(
-          //   // margin: EdgeInsets.only(bottom: 10),
-          //   width: screen(context).width * 0.28,
-          //   height: 120,
-          //   decoration: new BoxDecoration(
-          //     image: // Image.asset(''), // ,
-          //         DecorationImage(
-          //       //   // Future
-          //       image: loadImage(context,
-          //           '$baseUrl/${course.thumbnail}'), // AssetImage(''), // NetworkImage('$baseUrl/${course.thumbnail}',
-          //       //       headers: {'cache-control': 'max-age=0, must-revalidate'}),
-          //       fit: BoxFit.cover,
-          //     ),
-          //     borderRadius: BorderRadius.only(
-          //         bottomLeft: Radius.circular(5), topLeft: Radius.circular(5)),
-          //   ),
-          //   child: course.status == false
-          //       ? SvgPicture.asset("assets/imgs/icons/lock_icon.svg",
-          //           color: Colors.white, fit: BoxFit.scaleDown)
-          //       : SvgPicture.asset(
-          //           "assets/imgs/icons/play_video_icon.svg",
-          //           color: Colors.white,
-          //           fit: BoxFit.scaleDown,
-          //         ),
-          // ),
+          Container(
+            width: screen(context).width * 0.28,
+            height: 100,
+            decoration: new BoxDecoration(
+              image: DecorationImage(
+                image: NetworkImage('$baseUrl/${course.thumbnail}',
+                    headers: {'cache-control': 'max-age=0, must-revalidate'}),
+                fit: BoxFit.cover,
+              ),
+              borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(5), topLeft: Radius.circular(5)),
+            ),
+            child: course.status == false
+                ? SvgPicture.asset("assets/imgs/icons/lock_icon.svg",
+                    color: Colors.white, fit: BoxFit.scaleDown)
+                : SvgPicture.asset(
+                    "assets/imgs/icons/play_video_icon.svg",
+                    color: Colors.white,
+                    fit: BoxFit.scaleDown,
+                  ),
+          ),
           SizedBox(width: 10),
           Expanded(
               child: Container(
@@ -481,9 +507,9 @@ Widget loadImage(context, dynamic course, String url) {
   // return NetworkImage('$baseUrl/${course.thumbnail}',
   // headers: {'cache-control': 'max-age=1000000'});
   return new Container(
-    margin: EdgeInsets.only(bottom: 10),
+    // margin: EdgeInsets.only(bottom: 10),
     width: screen(context).width * 0.28,
-    height: 120,
+    height: 100,
     decoration: new BoxDecoration(
       image: DecorationImage(
         image: NetworkImage('$baseUrl/${course.thumbnail}',
@@ -502,46 +528,46 @@ Widget loadImage(context, dynamic course, String url) {
             fit: BoxFit.scaleDown,
           ),
   );
-  FutureBuilder(
-    future: http.get(url, headers: {'cache-control': 'max-age=1000000'}),
-    builder: (context, snapshot) {
-      if (snapshot.connectionState == ConnectionState.done) {
-        print("completed snapshot $snapshot");
-        return Container();
-        // return new Container(
-        //   width: screen(context).width * 0.28,
-        //   height: 120,
-        //   decoration: new BoxDecoration(
-        //     image: DecorationImage(
-        //       image: FileImage(snapshot.data),
-        //       // NetworkImage('$baseUrl/${course.thumbnail}',
-        //       //       headers: {'cache-control': 'max-age=0, must-revalidate'}),
-        //       fit: BoxFit.cover,
-        //     ),
-        //     borderRadius: BorderRadius.only(
-        //         bottomLeft: Radius.circular(5), topLeft: Radius.circular(5)),
-        //   ),
-        //   child: course.status == false
-        //       ? SvgPicture.asset("assets/imgs/icons/lock_icon.svg",
-        //           color: Colors.white, fit: BoxFit.scaleDown)
-        //       : SvgPicture.asset(
-        //           "assets/imgs/icons/play_video_icon.svg",
-        //           color: Colors.white,
-        //           fit: BoxFit.scaleDown,
-        //         ),
-        // );
-      } else {
-        print("not completed snapshot $snapshot");
-        return Container();
-        // return new Container(
-        //   width: screen(context).width * 0.28,
-        //   height: 120,
-        //   child:
-        //       Image.asset("assets/imgs/icons/unloaded.png", fit: BoxFit.cover),
-        // );
-      }
-    },
-  );
+  // FutureBuilder(
+  //   future: http.get(url, headers: {'cache-control': 'max-age=1000000'}),
+  //   builder: (context, snapshot) {
+  //     if (snapshot.connectionState == ConnectionState.done) {
+  //       print("completed snapshot $snapshot");
+  //       return Container();
+  //       // return new Container(
+  //       //   width: screen(context).width * 0.28,
+  //       //   height: 120,
+  //       //   decoration: new BoxDecoration(
+  //       //     image: DecorationImage(
+  //       //       image: FileImage(snapshot.data),
+  //       //       // NetworkImage('$baseUrl/${course.thumbnail}',
+  //       //       //       headers: {'cache-control': 'max-age=0, must-revalidate'}),
+  //       //       fit: BoxFit.cover,
+  //       //     ),
+  //       //     borderRadius: BorderRadius.only(
+  //       //         bottomLeft: Radius.circular(5), topLeft: Radius.circular(5)),
+  //       //   ),
+  //       //   child: course.status == false
+  //       //       ? SvgPicture.asset("assets/imgs/icons/lock_icon.svg",
+  //       //           color: Colors.white, fit: BoxFit.scaleDown)
+  //       //       : SvgPicture.asset(
+  //       //           "assets/imgs/icons/play_video_icon.svg",
+  //       //           color: Colors.white,
+  //       //           fit: BoxFit.scaleDown,
+  //       //         ),
+  //       // );
+  //     } else {
+  //       print("not completed snapshot $snapshot");
+  //       return Container();
+  //       // return new Container(
+  //       //   width: screen(context).width * 0.28,
+  //       //   height: 120,
+  //       //   child:
+  //       //       Image.asset("assets/imgs/icons/unloaded.png", fit: BoxFit.cover),
+  //       // );
+  //     }
+  //   },
+  // );
 }
 
 Widget renderLesson(Lesson lesson, context, Function callback,
@@ -705,4 +731,10 @@ Widget renderAssignment(context) {
                   ],
                 )
               ])));
+}
+
+setCurrentTutorial(Lesson tut) {
+  currentTutorial = tut;
+  // final SharedPreferences prefs = await _prefs;
+  // prefs.set
 }

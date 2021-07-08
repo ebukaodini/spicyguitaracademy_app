@@ -1,7 +1,8 @@
-// import 'dart:convert';
-
 // import 'package:sanitize_html/sanitize_html.dart';
 import 'package:spicyguitaracademy/common.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
 class Student {
   static String id;
@@ -30,6 +31,75 @@ class Student {
 
   static bool isLoaded = false;
 
+  static pseudoSignin({bool handleClick = false}) async {
+    try {
+      // Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+      final SharedPreferences prefs = await _prefs;
+      // print(prefs.getBool('authenticated'));
+      Auth.authenticated = prefs.getBool('authenticated') ?? false;
+      if (Auth.authenticated == true) {
+        id = prefs.getString('id');
+        firstname = prefs.getString('firstname');
+        lastname = prefs.getString('lastname');
+        email = prefs.getString('email');
+        telephone = prefs.getString('telephone');
+        avatar = prefs.getString('avatar');
+        status = prefs.getString('status');
+        Auth.token = prefs.getString('token');
+        isNewStudent = false;
+        forgotPassword = false;
+
+        if (handleClick == true) {
+          // load subscription plans
+          await Subscription.getSubscriptionPlans();
+
+          // get student subscription status, days remaining and subscription plan
+          await getSubscriptionStatus();
+
+          // get the current category and stats
+          await getStudentCategoryAndStats();
+        }
+
+        // print(prefs.getBool('authenticated'));
+      }
+    } catch (e) {
+      throw (e);
+    }
+  }
+
+  static cacheSignin() async {
+    // Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+    // store redundant values in sharedpreference
+    final SharedPreferences prefs = await _prefs;
+    prefs.setString('id', id);
+    prefs.setString('firstname', firstname);
+    prefs.setString('lastname', lastname);
+    prefs.setString('email', email);
+    prefs.setString('telephone', telephone);
+    prefs.setString('avatar', avatar);
+    prefs.setString('status', status);
+    prefs.setString('token', Auth.token);
+    prefs.setBool('authenticated', Auth.authenticated);
+
+    print(prefs.getBool('authenticated'));
+  }
+
+  static clearSigninCache() async {
+    // Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+    // store redundant values in sharedpreference
+    final SharedPreferences prefs = await _prefs;
+    prefs.remove('firstname');
+    prefs.remove('lastname');
+    prefs.remove('email');
+    prefs.remove('telephone');
+    prefs.remove('avatar');
+    prefs.remove('status');
+    prefs.remove('token');
+    prefs.setBool('authenticated', false);
+
+    print(prefs.getBool('authenticated'));
+  }
+
   static signin(Map<String, dynamic> student, String token) async {
     try {
       id = student['id'];
@@ -43,6 +113,8 @@ class Student {
       forgotPassword = false;
 
       Auth.token = token;
+      Auth.authenticated = true;
+      await cacheSignin();
 
       // load subscription plans
       await Subscription.getSubscriptionPlans();
@@ -59,6 +131,7 @@ class Student {
 
   static signout() {
     Auth.token = null;
+    Auth.authenticated = false;
     id = null;
     firstname = null;
     lastname = null;
@@ -80,6 +153,8 @@ class Student {
     hasUnreadNotifications = null;
     subscriptionPlanLabel = null;
     isLoaded = false;
+
+    clearSigninCache();
   }
 
   static getStudentCategoryAndStats() async {
@@ -181,6 +256,7 @@ class Student {
 
 class Auth {
   static String token;
+  static bool authenticated;
 }
 
 class Subscription {
@@ -188,6 +264,7 @@ class Subscription {
   static String accessCode;
   static int price;
   static bool paystatus;
+  static bool featuredpaystatus;
   static List<dynamic> plans;
 
   static getSubscriptionPlans() async {
@@ -293,10 +370,10 @@ class Subscription {
           });
 
       if (resp['status'] == true) {
-        Subscription.paystatus = true;
+        Subscription.featuredpaystatus = true;
         // get subscription status again
       } else {
-        Subscription.paystatus = false;
+        Subscription.featuredpaystatus = false;
       }
     } catch (e) {
       throw (e);
@@ -304,13 +381,13 @@ class Subscription {
   }
 }
 
-List<Course> studyingCourses = new List();
-List<Course> beginnersCourses = new List();
-List<Course> amateurCourses = new List();
-List<Course> intermediateCourses = new List();
-List<Course> advancedCourses = new List();
-List<Course> featuredCourses = new List();
-List<Course> myFeaturedCourses = new List();
+List<Course> studyingCourses = [];
+List<Course> beginnersCourses = [];
+List<Course> amateurCourses = [];
+List<Course> intermediateCourses = [];
+List<Course> advancedCourses = [];
+List<Course> featuredCourses = [];
+List<Course> myFeaturedCourses = [];
 
 class Courses {
   static Course currentCourse;
@@ -402,7 +479,7 @@ class Courses {
       } else {
         // activateCourseErrMsg =
         if (resp['message'] != "Course already activated") {
-          throw (resp['message']);
+          snackbar(context, resp['message']);
         }
       }
     } on AuthException catch (e) {
@@ -515,6 +592,7 @@ class Course {
   int allLessons;
   bool featured;
   double featuredprice;
+  String preview;
   bool status;
 
   // constructing from json
@@ -530,6 +608,7 @@ class Course {
     allLessons = int.parse(json['total'] ?? '0');
     featured = json['featured'] == '1' ? true : false;
     featuredprice = double.parse(json['featuredprice'] ?? 0);
+    preview = json['featured_preview_video'] ?? '';
     status = json['status'] ?? false;
   }
 }
@@ -584,7 +663,32 @@ class Lessons {
       // reAuthenticate(context);
     } catch (e) {
       // print(e.toString());
-      // TODO: if loading is active and this method is called, error won't take effect
+      // if loading is active and this method is called, error won't take effect
+      throw (e);
+      // error(context, stripExceptions(e));
+    }
+  }
+
+  static getFeaturedLessons(context, courseid) async {
+    try {
+      var resp = await request('/api/course/featured/$courseid/lessons',
+          method: 'GET',
+          headers: {
+            'JWToken': Auth.token,
+            'cache-control': 'max-age=0, must-revalidate'
+          });
+      List<dynamic> lessons = resp['data'] ?? [];
+      courseLessons = [];
+      lessons.forEach((lesson) {
+        courseLessons.add(Lesson.fromJson(lesson));
+      });
+    } on AuthException catch (e) {
+      throw (e);
+      // error(context, stripExceptions(e));
+      // reAuthenticate(context);
+    } catch (e) {
+      // print(e.toString());
+      // if loading is active and this method is called, error won't take effect
       throw (e);
       // error(context, stripExceptions(e));
     }
@@ -805,7 +909,7 @@ class Forum {
           method: 'GET',
           headers: {
             'JWToken': Auth.token,
-            'cache-control': 'max-age=0, must-revalidate'
+            'cache-control': 'max-age=6400000, must-revalidate'
           });
 
       return resp['data'] ?? [];

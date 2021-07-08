@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:spicyguitaracademy/common.dart';
 import 'package:spicyguitaracademy/models.dart';
@@ -19,10 +20,24 @@ class ForumsPageState extends State<ForumsPage> {
   String replyId = '0';
   List<Widget> messagesWidget = [
     Container(
-        alignment: Alignment.center,
-        margin: EdgeInsets.symmetric(vertical: 5),
-        child: Text('Loading messages...'))
+      margin: EdgeInsets.only(top: 40),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircularProgressIndicator(
+            strokeWidth: 5.0,
+          ),
+          SizedBox(width: 10),
+          Text('Loading messages...')
+        ],
+      ),
+    )
   ];
+
+  List<dynamic> globalKeyList = [];
+  int chatLength;
+  double end;
+  dynamic replyViewed;
 
   @override
   void initState() {
@@ -109,41 +124,69 @@ class ForumsPageState extends State<ForumsPage> {
       }
     }
     date = comment['date_added'];
-    return Container(
-        decoration: new BoxDecoration(
-          color: Color.fromRGBO(107, 43, 20, 0.2),
-          borderRadius: BorderRadius.all(Radius.circular(5)),
-        ),
-        margin: EdgeInsets.only(
-            left: who == "me" ? screen(context).width * 0.20 : 5,
-            right: who != "me" ? screen(context).width * 0.20 : 5,
-            top: 5,
-            bottom: 5),
-        padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
-        child: Column(
+    GlobalKey key = GlobalKey();
+    globalKeyList.add({'id': comment['id'], 'key': key});
+    return Dismissible(
+        confirmDismiss: (DismissDirection direction) {
+          Future<bool> status;
+          this.setState(() {
+            replyId = comment['id'];
+          });
+          return status;
+        },
+        direction: DismissDirection.horizontal,
+        resizeDuration: null,
+        movementDuration: Duration(milliseconds: 10),
+        dragStartBehavior: DragStartBehavior.down,
+        dismissThresholds: {
+          DismissDirection.startToEnd: 0.1,
+          DismissDirection.endToStart: 2
+        },
+        key: key,
+        child: Container(
+          decoration: new BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(5)),
+            boxShadow: replyViewed == key
+                ? [BoxShadow(color: brown, blurRadius: 10.0, spreadRadius: 5.0)]
+                : [],
+          ),
+          margin: EdgeInsets.only(
+              left: who == "me" ? screen(context).width * 0.20 : 5,
+              right: who != "me" ? screen(context).width * 0.20 : 5,
+              top: 5,
+              bottom: 5),
+          padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               comment['reply_id'] != '0'
-                  ? Column(
-                      children: [
-                        Container(
-                          width: screen(context).width,
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-                          decoration: new BoxDecoration(
-                            color: Color.fromRGBO(107, 43, 20, 0.2),
-                            borderRadius: BorderRadius.all(Radius.circular(5)),
+                  ? InkWell(
+                      onTap: () {
+                        scrollToRepliedMsg(comment['reply_id']);
+                      },
+                      child: Column(
+                        children: [
+                          Container(
+                            width: screen(context).width,
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 5, vertical: 5),
+                            decoration: new BoxDecoration(
+                              color: Color.fromRGBO(107, 43, 20, 0.2),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5)),
+                            ),
+                            child: Text(getRepliedMsg(comment['reply_id']),
+                                maxLines: 2,
+                                overflow: TextOverflow
+                                    .ellipsis), //  comment['reply_id'].toString()
                           ),
-                          child: Text(getRepliedMsg(comment['reply_id']),
-                              maxLines: 2,
-                              overflow: TextOverflow
-                                  .ellipsis), //  comment['reply_id'].toString()
-                        ),
-                        SizedBox(
-                          height: 3.0,
-                        ),
-                      ],
+                          SizedBox(
+                            height: 3.0,
+                          ),
+                        ],
+                      ),
                     )
                   : Container(),
               Row(
@@ -170,7 +213,7 @@ class ForumsPageState extends State<ForumsPage> {
                         alignment: Alignment.centerRight,
                         child: Text("$date",
                             maxLines: 1,
-                            style: TextStyle(color: brown, fontSize: 14))),
+                            style: TextStyle(color: brown, fontSize: 12))),
                   ]),
               SizedBox(
                 height: 1.0,
@@ -180,23 +223,9 @@ class ForumsPageState extends State<ForumsPage> {
                 textAlign: TextAlign.start,
                 style: TextStyle(fontSize: 14),
               ),
-              SizedBox(
-                height: 1.0,
-              ),
-              InkWell(
-                onTap: () {
-                  this.setState(() {
-                    replyId = comment['id'];
-                  });
-                },
-                child: Text(
-                  "reply",
-                  textAlign: who == "me" ? TextAlign.start : TextAlign.end,
-                  style: TextStyle(
-                      fontSize: 12, fontWeight: FontWeight.bold, color: brown),
-                ),
-              )
-            ]));
+            ],
+          ),
+        ));
   }
 
   loadForumMessages() async {
@@ -213,6 +242,10 @@ class ForumsPageState extends State<ForumsPage> {
         _messages = messages;
       });
 
+      this.setState(() {
+        chatLength = list.length;
+      });
+
       scrollToBottom();
     } catch (e) {
       error(context, stripExceptions(e));
@@ -224,6 +257,34 @@ class ForumsPageState extends State<ForumsPage> {
         Duration(milliseconds: 300),
         () => _scrollController
             .jumpTo(_scrollController.position.maxScrollExtent));
+    this.setState(() {
+      end = _scrollController.position.maxScrollExtent;
+    });
+  }
+
+  scrollToRepliedMsg(id) {
+    double position = getPosition(id);
+    Timer(
+        Duration(milliseconds: 300),
+        () => _scrollController.animateTo(position,
+            duration: Duration(milliseconds: 500), curve: Curves.linear));
+  }
+
+  getPosition(String id) {
+    int count = 0;
+    globalKeyList.firstWhere((gkey) {
+      count++;
+      if (gkey['id'] == id) {
+        this.setState(() {
+          replyViewed = gkey['key'];
+          print(replyViewed);
+        });
+        return true;
+      } else
+        return false;
+    });
+    double position = (count / chatLength) * end;
+    return position;
   }
 
   @override
@@ -247,12 +308,22 @@ class ForumsPageState extends State<ForumsPage> {
               preferredSize: Size.fromHeight(100),
               child: Container(
                 width: screen(context).width,
-                color: Colors.blue,
+                decoration: new BoxDecoration(
+                  color: darkbrown,
+                  // borderRadius:
+                  //     BorderRadius.all(Radius.circular(5)),
+                  boxShadow: [
+                    BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 10.0,
+                        spreadRadius: 3.0)
+                  ],
+                ),
                 child: Text(
                   forumSubtitle(),
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                      color: brown,
+                      color: Colors.white,
                       fontSize: 15,
                       fontFamily: "Poppins",
                       fontWeight: FontWeight.normal),
@@ -262,22 +333,30 @@ class ForumsPageState extends State<ForumsPage> {
         ),
         body: Stack(
           children: <Widget>[
-            Column(
-              children: <Widget>[
-                Flexible(
-                  child: ListView(
-                    addAutomaticKeepAlives: true,
-                    semanticChildCount: _messages.length,
-                    // physics: NeverScrollableScrollPhysics(),
-                    controller: _scrollController,
-                    children: messagesWidget, // Display your list,
-                    reverse: false,
-                  ),
+            Column(children: <Widget>[
+              Flexible(
+                child: ListView(
+                  addAutomaticKeepAlives: true,
+                  semanticChildCount: _messages.length,
+                  controller: _scrollController,
+                  children: messagesWidget, // Display your list,
+                  reverse: false,
                 ),
-                canMessage == false
-                    ? Container()
-                    : Align(
-                        alignment: Alignment.bottomLeft,
+              ),
+              canMessage == false
+                  ? Container()
+                  : Align(
+                      alignment: Alignment.bottomLeft,
+                      child: Container(
+                        decoration: new BoxDecoration(
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.black12,
+                                blurRadius: 10.0,
+                                spreadRadius: 2.0)
+                          ],
+                        ),
                         child: Column(
                           children: [
                             replyId == "0"
@@ -295,10 +374,27 @@ class ForumsPageState extends State<ForumsPage> {
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(5)),
                                         ),
-                                        child: Text(getRepliedMsg(replyId),
-                                            maxLines: 2,
-                                            overflow: TextOverflow
-                                                .ellipsis), //  comment['reply_id'].toString()
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                  getRepliedMsg(replyId),
+                                                  maxLines: 2,
+                                                  overflow:
+                                                      TextOverflow.ellipsis),
+                                            ),
+                                            InkWell(
+                                                child: Icon(
+                                                  Icons.close,
+                                                  color: darkbrown,
+                                                ),
+                                                onTap: () {
+                                                  this.setState(() {
+                                                    replyId = '0';
+                                                  });
+                                                })
+                                          ],
+                                        ),
                                       ),
                                       SizedBox(
                                         height: 1.0,
@@ -375,9 +471,10 @@ class ForumsPageState extends State<ForumsPage> {
                               ),
                             ),
                           ],
-                        )),
-              ],
-            ),
+                        ),
+                      ),
+                    ),
+            ]),
           ],
         ));
   }

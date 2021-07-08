@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:spicyguitaracademy/common.dart';
-import 'package:spicyguitaracademy/models.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+// import 'package:spicyguitaracademy/models.dart';
+// import 'package:flutter_svg/flutter_svg.dart';
 
 class SettingsPage extends StatefulWidget {
   @override

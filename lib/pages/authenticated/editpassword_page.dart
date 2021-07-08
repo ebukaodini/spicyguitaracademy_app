@@ -4,19 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:spicyguitaracademy/common.dart';
 import 'package:spicyguitaracademy/models.dart';
 
-class ResetPasswordPage extends StatefulWidget {
+class EditPasswordPage extends StatefulWidget {
   @override
-  ResetPasswordPageState createState() => new ResetPasswordPageState();
+  EditPasswordPageState createState() => new EditPasswordPageState();
 }
 
-class ResetPasswordPageState extends State<ResetPasswordPage> {
-  TextEditingController _pass = TextEditingController();
+class EditPasswordPageState extends State<EditPasswordPage> {
+  TextEditingController _opass = TextEditingController();
+  TextEditingController _npass = TextEditingController();
   TextEditingController _cpass = TextEditingController();
 
   // properties
-  bool _obscurePwd = true;
+  bool _obscureOPwd = true;
+  bool _obscureNPwd = true;
   bool _obscureCPwd = true;
-  String _email = "";
 
   @override
   void initState() {
@@ -25,8 +26,6 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
 
   @override
   Widget build(BuildContext context) {
-    final Map args = ModalRoute.of(context).settings.arguments as Map;
-    _email = args['email'];
     return Scaffold(
         appBar: AppBar(
           toolbarHeight: 70,
@@ -34,7 +33,7 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
           backgroundColor: grey,
           centerTitle: true,
           title: Text(
-            'Reset Password',
+            'Edit Password',
             style: TextStyle(
                 color: brown,
                 fontSize: 30,
@@ -44,33 +43,42 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
           elevation: 0,
         ),
         body: SafeArea(
-          minimum: EdgeInsets.symmetric(horizontal: 15.0),
+          minimum: EdgeInsets.all(5.0),
           child: SingleChildScrollView(
               child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              SizedBox(
-                height: 20.0,
-              ),
-              Text('Choose another password that you can remember.',
-                  textAlign: TextAlign.center),
-              SizedBox(
-                height: 20.0,
-              ),
+              SizedBox(height: 40.0),
 
               // Password field
               TextField(
-                  controller: _pass,
-                  obscureText: _obscurePwd,
+                  controller: _opass,
+                  obscureText: _obscureOPwd,
                   textInputAction: TextInputAction.next,
                   style: TextStyle(fontSize: 20.0, color: brown),
                   decoration: InputDecoration(
-                      labelText: "Password",
+                      labelText: "Old Password",
                       suffix: IconButton(
                           onPressed: () => setState(() {
-                                _obscurePwd = !_obscurePwd;
+                                _obscureOPwd = !_obscureOPwd;
                               }),
-                          icon: Icon(_obscurePwd == true
+                          icon: Icon(_obscureOPwd == true
+                              ? Icons.visibility_outlined
+                              : Icons.visibility_off_outlined)))),
+              SizedBox(height: 20.0),
+              // Password field
+              TextField(
+                  controller: _npass,
+                  obscureText: _obscureNPwd,
+                  textInputAction: TextInputAction.next,
+                  style: TextStyle(fontSize: 20.0, color: brown),
+                  decoration: InputDecoration(
+                      labelText: "New Password",
+                      suffix: IconButton(
+                          onPressed: () => setState(() {
+                                _obscureNPwd = !_obscureNPwd;
+                              }),
+                          icon: Icon(_obscureNPwd == true
                               ? Icons.visibility_outlined
                               : Icons.visibility_off_outlined)))),
               SizedBox(height: 20.0),
@@ -88,23 +96,28 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
                           icon: Icon(_obscureCPwd == true
                               ? Icons.visibility_outlined
                               : Icons.visibility_off_outlined)))),
+              SizedBox(
+                height: 20.0,
+              ),
               Text(
-                'Your secured password must contain lessters, numbers and must be atleast 8 characters long.',
+                'Password must contain letters, numbers and must be atleast 8 characters.',
                 style: TextStyle(color: Colors.red),
               ),
-              SizedBox(height: 20.0),
+              SizedBox(
+                height: 20.0,
+              ),
               Container(
                 width: MediaQuery.of(context).copyWith().size.width,
                 child: RaisedButton(
                   onPressed: () {
-                    resetpassword();
+                    updatepassword();
                   },
                   textColor: Colors.white,
                   shape: RoundedRectangleBorder(
                       borderRadius: new BorderRadius.circular(5.0),
                       side: BorderSide(color: brown)),
                   padding: EdgeInsets.symmetric(vertical: 10),
-                  child: Text("Reset", style: TextStyle(fontSize: 20.0)),
+                  child: Text("Update", style: TextStyle(fontSize: 20.0)),
                 ),
               ),
               SizedBox(
@@ -115,21 +128,25 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
         ));
   }
 
-  void resetpassword() async {
+  void updatepassword() async {
     try {
       loading(context);
 
-      var resp = await request('/api/resetpassword', method: 'POST', body: {
-        'email': _email,
-        'password': _pass.text,
-        'cpassword': _cpass.text
-      });
+      var resp = await request('/api/account/updatepassword',
+          method: 'POST',
+          headers: {
+            'JWToken': Auth.token,
+            'cache-control': 'max-age=0, must-revalidate'
+          },
+          body: {
+            'opassword': _opass.text,
+            'npassword': _npass.text,
+            'cpassword': _cpass.text
+          });
 
-      Navigator.pop(context);
       if (resp['status'] == true) {
-        // success(context, 'Reset Password Successful');
-        // Navigator.pushNamed(context, "/login");
         Navigator.pop(context);
+        success(context, resp['message']);
       } else {
         Map<String, dynamic> data = {};
         String msg = "";
@@ -140,12 +157,14 @@ class ResetPasswordPageState extends State<ResetPasswordPage> {
             msg += "$count. $value\n";
             count++;
           });
+        } else {
+          msg = resp['message'];
         }
         throw Exception("$msg");
       }
     } catch (e) {
-      // Navigator.pop(context); //??
-      error(context, stripExceptions(e), title: "Reset Password failed");
+      Navigator.pop(context);
+      error(context, stripExceptions(e), title: "Update password failed");
     }
   }
 }

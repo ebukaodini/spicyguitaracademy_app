@@ -50,7 +50,7 @@ class StudyingCoursesPageState extends State<StudyingCoursesPage> {
   }
 
   Widget _loadCourses() {
-    List<Widget> vids = new List<Widget>();
+    List<Widget> vids = [];
 
     // var videos;
     // // _sortCourses();

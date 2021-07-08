@@ -45,7 +45,7 @@ class MyFeaturedCoursesPageState extends State<MyFeaturedCoursesPage> {
   }
 
   Widget _loadCourses() {
-    List<Widget> vids = new List<Widget>();
+    List<Widget> vids = [];
 
     // var videos;
     // // _sortCourses();
@@ -75,7 +75,8 @@ class MyFeaturedCoursesPageState extends State<MyFeaturedCoursesPage> {
             // get the lessons on this course
             // and the assignments for the course
             loading(context);
-            await Lessons.getLessons(context, course.id);
+            // await Lessons.getLessons(context, course.id);
+            await Lessons.getFeaturedLessons(context, course.id);
             await Courses.getAssigment(context, course.id);
             Lessons.source = LessonSource.featured;
             Courses.currentCourse = course;

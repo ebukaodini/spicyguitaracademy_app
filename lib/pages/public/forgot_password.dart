@@ -69,7 +69,7 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
                       shape: RoundedRectangleBorder(
                           borderRadius: new BorderRadius.circular(5.0),
                           side: BorderSide(color: brown)),
-                      padding: EdgeInsets.fromLTRB(135, 10, 135, 10),
+                      padding: EdgeInsets.symmetric(vertical: 10),
                       child: Text("Submit", style: TextStyle(fontSize: 20.0)),
                     ),
                   ),
@@ -89,7 +89,8 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
       if (resp['status'] == true) {
         // success(context, resp['message']);
         Student.forgotPassword = true;
-        Navigator.popAndPushNamed(context, "/verify");
+        Navigator.popAndPushNamed(context, "/verify",
+            arguments: {'email': _email.text});
       } else {
         throw Exception(resp['message']);
       }

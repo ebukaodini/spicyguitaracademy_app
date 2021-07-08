@@ -12,7 +12,7 @@ class HomePage extends StatefulWidget {
 class HomePageState extends State<HomePage> {
   // properties
   // all these variables should be abstracted in a class and used globally
-  bool _notificationsExist = false;
+  // bool _notificationsExist = false;
 
   @override
   void initState() {
@@ -165,10 +165,10 @@ class HomePageState extends State<HomePage> {
   List<Widget> _loadFreeLessons() {
     // tutorial lessons
     tutorialLessons = freeLessons;
-    List<Widget> vids = new List<Widget>();
+    List<Widget> vids = [];
     freeLessons.forEach((lesson) {
       vids.add(renderLesson(lesson, context, () {
-        currentTutorial = lesson;
+        setCurrentTutorial(lesson);
         Navigator.pushNamed(context, "/tutorial_page");
       }, courseLocked: false));
     });

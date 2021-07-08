@@ -17,6 +17,7 @@ class LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
+    _email.text = Student.email;
   }
 
   @override
@@ -46,8 +47,10 @@ class LoginPageState extends State<LoginPage> {
                   SizedBox(height: 40.0),
 
                   // Email field
-                  TextField(
+                  TextFormField(
                     controller: _email,
+                    keyboardType: TextInputType.emailAddress,
+                    autofillHints: [AutofillHints.email],
                     autofocus: true,
                     textInputAction: TextInputAction.next,
                     style: TextStyle(fontSize: 20.0, color: brown),
@@ -59,10 +62,12 @@ class LoginPageState extends State<LoginPage> {
                   SizedBox(height: 20.0),
 
                   // Password field
-                  TextField(
+                  TextFormField(
                       controller: _pass,
                       obscureText: _obscurePwd,
                       textInputAction: TextInputAction.done,
+                      keyboardType: TextInputType.visiblePassword,
+                      autofillHints: [AutofillHints.password],
                       // onSubmitted: (value) {
                       //   login();
                       // },
@@ -89,7 +94,7 @@ class LoginPageState extends State<LoginPage> {
                       shape: RoundedRectangleBorder(
                           borderRadius: new BorderRadius.circular(5.0),
                           side: BorderSide(color: brown)),
-                      padding: EdgeInsets.fromLTRB(135, 10, 135, 10),
+                      padding: EdgeInsets.symmetric(vertical: 10),
                       child: Text("Login", style: TextStyle(fontSize: 20.0)),
                     ),
                   ),

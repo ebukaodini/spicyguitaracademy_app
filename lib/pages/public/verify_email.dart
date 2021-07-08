@@ -11,6 +11,7 @@ class VerifyPage extends StatefulWidget {
 class VerifyPageState extends State<VerifyPage> {
   // properties
   TextEditingController _token = TextEditingController();
+  String _email = "";
 
   @override
   void initState() {
@@ -19,6 +20,10 @@ class VerifyPageState extends State<VerifyPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (Student.forgotPassword) {
+      final Map args = ModalRoute.of(context).settings.arguments as Map;
+      _email = args['email'];
+    }
     return Scaffold(
         appBar: AppBar(
           toolbarHeight: 70,
@@ -65,7 +70,7 @@ class VerifyPageState extends State<VerifyPage> {
                       shape: RoundedRectangleBorder(
                           borderRadius: new BorderRadius.circular(5.0),
                           side: BorderSide(color: brown)),
-                      padding: EdgeInsets.fromLTRB(135, 10, 135, 10),
+                      padding: EdgeInsets.symmetric(vertical: 10),
                       child: Text("Verify", style: TextStyle(fontSize: 20.0)),
                     ),
                   ),
@@ -74,18 +79,22 @@ class VerifyPageState extends State<VerifyPage> {
 
   void verify() async {
     try {
-      loading(context);
+      loading(context, message: 'Verifying');
 
-      print("${_token.text} ${Student.email}");
-      var resp = await request('/api/verify',
-          method: 'POST', body: {'token': _token.text, 'email': Student.email});
+      // print("${_token.text} ${_email}");
+      var resp = await request('/api/verify', method: 'POST', body: {
+        'token': _token.text,
+        'email': Student.isNewStudent == true ? Student.email : _email
+      });
 
+      // error(context, resp['status']);
       if (resp['status'] == true) {
         Student.status = 'active';
 
         Navigator.pop(context);
         if (Student.forgotPassword == true) {
-          Navigator.popAndPushNamed(context, "/resetpassword");
+          Navigator.popAndPushNamed(context, "/resetpassword",
+              arguments: {'email': _email});
         } else if (Student.isNewStudent == true) {
           Navigator.popAndPushNamed(context, "/login");
         } else {

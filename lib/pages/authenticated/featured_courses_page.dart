@@ -68,7 +68,7 @@ class FeaturedCoursesPageState extends State<FeaturedCoursesPage>
                 )),
                 Tab(
                     child: Text(
-                  "PICK COURSES",
+                  "BUY COURSES",
                   style: TextStyle(fontWeight: FontWeight.w500),
                 )),
               ],

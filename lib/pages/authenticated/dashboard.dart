@@ -74,8 +74,13 @@ class DashboardState extends State<Dashboard> {
         body:
             SafeArea(minimum: EdgeInsets.all(10.0), child: _pages[_pageIndex]),
         drawer: Container(
-          width: screen(context).width / 2,
-          color: Colors.white,
+          width: screen(context).width * 0.6,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            // borderRadius: BorderRadius.only(
+            //     bottomRight: Radius.circular(100),
+            //     topRight: Radius.circular(100)),
+          ),
           child: Drawer(
             semanticLabel: "Side Navigation Bar",
             child: SingleChildScrollView(
@@ -128,17 +133,9 @@ class DashboardState extends State<Dashboard> {
                     "assets/imgs/icons/sidebar_video_icon.svg", "Tutorial", () {
                   Navigator.pushNamed(context, '/tutorial_page');
                 }),
-                // Student.subscriptionPlan != '0'
                 sideBarItem("assets/imgs/icons/message_icon.svg", "Forum", () {
                   Navigator.pushNamed(context, '/forums');
-                }),
-                // : Container(),
-                // sideBarItem("assets/imgs/icons/user_icon_active.svg", "Profile",
-                //     () {
-                //   setState(() {
-                //     _pageIndex = 3;
-                //   });
-                // }),
+                }, width: 20),
                 // sideBarItem("assets/imgs/icons/settings_icon.svg", "Settings",
                 //     () {
                 //   Navigator.pushNamed(context, '/settings');
@@ -148,21 +145,14 @@ class DashboardState extends State<Dashboard> {
                 //     () {
                 //   Navigator.pushNamed(context, '/notification');
                 // }),
-                sideBarItem("assets/imgs/icons/help_circle_icon.svg", "Help",
-                    () {
-                  Navigator.pushNamed(context, '/help');
-                }),
-                sideBarItem("assets/imgs/icons/help_circle_icon.svg", "Terms",
-                    () {
-                  Navigator.pushNamed(context, '/terms_and_condition');
-                }),
                 sideBarItem(
                     "assets/imgs/icons/contactus_icon.svg", "Contact Us", () {
                   Navigator.pushNamed(context, '/contactus');
                 }),
                 sideBarItem("assets/imgs/icons/signout_icon.svg", "Logout", () {
                   Student.signout();
-                  Navigator.popUntil(context, ModalRoute.withName('/login'));
+                  Navigator.popUntil(
+                      context, ModalRoute.withName('/welcome_page'));
                 }),
               ],
             )),
@@ -188,17 +178,22 @@ class DashboardState extends State<Dashboard> {
         ));
   }
 
-  ListTile sideBarItem(String asset, String title, Function callback) {
+  ListTile sideBarItem(String asset, String title, Function callback,
+      {double width}) {
     return ListTile(
         title: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SvgPicture.asset(
               asset,
+              width: width,
               matchTextDirection: true,
             ),
             SizedBox(width: 20),
-            Text(title, style: TextStyle(color: darkgrey, fontSize: 14.0)),
+            Text(title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(color: darkgrey, fontSize: 14.0)),
           ],
         ),
         trailing: Icon(Icons.arrow_forward_ios, size: 14, color: brown),

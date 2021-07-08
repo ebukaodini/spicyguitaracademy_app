@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:spicyguitaracademy/common.dart';
-import 'package:spicyguitaracademy/models.dart';
+// import 'package:spicyguitaracademy/models.dart';
 
 class ReChoosePlan extends StatefulWidget {
   @override

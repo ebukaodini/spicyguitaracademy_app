@@ -105,7 +105,7 @@ class ChoosePlanState extends State<ChoosePlan> {
 
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Container(
                         width: screen(context).width * 0.4,
@@ -130,8 +130,7 @@ class ChoosePlanState extends State<ChoosePlan> {
                           child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: <Widget>[
-                                Text(
-                                    "NGN ${Subscription.plans[0]['price']}\n/mo",
+                                Text("NGN ${Subscription.plans[0]['price']}",
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                         fontSize: 16.0,
@@ -173,8 +172,7 @@ class ChoosePlanState extends State<ChoosePlan> {
                           child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: <Widget>[
-                                Text(
-                                    "NGN ${Subscription.plans[1]['price']}\n/mo",
+                                Text("NGN ${Subscription.plans[1]['price']}",
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                         fontSize: 16.0,
@@ -224,8 +222,7 @@ class ChoosePlanState extends State<ChoosePlan> {
                           child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: <Widget>[
-                                Text(
-                                    "NGN ${Subscription.plans[2]['price']}\n/mo",
+                                Text("NGN ${Subscription.plans[2]['price']}",
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                         fontSize: 16.0,
@@ -267,8 +264,7 @@ class ChoosePlanState extends State<ChoosePlan> {
                           child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: <Widget>[
-                                Text(
-                                    "NGN ${Subscription.plans[3]['price']}\n/mo",
+                                Text("NGN ${Subscription.plans[3]['price']}",
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                         fontSize: 16.0,

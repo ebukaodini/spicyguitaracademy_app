@@ -87,7 +87,7 @@ class InviteFriendState extends State<InviteFriend> {
                             EdgeInsets.symmetric(vertical: 20, horizontal: 20),
                         onPressed: () async {
                           try {
-                            loading(context);
+                            loading(context, message: 'Sending');
                             var resp = await request(
                                 '/api/student/invite-a-friend',
                                 method: 'POST',

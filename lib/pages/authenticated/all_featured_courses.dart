@@ -17,11 +17,8 @@ class AllFeaturedCoursesPage extends StatefulWidget {
 }
 
 class AllFeaturedCoursesPageState extends State<AllFeaturedCoursesPage> {
-  CheckoutMethod _method = CheckoutMethod.selectable;
-
   @override
   void initState() {
-    PaystackPlugin.initialize(publicKey: paystackPublicKey);
     super.initState();
   }
 
@@ -54,52 +51,8 @@ class AllFeaturedCoursesPageState extends State<AllFeaturedCoursesPage> {
     }
   }
 
-  PaymentCard _getCardFromUI() {
-    return PaymentCard(
-      number: '',
-      cvc: '',
-      expiryMonth: 0,
-      expiryYear: 0,
-    );
-  }
-
-  _handleCheckout(BuildContext context) async {
-    Charge charge = Charge()
-      ..amount = Subscription.price // In base currency
-      ..email = Student.email
-      ..card = _getCardFromUI();
-
-    charge.accessCode = Subscription.accessCode;
-
-    try {
-      CheckoutResponse response = await PaystackPlugin.checkout(
-        context,
-        method: _method,
-        charge: charge,
-        fullscreen: true,
-        logo: SvgPicture.asset(
-          "assets/imgs/icons/spicy_guitar_logo.svg",
-          width: 40.0,
-          matchTextDirection: true,
-        ),
-      );
-
-      if (response.verify == true) {
-        Subscription.verifyFeatured();
-        if (Subscription.paystatus == true) {
-          // update my featured courses
-          await Courses.getMyFeaturedCourses(context);
-        }
-      } else {
-        throw Exception('Cancelled Transaction');
-      }
-    } catch (e) {
-      error(context, stripExceptions(e));
-    }
-  }
-
   Widget _loadCourses() {
-    List<Widget> vids = new List<Widget>();
+    List<Widget> vids = [];
 
     // add the image for the category
     vids.add(Container(
@@ -123,7 +76,8 @@ class AllFeaturedCoursesPageState extends State<AllFeaturedCoursesPage> {
         try {
           loading(context);
           if (course.status == true) {
-            await Lessons.getLessons(context, course.id);
+            // await Lessons.getLessons(context, course.id);
+            await Lessons.getFeaturedLessons(context, course.id);
             await Courses.getAssigment(context, course.id);
             Lessons.source = LessonSource.featured;
             Courses.currentCourse = course;
@@ -134,9 +88,10 @@ class AllFeaturedCoursesPageState extends State<AllFeaturedCoursesPage> {
               'courseId': course.id,
             });
           } else {
-            await Subscription.initiateFeaturedPayment(course.id);
             Navigator.pop(context);
-            _handleCheckout(context);
+            Navigator.pushNamed(context, '/coursepreview_page', arguments: {
+              'course': course,
+            });
           }
         } catch (e) {
           Navigator.pop(context);
@@ -159,7 +114,7 @@ class AllFeaturedCoursesPageState extends State<AllFeaturedCoursesPage> {
         children: <Widget>[
           // description text
           Text(
-            "Pick\nCourses",
+            "Buy\nCourses",
             // "Featured\nCourses",
             textAlign: TextAlign.start,
             style: TextStyle(

@@ -75,7 +75,7 @@ class AllCoursesPageState extends State<AllCoursesPage> {
   }
 
   Widget _loadCourses() {
-    List<Widget> vids = new List<Widget>();
+    List<Widget> vids = [];
     List<dynamic> videos;
 
     switch (_courseCategory) {
@@ -122,16 +122,20 @@ class AllCoursesPageState extends State<AllCoursesPage> {
 
   Widget categoryIdentification(category, categoryLabel) {
     return InkWell(
-        onTap: () {
-          setState(() {
-            _courseCategory = category;
-          });
-        },
+      onTap: () {
+        setState(() {
+          _courseCategory = category;
+        });
+      },
+      child: Container(
+        // width: screen(context).width * 0.25,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               '$categoryLabel',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 color: _courseCategory == category ? brown : darkgrey,
                 fontWeight: FontWeight.w600,
@@ -143,7 +147,9 @@ class AllCoursesPageState extends State<AllCoursesPage> {
                 height: 5,
                 color: _courseCategory == category ? brown : Colors.transparent)
           ],
-        ));
+        ),
+      ),
+    );
   }
 
   @override
@@ -198,18 +204,19 @@ class AllCoursesPageState extends State<AllCoursesPage> {
 
       // the category identification
       Container(
-          width: screen(context).width,
-          padding: EdgeInsets.symmetric(vertical: 5),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              categoryIdentification(1, 'Beginners'),
-              categoryIdentification(2, 'Amateurs'),
-              categoryIdentification(3, 'Intermediates'),
-              categoryIdentification(4, 'Advanced')
-            ],
-          )),
+        width: screen(context).width,
+        padding: EdgeInsets.symmetric(vertical: 5),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            categoryIdentification(1, 'Beginners'),
+            categoryIdentification(2, 'Amateurs'),
+            categoryIdentification(3, 'Intermediates'),
+            categoryIdentification(4, 'Advanced')
+          ],
+        ),
+      ),
 
       _loadCourses()
     ]));

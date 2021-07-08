@@ -23,12 +23,12 @@ class LessonsPageState extends State<LessonsPage> {
   List<Widget> _loadLessons() {
     // tutorial lessons
     tutorialLessons = courseLessons;
-    List<Widget> vids = new List<Widget>();
+    List<Widget> vids = [];
     courseLessons.forEach((lesson) {
       vids.add(renderLesson(lesson, context, () async {
         try {
           loading(context);
-          currentTutorial = lesson;
+          setCurrentTutorial(lesson);
           if (Lessons.source == LessonSource.normal)
             await Lessons.activateLesson(context);
           else if (Lessons.source == LessonSource.featured)
