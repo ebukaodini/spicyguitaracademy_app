@@ -1,10 +1,8 @@
 // import 'package:flutter/gestures.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:spicyguitaracademy/common.dart';
 import 'package:spicyguitaracademy/models.dart';
-import 'package:flutter_paystack/flutter_paystack.dart';
 
 // import the all and the studying
 // import './all_courses.dart';

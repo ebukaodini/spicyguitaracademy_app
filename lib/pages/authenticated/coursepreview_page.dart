@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_paystack/flutter_paystack.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:pdf_flutter/pdf_flutter.dart';
 import 'package:spicyguitaracademy/pages/authenticated/videoWidget.dart';
-import 'package:spicyguitaracademy/pages/authenticated/audioWidget.dart';
 import 'package:spicyguitaracademy/common.dart';
 import 'package:spicyguitaracademy/models.dart';
 

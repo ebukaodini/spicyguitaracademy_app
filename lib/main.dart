@@ -1,8 +1,4 @@
-import 'dart:io';
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:in_app_update/in_app_update.dart';
 import 'package:flutter/services.dart';
 import 'package:spicyguitaracademy/pages/authenticated/coursepreview_page.dart';
 import 'package:spicyguitaracademy/pages/authenticated/editpassword_page.dart';
@@ -10,7 +6,6 @@ import 'package:spicyguitaracademy/pages/authenticated/forums_page.dart';
 import 'package:spicyguitaracademy/pages/public/contact.dart';
 import 'package:spicyguitaracademy/pages/authenticated/editprofile_page.dart';
 import 'package:spicyguitaracademy/pages/public/forgot_password.dart';
-import 'package:spicyguitaracademy/pages/public/privacy_policy.dart';
 import 'package:spicyguitaracademy/pages/public/reset_password.dart';
 
 import 'package:spicyguitaracademy/pages/public/terms_and_condition.dart';
