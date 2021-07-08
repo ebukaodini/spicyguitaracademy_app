@@ -48,6 +48,8 @@ dependencies:
   shared_preferences: ^0.5.12+4
   # for in app update
   in_app_update: ^2.0.0
+  # For adding hyperlinks
+  url_launcher: ^5.7.10
 
   # for cache
   # flutter_cache_manager: ^3.0.2

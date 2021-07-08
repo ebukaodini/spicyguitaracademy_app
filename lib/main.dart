@@ -145,7 +145,7 @@ class SpicyGuitarAcademy extends StatelessWidget {
         '/register': (BuildContext context) => new RegisterPage(),
         '/terms_and_condition': (BuildContext context) =>
             new TermsAndCondition(),
-        '/privacy': (BuildContext context) => new PrivacyPolicy(),
+        // '/privacy': (BuildContext context) => new PrivacyPolicy(),
         '/login': (BuildContext context) => new LoginPage(),
         '/forgot_password': (BuildContext context) => new ForgotPasswordPage(),
         '/verify': (BuildContext context) => new VerifyPage(),

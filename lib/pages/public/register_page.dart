@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:spicyguitaracademy/common.dart';
 import 'package:spicyguitaracademy/models.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -159,9 +160,24 @@ class RegisterPageState extends State<RegisterPage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                Text("I have carfully read and agreed to the"),
-                                Text("Terms and Privacy Policy",
-                                    style: TextStyle(color: brown)),
+                                Text("I have carefully read and agreed to the"),
+                                InkWell(
+                                  onTap: () async {
+                                    if (await canLaunch(
+                                        'https://spicyguitaracademy.com/terms')) {
+                                      await launch(
+                                        'https://spicyguitaracademy.com/terms',
+                                        enableJavaScript: true,
+                                        enableDomStorage: true,
+                                      );
+                                    } else {
+                                      snackbar(context,
+                                          'Could not launch the URL https://spicyguitaracademy.com/terms');
+                                    }
+                                  },
+                                  child: Text("Terms and Conditions",
+                                      style: TextStyle(color: brown)),
+                                ),
                               ],
                             )))
                   ]),

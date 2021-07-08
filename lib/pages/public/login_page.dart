@@ -101,9 +101,20 @@ class LoginPageState extends State<LoginPage> {
 
                   SizedBox(height: 20.0),
 
-                  Align(
-                      alignment: Alignment.centerLeft,
-                      child: InkWell(
+                  Row(
+                    // alignment: Alignment.centerLeft,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      InkWell(
+                          onTap: () {
+                            Navigator.pushNamed(context, '/register');
+                          },
+                          child: Text(
+                            'Create Account',
+                            textAlign: TextAlign.right,
+                            style: TextStyle(color: brown),
+                          )),
+                      InkWell(
                           onTap: () {
                             Navigator.pushNamed(context, '/forgot_password');
                           },
@@ -111,7 +122,9 @@ class LoginPageState extends State<LoginPage> {
                             'Forgot Password',
                             textAlign: TextAlign.right,
                             style: TextStyle(color: brown),
-                          )))
+                          ))
+                    ],
+                  )
                 ]))));
   }
 
