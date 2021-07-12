@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="20.5" height="22.5" viewBox="0 0 20.5 22.5">
-  <g id="home_tab_icon" data-name="home tab icon" transform="translate(1.25 1.25)">
-    <path id="Shape" d="M0,7,9,0l9,7V18a2,2,0,0,1-2,2H2a2,2,0,0,1-2-2Z" fill="none" stroke="#6b2b14" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2.5"/>
-    <path id="Shape-2" data-name="Shape" d="M0,10V0H6V10" transform="translate(6 10)" fill="none" stroke="#6b2b14" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2.5"/>
-  </g>
-</svg>

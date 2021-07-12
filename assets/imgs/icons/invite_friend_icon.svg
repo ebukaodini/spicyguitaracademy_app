@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="20" viewBox="0 0 24 20">
-  <g id="invite_friend_icon" data-name="invite friend icon" transform="translate(1 1)">
-    <path id="Shape" d="M15,6V4a4,4,0,0,0-4-4H4A4,4,0,0,0,0,4V6" transform="translate(0 12)" fill="none" stroke="#6b2b14" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/>
-    <circle id="Oval" cx="4" cy="4" r="4" stroke-width="2" transform="translate(3.5)" stroke="#6b2b14" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" fill="none"/>
-    <path id="Shape-2" data-name="Shape" d="M0,0V6" transform="translate(19 5)" fill="none" stroke="#6b2b14" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/>
-    <path id="Shape-3" data-name="Shape" d="M6,0H0" transform="translate(16 8)" fill="none" stroke="#6b2b14" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/>
-  </g>
-</svg>
